@@ -1,0 +1,27 @@
+# permissions for end users to edit alloys.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: alloy-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: alloy-editor-role
+rules:
+- apiGroups:
+  - collectors.grafana.com
+  resources:
+  - alloys
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - collectors.grafana.com
+  resources:
+  - alloys/status
+  verbs:
+  - get

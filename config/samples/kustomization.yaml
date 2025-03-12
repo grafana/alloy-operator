@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- collectors_v1alpha1_alloy.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples
