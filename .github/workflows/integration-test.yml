@@ -1,0 +1,55 @@
+---
+name: Integration Test
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: ["main"]
+  pull_request: {}
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  list-tests:
+    name: List tests
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.list_tests.outputs.tests }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: List tests
+        id: list_tests
+        working-directory: tests/integration
+        run: |
+          tests=$(find . -name Makefile -exec dirname {} \;)
+          echo "Tests: ${tests}"
+          echo "tests=$(echo "${tests}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')" >> "${GITHUB_OUTPUT}"
+
+  run-tests:
+    name: Integration Test
+    needs: list-tests
+    runs-on: ubuntu-latest
+    if: needs.list-tests.outputs.tests != '[]'
+    strategy:
+      matrix:
+        test: ${{ fromJson(needs.list-tests.outputs.tests) }}
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Kind CLI
+        uses: helm/kind-action@v1
+        with:
+          kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Run test
+        working-directory: "tests/integration/${{ matrix.test }}"
+        run: make run-test
+        env:
+          KUBECONFIG: "kubeconfig.yaml"
