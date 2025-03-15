@@ -40,13 +40,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Kind CLI
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+
+      - name: Create Kind cluster
         uses: helm/kind-action@v1
         with:
           kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
-
-      - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@main
 
       - name: Run test
         working-directory: "tests/integration/${{ matrix.test }}"
