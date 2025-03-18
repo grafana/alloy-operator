@@ -8,7 +8,7 @@ $(KUBECONFIG):
 
 deploy-dependencies: $(KUBECONFIG)
 	@echo "Deploying dependencies..."
-	@flux install
+	@flux install --components=source-controller,helm-controller
 	@kubectl apply -f dependencies --wait
 	HELM_RELEASE_COUNT=$$(flux get helmreleases --all-namespaces | wc -l); \
 	while [ $$(flux get helmreleases --all-namespaces --status-selector ready=true | wc -l) -lt $${HELM_RELEASE_COUNT} ]; do \
@@ -25,7 +25,7 @@ deploy: $(KUBECONFIG)
 
 test:
 	@echo "Running tests..."
-	@helm test k8s-monitoring-test
+	@helm test k8s-monitoring-test --logs
 
 delete-cluster:
 	@echo "Deleting cluster $(CLUSTER_NAME)..."

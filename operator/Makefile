@@ -1,9 +1,6 @@
 VERSION ?= $(shell yq eval '.version' helm-charts/alloy/Chart.yaml)
 IMG ?= ghcr.io/grafana/alloy-operator:$(VERSION)
 
-.PHONY: all
-all: docker-build
-
 ##@ General
 
 # The help target prints out all targets with their descriptions organized

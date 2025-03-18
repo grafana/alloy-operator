@@ -1,3 +1,4 @@
+---
 # Use the 'create api' subcommand to add watches to this file.
 - group: collectors.grafana.com
   version: v1alpha1
