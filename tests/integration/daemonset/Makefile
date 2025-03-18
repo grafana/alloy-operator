@@ -10,8 +10,9 @@ deploy-dependencies: $(KUBECONFIG)
 	@echo "Deploying dependencies..."
 	@flux install --components=source-controller,helm-controller
 	@kubectl apply -f dependencies --wait
-	HELM_RELEASE_COUNT=$$(flux get helmreleases --all-namespaces | wc -l); \
+	@HELM_RELEASE_COUNT=$$(flux get helmreleases --all-namespaces | wc -l); \
 	while [ $$(flux get helmreleases --all-namespaces --status-selector ready=true | wc -l) -lt $${HELM_RELEASE_COUNT} ]; do \
+	  	echo -n "."; \
 		sleep 5; \
 	done
 
