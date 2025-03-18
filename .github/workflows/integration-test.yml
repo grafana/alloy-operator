@@ -43,9 +43,27 @@ jobs:
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@main
 
+      - name: Check for cluster config
+        id: check-cluster-config
+        working-directory: "tests/integration/${{ matrix.test }}"
+        run: |
+          if [ -f "kind-cluster-config.yaml" ]; then
+            echo "cluster-type=kind-with-config" >> "${GITHUB_OUTPUT}"
+          else
+            echo "cluster-type=kind" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Create Kind cluster
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'kind' }}
         uses: helm/kind-action@v1
         with:
+          kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
+
+      - name: Create Kind cluster with special config
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'kind-with-config' }}
+        uses: helm/kind-action@v1
+        with:
+          config: "tests/integration/${{ matrix.test }}/kind-cluster-config.yaml"
           kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
 
       - name: Run test
