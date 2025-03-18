@@ -331,7 +331,7 @@ spec:
         - --leader-elect
         - --leader-election-id=alloy-operator
         - --health-probe-bind-address=:8081
-        image: ghcr.io/grafana/alloy-operator:0.12.3
+        image: ghcr.io/grafana/alloy-operator:0.12.5
         livenessProbe:
           httpGet:
             path: /healthz

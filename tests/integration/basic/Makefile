@@ -7,12 +7,13 @@ $(KUBECONFIG):
 	@kind create cluster --name $(CLUSTER_NAME) --kubeconfig $(KUBECONFIG)
 
 deploy-dependencies: $(KUBECONFIG)
-	@echo "Deploying dependencies..."
+	@echo "Deploying flux..."
 	@flux install --components=source-controller,helm-controller
+
+	@echo "Deploying dependencies..."
 	@kubectl apply -f dependencies --wait
 	@HELM_RELEASE_COUNT=$$(flux get helmreleases --all-namespaces | wc -l); \
 	while [ $$(flux get helmreleases --all-namespaces --status-selector ready=true | wc -l) -lt $${HELM_RELEASE_COUNT} ]; do \
-	  	echo -n "."; \
 		sleep 5; \
 	done
 

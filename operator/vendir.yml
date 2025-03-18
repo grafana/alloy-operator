@@ -7,6 +7,6 @@ directories:
       - path: alloy
         helmChart:
           name: alloy
-          version: 0.12.3
+          version: 0.12.5
           repository:
             url: https://grafana.github.io/helm-charts

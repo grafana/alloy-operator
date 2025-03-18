@@ -20,16 +20,34 @@ help: ## Display this help.
 
 ##@ Build
 
+vendir.lock.yml: vendir.yml
+	vendir sync
+	rm -rf helm-charts/alloy/charts helm-charts/alloy/Chart.lock
+	yq 'del(.dependencies[] | select(.name == "crds"))' -i helm-charts/alloy/Chart.yaml
+	yq 'del(.crds)' -i helm-charts/alloy/values.yaml
+	cd helm-charts/alloy && helm dependency build
+
+helm-charts/alloy/Chart.yaml: vendir.lock.yml
+	vendir sync --locked
+	rm -rf helm-charts/alloy/charts helm-charts/alloy/Chart.lock
+	yq 'del(.dependencies[] | select(.name == "crds"))' -i helm-charts/alloy/Chart.yaml
+	yq 'del(.crds)' -i helm-charts/alloy/values.yaml
+	cd helm-charts/alloy && helm dependency build
+
 ALLOY_HELM_FILES ?= $(shell find helm-charts/alloy -type f)
 
 .PHONY: build
-build: build-crd build-manifest build-image
+build: build-alloy build-crd build-manifest build-image
+
+.PHONY: build-alloy
+build-alloy: helm-charts/alloy/Chart.yaml## Build Alloy helm chart.
 
 .PHONY: build-image
+PLATFORMS ?= linux/arm64,linux/amd64
 build-image: .temp/build-image
 .temp/build-image: Dockerfile watches.yaml $(ALLOY_HELM_FILES) ## Build docker image with the manager.
-	docker build -t ${IMG} .
-	mkdir -p .temp && touch .temp/build-image
+	docker buildx build --platform $(PLATFORMS) --tag ${IMG} .
+	touch .temp/build-image
 
 .PHONY: push-image
 push-image: ## Push docker image with the manager.
@@ -45,20 +63,6 @@ build-manifest: manifests/operator.yaml ## Build operator manifest.
 manifests/operator.yaml:
 	cd config/manager && kustomize edit set image controller=${IMG}
 	kustomize build config/default > $@
-
-# PLATFORMS defines the target platforms for  the manager image be build to provide support to multiple
-# architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
-# - able to use docker buildx . More info: https://docs.docker.com/build/buildx/
-# - have enable BuildKit, More info: https://docs.docker.com/develop/develop-images/build_enhancements/
-# - be able to push the image for your registry (i.e. if you do not inform a valid value via IMG=<myregistry/image:<tag>> than the export will fail)
-# To properly provided solutions that supports more than one platform you should use this option.
-PLATFORMS ?= linux/arm64,linux/amd64
-.PHONY: docker-buildx
-docker-buildx: ## Build and push docker image for the manager for cross-platform support
-	- docker buildx create --name project-v3-builder
-	docker buildx use project-v3-builder
-	- docker buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile .
-	- docker buildx rm project-v3-builder
 
 .PHONY: clean
 clean:
