@@ -6,6 +6,6 @@
 version: 2
 updates:
   - package-ecosystem: docker
-    directory: "/"
+    directory: "/operator"
     schedule:
       interval: daily

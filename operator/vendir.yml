@@ -1,0 +1,12 @@
+---
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+  - path: helm-charts
+    contents:
+      - path: alloy
+        helmChart:
+          name: alloy
+          version: 0.12.3
+          repository:
+            url: https://grafana.github.io/helm-charts

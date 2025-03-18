@@ -17,8 +17,8 @@ deploy-dependencies: $(KUBECONFIG)
 
 deploy: $(KUBECONFIG)
 	@echo "Deploying Alloy Operator..."
-	@make -C ../../.. install
-	@make -C ../../.. deploy
+	@kubectl apply -f ../../../operator/manifests/crd.yaml
+	@kubectl apply -f ../../../operator/manifests/operator.yaml
 
 	@echo "Deploying Alloy object..."
 	@kubectl apply -f alloy.yaml --wait
