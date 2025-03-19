@@ -1,0 +1,115 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-logs
+spec:
+  controller:
+    type: daemonset
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+
+  alloy:
+    extraEnv:
+      - name: CLUSTER_NAME
+        value: daemonset-test-cluster
+    configMap:
+      content: |-
+        prometheus.exporter.self "default" {}
+
+        prometheus.scrape "default" {
+          targets    = prometheus.exporter.self.default.targets
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+           
+            write_relabel_config {
+              replacement = sys.env("CLUSTER_NAME")
+              target_label = "cluster"
+            }
+          }
+        }
+        
+        discovery.kubernetes "pod" {
+          role = "pod"
+        }
+
+        discovery.relabel "pod_logs" {
+          targets = discovery.kubernetes.pod.targets
+
+          rule {
+            source_labels = ["__meta_kubernetes_namespace"]
+            target_label = "namespace"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_name"]
+            target_label = "pod"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_name"]
+            target_label = "container"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+            target_label = "app"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+            separator = "/"
+            replacement = "$1"
+            target_label = "job"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+            separator = "/"
+            replacement = "/var/log/pods/*$1/*.log"
+            target_label = "__path__"
+          }
+
+          rule {
+            source_labels = ["__meta_kubernetes_pod_container_id"]
+            target_label = "container_runtime"
+            regex = "^(\\S+):\\/\\/.+$"
+            replacement = "$1"
+          }
+        }
+
+        loki.source.kubernetes "pod_logs" {
+          targets    = discovery.relabel.pod_logs.output
+          forward_to = [loki.process.pod_logs.receiver]
+        }
+
+        loki.process "pod_logs" {
+          stage.static_labels {
+            values = {
+              cluster = sys.env("CLUSTER_NAME"),
+            }
+          }
+
+          forward_to = [loki.write.loki.receiver]
+        }
+        
+        remote.kubernetes.secret "loki" {
+          name = "loki"
+          namespace = "loki"
+        }
+        
+        loki.write "loki" {
+          endpoint {
+            url = "http://loki.loki.svc:3100/loki/api/v1/push"
+            tenant_id = convert.nonsensitive(remote.kubernetes.secret.loki.data["tenantId"])
+            basic_auth {
+              username = convert.nonsensitive(remote.kubernetes.secret.loki.data["username"])
+              password = remote.kubernetes.secret.loki.data["password"]
+            }
+          }
+        }

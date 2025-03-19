@@ -66,5 +66,7 @@ rules:
   - "apps"
   resources:
   - "daemonsets"
+  - "deployments"
+  - "statefulsets"
 
 # +kubebuilder:scaffold:rules

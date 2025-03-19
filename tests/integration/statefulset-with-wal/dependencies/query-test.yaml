@@ -31,7 +31,23 @@ spec:
   values:
     tests:
       - env:
+          CLUSTER: statefulset-with-wal
           PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
         queries:
-          - query: alloy_build_info{job="integrations/self"}
+          # DPM check to ensure clustering is working
+          - query: avg(count_over_time(scrape_samples_scraped{cluster="$CLUSTER"}[1m]))
             type: promql
+            expect:
+              value: 1
+              operator: ==
+
+          # Kubernetes service discovery is working
+          - query: kubernetes_build_info{cluster="$CLUSTER"}
+            type: promql
+
+          # PVC and WAL are working
+          - query: prometheus_remote_write_wal_storage_active_series{cluster="$CLUSTER"}
+            type: promql
+            expect:
+              value: 0
+              operator: ">"

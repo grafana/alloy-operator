@@ -26,16 +26,24 @@ spec:
         name: k8s-monitoring-test
       interval: 1m
   dependsOn:
+    - name: loki
+      namespace: loki
     - name: prometheus
       namespace: prometheus
   values:
     tests:
       - env:
-          CLUSTER: prom-operator-objects-cluster
+          CLUSTER: daemonset-test-cluster
           PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          LOKI_URL: http://loki.loki.svc:3100/loki/api/v1/query
+          LOKI_TENANTID: 1
+          LOKI_USER: loki
+          LOKI_PASS: lokipassword
         queries:
-          - query: count(alloy_build_info{job="integrations/self"})
+          - query: count(alloy_build_info{cluster="$CLUSTER", job="integrations/self"})
             type: promql
             expect:
               operator: ==
               value: 3
+          - query: count_over_time({cluster="$CLUSTER", container="manager", namespace="alloy-operator-system"}[1h])
+            type: logql
