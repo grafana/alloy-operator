@@ -1,0 +1,55 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-client
+  namespace: default
+spec:
+  controller:
+    type: deployment
+  alloy:
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            key: GRAFANA_CLOUD_FLEET_MGMT_TOKEN
+            name: grafana-cloud-credentials
+      - name: CLUSTER_NAME
+        valueFrom:
+          configMapKeyRef:
+            key: CLUSTER
+            name: test-variables
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: alloy-operator-$(CLUSTER_NAME)-$(NAMESPACE)-$(POD_NAME)
+    configMap:
+      content: |-
+        remote.kubernetes.secret "creds" {
+          name = "grafana-cloud-credentials"
+          namespace = "default"
+        }
+        
+        remotecfg {
+          id = sys.env("GCLOUD_FM_COLLECTOR_ID")
+          url = "https://fleet-management-prod-008.grafana.net"
+          basic_auth {
+            username = convert.nonsensitive(remote.kubernetes.secret.creds.data["GRAFANA_CLOUD_FLEET_MGMT_USER"])
+            password = remote.kubernetes.secret.creds.data["GRAFANA_CLOUD_FLEET_MGMT_TOKEN"]
+          }
+          poll_frequency = "5m"
+          attributes = {
+            "platform" = "kubernetes",
+            "source" = "alloy-operator",
+            "cluster" = sys.env("CLUSTER_NAME"),
+            "namespace" = sys.env("NAMESPACE"),
+            "workloadName" = sys.env("POD_NAME"),
+            "workloadType" = "deployment",
+          }
+        }

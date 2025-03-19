@@ -55,11 +55,12 @@ spec:
 The `spec` section supports all fields in the
 [Alloy Helm chart](https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy)'s values file.
 
-For some examples, see the integration tests that are used within this repository:
+For some examples, see the tests that are used within this repository:
 
 *   [Basic Alloy instance](tests/integration/basic/alloy.yaml)
 *   [DaemonSet with HostPath volume mounts](tests/integration/daemonset-with-volumes/alloy.yaml)
 *   [StatefulSet with WAL](tests/integration/statefulset-with-wal/alloy.yaml)
+*   [Remote Configuration](tests/platform/remote-config/alloy.yaml)
 
 NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support the `crds` field in the `spec`.
 
