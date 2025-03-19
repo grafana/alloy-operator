@@ -61,6 +61,8 @@ For some examples, see the integration tests that are used within this repositor
 *   [DaemonSet with HostPath volume mounts](tests/integration/daemonset-with-volumes/alloy.yaml)
 *   [StatefulSet with WAL](tests/integration/statefulset-with-wal/alloy.yaml)
 
+NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support the `crds` field in the `spec`.
+
 ## Contributing
 
 We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more information.

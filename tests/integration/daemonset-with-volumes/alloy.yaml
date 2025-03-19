@@ -11,6 +11,8 @@ spec:
         operator: Exists
 
   alloy:
+    mounts:
+      varlog: true
     extraEnv:
       - name: CLUSTER_NAME
         value: daemonset-test-cluster
