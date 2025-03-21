@@ -45,5 +45,5 @@ spec:
             expect:
               operator: ==
               value: 3
-          - query: count_over_time({cluster="$CLUSTER", container="manager", namespace="alloy-operator-system"}[1h])
+          - query: count_over_time({cluster="$CLUSTER", container="alloy-operator", namespace="operator"}[1h])
             type: logql
