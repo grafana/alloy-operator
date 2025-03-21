@@ -1,0 +1,14 @@
+apiVersion: v2
+name: alloy-operator
+description: A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
+type: application
+version: 0.1.0
+appVersion: "0.12.5"
+
+dependencies:
+  - name: alloy-crd
+    condition: crds.deployAlloyCRD
+    version: 0.0.0
+  - name: pod-logs-crd
+    condition: crds.deployPodLogsCRD
+    version: 0.0.0

@@ -18,8 +18,7 @@ deploy-dependencies: $(KUBECONFIG)
 
 deploy: $(KUBECONFIG)
 	@echo "Deploying Alloy Operator..."
-	@kubectl apply -f ../../../operator/manifests/crd.yaml
-	@kubectl apply -f ../../../operator/manifests/operator.yaml
+	@helm install alloy-operator -n operator --create-namespace ../../../charts/alloy-operator --wait
 
 	@echo "Deploying Alloy object..."
 	@kubectl apply -f alloy.yaml --wait
