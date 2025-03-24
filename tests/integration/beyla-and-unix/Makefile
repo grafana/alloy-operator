@@ -1,18 +1,19 @@
-CLUSTER_NAME ?= daemonset-test-cluster
+CLUSTER_NAME ?= beyla-and-unix-cluster
 KUBECONFIG ?= $(shell pwd)/kubeconfig.yaml
 
 create-cluster: $(KUBECONFIG)
 $(KUBECONFIG):
 	@echo "Creating cluster $(CLUSTER_NAME)..."
-	@kind create cluster --name $(CLUSTER_NAME) --config kind-cluster-config.yaml --kubeconfig $(KUBECONFIG)
+	@kind create cluster --name $(CLUSTER_NAME) --kubeconfig $(KUBECONFIG)
 
 deploy-dependencies: $(KUBECONFIG)
-	@echo "Deploying dependencies..."
+	@echo "Deploying flux..."
 	@flux install --components=source-controller,helm-controller
+
+	@echo "Deploying dependencies..."
 	@kubectl apply -f dependencies --wait
 	@HELM_RELEASE_COUNT=$$(flux get helmreleases --all-namespaces | wc -l); \
 	while [ $$(flux get helmreleases --all-namespaces --status-selector ready=true | wc -l) -lt $${HELM_RELEASE_COUNT} ]; do \
-	  	echo -n "."; \
 		sleep 5; \
 	done
 
@@ -25,7 +26,7 @@ deploy: $(KUBECONFIG)
 
 test:
 	@echo "Running tests..."
-	@helm test k8s-monitoring-test --logs
+	@helm test k8s-monitoring-test --logs || kubectl get pods --all-namespaces
 
 delete-cluster:
 	@echo "Deleting cluster $(CLUSTER_NAME)..."

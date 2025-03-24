@@ -1,0 +1,67 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-test
+spec:
+  controller:
+    type: daemonset
+    hostNetwork: true
+    hostPID: true
+    dnsPolicy: ClusterFirstWithHostNet
+  alloy:
+    securityContext:
+      capabilities:
+        add: [CAP_SYS_ADMIN, CAP_SYS_PTRACE]
+    stabilityLevel: public-preview
+    configMap:
+      content: |-
+        prometheus.exporter.unix "node_metrics" {}  
+
+        prometheus.scrape "default" {
+          targets    = prometheus.exporter.unix.node_metrics.targets
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        beyla.ebpf "default" {
+          attributes {
+            kubernetes {
+              enable = "true"
+              cluster_name = "beyla-and-unix-cluster"
+            }
+          }
+
+          discovery {
+            services {
+              kubernetes {
+                deployment_name = "alloy-operator"
+              }
+            }
+          }
+          output {
+            traces = [otelcol.exporter.otlp.local_tempo.input]
+          }
+        }
+
+        prometheus.scrape "beyla" {
+          targets = beyla.ebpf.default.targets
+          honor_labels = true
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+        
+        
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+          }
+        }
+
+        otelcol.exporter.otlp "local_tempo" {
+          client {
+            endpoint = "tempo.tempo.svc:4317"
+            tls {
+              insecure = true
+              insecure_skip_verify = true
+            }
+          }
+        }

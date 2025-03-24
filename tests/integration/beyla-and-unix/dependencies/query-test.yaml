@@ -1,0 +1,51 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: k8s-monitoring-test
+spec:
+  interval: 1m
+  url: https://github.com/grafana/k8s-monitoring-helm
+  ref:
+    branch: main
+  ignore: |
+    /*
+    !/charts/k8s-monitoring-test
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k8s-monitoring-test
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: charts/k8s-monitoring-test
+      sourceRef:
+        kind: GitRepository
+        name: k8s-monitoring-test
+      interval: 1m
+  dependsOn:
+    - name: prometheus
+      namespace: prometheus
+  values:
+    tests:
+      - env:
+          PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          TEMPO_URL: http://tempo.tempo.svc:3100/api/search
+        queries:
+          # Unix node metrics
+          - query: node_cpu_seconds_total{job="integrations/unix"}
+            type: promql
+
+          # Beyla internal metrics
+          - query: beyla_internal_build_info{job="beyla"}
+            type: promql
+
+          # Beyla application metrics
+          - query: '{k8s_deployment_name="alloy-operator", job="operator/alloy-operator", source="beyla"}'
+            type: promql
+
+          # Beyla application traces
+          - query: '{resource.k8s.deployment.name="alloy-operator"}'
+            type: traceql
