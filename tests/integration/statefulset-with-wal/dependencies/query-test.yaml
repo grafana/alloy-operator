@@ -50,4 +50,4 @@ spec:
             type: promql
             expect:
               value: 0
-              operator: ">"
+              operator: "<"
