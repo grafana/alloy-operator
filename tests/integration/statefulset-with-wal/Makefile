@@ -26,7 +26,7 @@ deploy: $(KUBECONFIG)
 
 test:
 	@echo "Running tests..."
-	@helm test k8s-monitoring-test --logs || kubectl get pods --all-namespaces
+	@helm test k8s-monitoring-test --logs
 
 delete-cluster:
 	@echo "Deleting cluster $(CLUSTER_NAME)..."
