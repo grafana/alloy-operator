@@ -6,6 +6,14 @@
 version: 2
 updates:
   - package-ecosystem: docker
-    directory: "/operator"
+    directory: /operator
     schedule:
       interval: daily
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - dependencies
+      - github-actions

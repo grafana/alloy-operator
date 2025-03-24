@@ -49,6 +49,8 @@ jobs:
         run: |
           if [ -f "kind-cluster-config.yaml" ]; then
             echo "cluster-type=kind-with-config" >> "${GITHUB_OUTPUT}"
+          if [ -f "minikube-cluster-config.yaml" ]; then
+            echo "cluster-type=minikube" >> "${GITHUB_OUTPUT}"
           else
             echo "cluster-type=kind" >> "${GITHUB_OUTPUT}"
           fi
@@ -65,6 +67,10 @@ jobs:
         with:
           config: "tests/integration/${{ matrix.test }}/kind-cluster-config.yaml"
           kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
+
+      - name: Create Minikube cluster
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'minikube' }}
+        uses: medyagh/setup-minikube@cea33675329b799adccc9526aa5daccc26cd5052
 
       - name: Run test
         working-directory: "tests/integration/${{ matrix.test }}"

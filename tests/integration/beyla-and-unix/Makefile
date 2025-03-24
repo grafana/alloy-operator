@@ -4,7 +4,7 @@ KUBECONFIG ?= $(shell pwd)/kubeconfig.yaml
 create-cluster: $(KUBECONFIG)
 $(KUBECONFIG):
 	@echo "Creating cluster $(CLUSTER_NAME)..."
-	@kind create cluster --name $(CLUSTER_NAME) --kubeconfig $(KUBECONFIG)
+	@minikube start
 
 deploy-dependencies: $(KUBECONFIG)
 	@echo "Deploying flux..."
@@ -30,7 +30,7 @@ test:
 
 delete-cluster:
 	@echo "Deleting cluster $(CLUSTER_NAME)..."
-	@kind delete cluster --name $(CLUSTER_NAME)
+	@minikube delete
 	@rm -f $(KUBECONFIG)
 
 run-test: $(KUBECONFIG) deploy-dependencies deploy test
