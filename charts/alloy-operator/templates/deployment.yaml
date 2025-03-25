@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -33,19 +33,19 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --leader-elect
             - --leader-election-id={{ .Release.Name }}
-            - --health-probe-bind-address=:{{ .Values.service.port }}
-            - --metrics-bind-address=:{{ .Values.metrics.port }}
+            - --health-probe-bind-address=:{{ .Values.service.health.port }}
+            - --metrics-bind-address=:{{ .Values.service.metrics.port }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.health.port }}
               protocol: TCP
             - name: metrics
-              containerPort: {{ .Values.metrics.port }}
+              containerPort: {{ .Values.service.metrics.port }}
               protocol: TCP
           livenessProbe:
             httpGet:

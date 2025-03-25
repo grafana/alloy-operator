@@ -1,27 +1,21 @@
 # Alloy Operator
 
-The Alloy Operator is a Kubernetes Operator that manages the lifecycle of [Grafana Alloy](https://grafana.com/docs/alloy/latest/)
-instances. It is built with the [Operator SDK](https://sdk.operatorframework.io/) using the [Alloy Helm chart](https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy)
-as its base.
+The Alloy Operator is a Kubernetes Operator that manages the lifecycle of
+[Grafana Alloy](https://grafana.com/docs/alloy/latest/) instances. It is built with the
+[Operator SDK](https://sdk.operatorframework.io/) using the
+[Alloy Helm chart](https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy) as its base.
 
 ## Usage
 
 To use the Alloy Operator, there are three steps to follow:
 
-1. Deploy the Alloy CustomResourceDefinition (CRD).
-2. Deploy the Alloy Operator.
-3. Deploy an Alloy instance.
+1. Deploy the Alloy Operator.
+1. Deploy an Alloy instance.
 
-### Install the CRD
-
-```shell
-$ kubectl apply -f https://raw.githubusercontent.com/grafana/alloy-operator/refs/heads/main/operator/manifests/crd.yaml
-```
-
-### Install the Operator
+### Deploy the Alloy Operator
 
 ```shell
-$ kubectl apply -f https://raw.githubusercontent.com/grafana/alloy-operator/refs/heads/main/operator/manifests/operator.yaml
+$ helm install alloy-operator grafana/alloy-operator
 ```
 
 ### Deploy an Alloy instance
@@ -57,13 +51,14 @@ The `spec` section supports all fields in the
 
 For some examples, see the tests that are used within this repository:
 
-*   [Basic Alloy instance](tests/integration/basic/alloy.yaml)
-*   [DaemonSet with HostPath volume mounts](tests/integration/daemonset-with-volumes/alloy.yaml)
-*   [StatefulSet with WAL](tests/integration/statefulset-with-wal/alloy.yaml)
-*   [Remote Configuration](tests/platform/remote-config/alloy.yaml)
+* [Basic Alloy instance](tests/integration/basic/alloy.yaml)
+* [DaemonSet with HostPath volume mounts](tests/integration/daemonset-with-volumes/alloy.yaml)
+* [StatefulSet with WAL](tests/integration/statefulset-with-wal/alloy.yaml)
+* [Remote Configuration](tests/platform/remote-config/alloy.yaml)
 
 NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support the `crds` field in the `spec`.
 
 ## Contributing
 
-We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more information.
+We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more
+information.

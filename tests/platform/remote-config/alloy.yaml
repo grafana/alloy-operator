@@ -35,7 +35,7 @@ spec:
           name = "grafana-cloud-credentials"
           namespace = "default"
         }
-        
+
         remotecfg {
           id = sys.env("GCLOUD_FM_COLLECTOR_ID")
           url = "https://fleet-management-prod-008.grafana.net"

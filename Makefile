@@ -1,5 +1,7 @@
 VERSION ?= $(shell yq eval '.version' operator/helm-charts/alloy/Chart.yaml)
 IMG ?= ghcr.io/grafana/alloy-operator:$(VERSION)
+HAS_HELM_DOCS := $(shell command -v helm-docs;)
+HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 
 ##@ General
 
@@ -21,10 +23,10 @@ help: ## Display this help.
 ##@ Build
 
 .PHONY: build
-build: build-alloy build-image
+build: fetch-alloy build-image
 
 .PHONY: build-alloy
-build-alloy: operator/helm-charts/alloy/Chart.yaml ## Build Alloy helm chart.
+fetch-alloy: operator/helm-charts/alloy/Chart.yaml ## Download the Alloy helm chart.
 
 vendir.lock.yml: vendir.yml
 	vendir sync
@@ -41,7 +43,6 @@ operator/manifests/operator.yaml:
 	cd operator/config/manager && kustomize edit set image controller=${IMG}
 	kustomize build operator/config/default > $@
 
-
 .PHONY: build-image
 PLATFORMS ?= linux/arm64,linux/amd64
 build-image: .temp/image-built
@@ -54,15 +55,16 @@ ALLOY_HELM_FILES ?= $(shell find operator/helm-charts/alloy -type f)
 push-image: ## Push docker image with the manager.
 	docker push ${IMG}
 
-.PHONY: clean
-clean: ## Clean up build artifacts.
-	rm -rf .temp
-	rm -f operator/manifests/crd.yaml
-	rm -f operator/manifests/operator.yaml
-
 # Alloy Operator Helm chart files
 charts/alloy-operator/Chart.yaml: operator/helm-charts/alloy/Chart.yaml
 	yq ".appVersion = \"$(VERSION)\"" -i charts/alloy-operator/Chart.yaml
+
+charts/alloy-operator/README.md: charts/alloy-operator/values.yaml charts/alloy-operator/Chart.yaml
+ifdef HAS_HELM_DOCS
+	helm-docs --chart-search-root charts/alloy-operator
+else
+	docker run --rm --volume "$(shell pwd):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:latest --chart-search-root charts/alloy-operator
+endif
 
 charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml: vendir.lock.yml
 	vendir sync --locked
@@ -70,32 +72,29 @@ charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.ya
 charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml : operator/manifests/crd.yaml
 	cp $< $@
 
-build-chart: charts/alloy-operator/Chart.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml
+build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
+
+.PHONY: clean
+clean: ## Clean up build artifacts.
+	rm -rf .temp
+	rm -f operator/manifests/crd.yaml
+	rm -f operator/manifests/operator.yaml
 
 ##@ Test
 
-.PHONY: install-alloy-crd
-install-alloy-crd: operator/manifests/crd.yaml	## Installs the Alloy CRD into the current K8s cluster.
-	kubectl apply -f operator/manifests/crd.yaml
-
-.PHONY: uninstall-alloy-crd
-uninstall-alloy-crd: operator/manifests/crd.yaml ## Uninstall CRDs from the current K8s cluster.
-	kubectl delete -f operator/manifests/crd.yaml
-
-.PHONY: deploy-operator
-deploy-operator: operator/manifests/operator.yaml ## Deploy controller to the current K8s cluster.
-	kubectl apply -f operator/manifests/operator.yaml
-
-.PHONY: undeploy-operator
-undeploy-operator: operator/manifests/operator.yaml ## Undeploy controller from the current K8s cluster.
-	kubectl delete -f operator/manifests/operator.yaml
-
 .PHONY: lint
-lint: lint-yaml ## Runs all linters.
-	yamllint
-	kubectl apply -f manifests/crd.yaml
+lint: lint-yaml lint-markdown ## Runs all linters.
 
-YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/helm-charts/*")
+YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*")
 .PHONY: lint-yaml
 lint-yaml: $(YAML_FILES) ## Lint yaml files.
 	@yamllint $(YAML_FILES)
+
+MARKDOWN_FILES ?= $(shell find . -name "*.md" -not -path "./operator/helm-charts/*")
+.PHONY: lint-markdown
+lint-markdown: $(MARKDOWN_FILES)  ## Lint markdown files.
+ifdef HAS_MARKDOWNLINT
+	markdownlint-cli2 $(MARKDOWN_FILES)
+else
+	docker run -v $(shell pwd):/workdir davidanson/markdownlint-cli2 $(MARKDOWN_FILES)
+endif

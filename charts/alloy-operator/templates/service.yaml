@@ -7,9 +7,13 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - name: http
+      port: {{ .Values.service.health.port }}
       targetPort: http
       protocol: TCP
-      name: http
+    - name: metrics
+      port: {{ .Values.service.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
   selector:
     {{- include "alloy-operator.selectorLabels" . | nindent 4 }}

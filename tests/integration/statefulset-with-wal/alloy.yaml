@@ -41,7 +41,7 @@ spec:
             label = "app.kubernetes.io/name=alloy"
           }
         }
-        
+
         prometheus.scrape "alloy_pods" {
           targets    = discovery.kubernetes.alloy_pods.targets
           scrape_interval = "60s"
@@ -54,27 +54,27 @@ spec:
         discovery.kubernetes "nodes" {
           role = "node"
         }
-          
+
         prometheus.scrape "kubelet" {
           targets  = discovery.kubernetes.nodes.targets
           job_name = "integrations/kubernetes/kubelet"
           scheme   = "https"
           scrape_interval = "60s"
           bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
-          
+
           tls_config {
             ca_file = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
             insecure_skip_verify = true
             server_name = "kubernetes"
           }
-          
+
           clustering {
             enabled = true
           }
-          
+
           forward_to = [prometheus.remote_write.local_prom.receiver]
         }
-        
+
         prometheus.remote_write "local_prom" {
           endpoint {
             url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"

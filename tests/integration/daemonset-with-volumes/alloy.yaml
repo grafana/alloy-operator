@@ -28,14 +28,14 @@ spec:
         prometheus.remote_write "local_prom" {
           endpoint {
             url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
-           
+
             write_relabel_config {
               replacement = sys.env("CLUSTER_NAME")
               target_label = "cluster"
             }
           }
         }
-        
+
         discovery.kubernetes "pod" {
           role = "pod"
         }
@@ -99,12 +99,12 @@ spec:
 
           forward_to = [loki.write.loki.receiver]
         }
-        
+
         remote.kubernetes.secret "loki" {
           name = "loki"
           namespace = "loki"
         }
-        
+
         loki.write "loki" {
           endpoint {
             url = "http://loki.loki.svc:3100/loki/api/v1/push"

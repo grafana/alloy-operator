@@ -16,7 +16,7 @@ spec:
     stabilityLevel: public-preview
     configMap:
       content: |-
-        prometheus.exporter.unix "node_metrics" {}  
+        prometheus.exporter.unix "node_metrics" {}
 
         prometheus.scrape "default" {
           targets    = prometheus.exporter.unix.node_metrics.targets
@@ -48,8 +48,7 @@ spec:
           honor_labels = true
           forward_to = [prometheus.remote_write.local_prom.receiver]
         }
-        
-        
+
         prometheus.remote_write "local_prom" {
           endpoint {
             url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"

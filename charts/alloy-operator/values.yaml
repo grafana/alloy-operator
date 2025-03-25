@@ -1,4 +1,11 @@
-# -- Handling of the CustomResourceDefinitions (CRDs)
+---
+# -- Overrides the chart's name. Used to change the infix in the resource names.
+nameOverride: null
+# -- Overrides the chart's computed fullname. Used to change the full prefix of
+# resource names.
+fullnameOverride: null
+
+# Handling of the CustomResourceDefinitions (CRDs)
 crds:
   # -- Should this chart deploy the Alloy CRD?
   # @section -- CRDs
@@ -8,46 +15,65 @@ crds:
   # @section -- CRDs
   deployPodLogsCRD: false
 
-# How many replicas to use for the Alloy Operator Deployment.
-# @section -- Operator
+# -- How many replicas to use for the Alloy Operator Deployment.
+# @section -- Deployment Settings
 replicaCount: 1
 
-# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: ghcr.io/grafana/alloy-operator
-  # This sets the pull policy for images.
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Alloy Operator image registry
+  # @section -- Image Settings
+  registry: ghcr.io
+
+  # -- Alloy Operator image repository
+  # @section -- Image Settings
+  repository: grafana/alloy-operator
+
+  # -- Alloy Operator image tag. When empty, the Chart's appVersion is used.
+  # @section -- Image Settings
   tag: ""
 
-# This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-imagePullSecrets: []
-# This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
+  # -- The pull policy for images.
+  # @section -- Image Settings
+  pullPolicy: IfNotPresent
 
-# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+  # -- Optional set of image pull secrets.
+  # @section -- Image Settings
+  pullSecrets: []
+
+# Service Account settings
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Whether to create a service account for the Alloy Operator deployment.
+  # @section -- Service Account Settings
   create: true
-  # Automatically mount a ServiceAccount's API credentials?
+  # -- Whether the Alloy Operator pod should automatically mount the service account token.
+  # @section -- Service Account Settings
   automount: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account
+  # @section -- Service Account Settings
   annotations: {}
-  # The name of the service account to use.
+  # -- Additional labels to add to the service account
+  # @section -- Service Account Settings
+  labels: {}
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
+  # @section -- Service Account Settings
   name: ""
 
-# This is for setting Kubernetes Annotations to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+# -- Additional annotations to add to the pod.
+# @section -- Pod Settings
 podAnnotations: {}
-# This is for setting Kubernetes Labels to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+
+# -- Additional labels to add to the pod.
+# @section -- Pod Settings
 podLabels: {}
 
+# -- Set the security context for the pod.
+# @section -- Pod Settings
 podSecurityContext: {}
   # fsGroup: 2000
 
+# -- Set the security context for the operator container.
+# @section -- Container Settings
 securityContext:
   runAsNonRoot: true
   # capabilities:
@@ -56,34 +82,55 @@ securityContext:
   # readOnlyRootFilesystem: true
   # runAsUser: 1000
 
-# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
-  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  # -- The type of service to create for the operator.
+  # @section -- Service
   type: ClusterIP
-  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 8081
 
+  health:
+    # -- The port number for the health probes.
+    # @section -- Service
+    port: 8081
 
+  metrics:
+    # -- The port number for the metrics service.
+    # @section -- Service
+    port: 8082
+
+# Sets the resources for the pod.
 resources:
-  limits:
-    cpu: 500m
-    memory: 128Mi
+  # -- Set the resource requests for the pod.
+  # @section -- Resources
   requests:
     cpu: 10m
     memory: 64Mi
 
+  # -- Set the resource limits for the pod.
+  # @section -- Resources
+  limits:
+    cpu: 500m
+    memory: 128Mi
+
+# -- Liveness probe settings
+# @section -- Probes
 livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
+
+# -- Readiness probe settings
+# @section -- Probes
 readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
 
+# -- Set the node selector for the pod.
+# @section -- Pod Settings
 nodeSelector: {}
 
+# -- Set the tolerations for the pod.
+# @section -- Pod Settings
 tolerations: []
 
+# -- Set the affinity for the pod.
+# @section -- Pod Settings
 affinity: {}
-
-metrics:
-  port: 8082

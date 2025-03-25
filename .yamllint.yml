@@ -1,0 +1,15 @@
+---
+yaml-files:
+  - "*.yaml"
+  - "*.yml"
+  - ".yamllint"
+
+extends: default
+
+ignore:
+  - charts/**/templates
+  - charts/alloy-operator/charts/**/crds
+rules:
+  line-length:
+    max: 200
+    level: warning
