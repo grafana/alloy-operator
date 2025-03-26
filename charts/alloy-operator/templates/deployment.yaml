@@ -37,9 +37,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --leader-elect
-            - --leader-election-id={{ .Release.Name }}
-            - --health-probe-bind-address=:{{ .Values.service.health.port }}
-            - --metrics-bind-address=:{{ .Values.service.metrics.port }}
+            - --leader-election-id={{ include "alloy-operator.fullname" . }}
+            - --health-probe-bind-address=":{{ .Values.service.health.port }}"
+            - --metrics-bind-address=":{{ .Values.service.metrics.port }}"
           ports:
             - name: http
               containerPort: {{ .Values.service.health.port }}
@@ -50,13 +50,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /healthz
-              port: {{ .Values.service.port }}
+              port: {{ .Values.service.health.port }}
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
           readinessProbe:
             httpGet:
               path: /readyz
-              port: {{ .Values.service.port }}
+              port: {{ .Values.service.health.port }}
             initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           {{- with .Values.resources }}
