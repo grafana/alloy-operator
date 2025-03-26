@@ -38,8 +38,8 @@ spec:
           args:
             - --leader-elect
             - --leader-election-id={{ include "alloy-operator.fullname" . }}
-            - --health-probe-bind-address=":{{ .Values.service.health.port }}"
-            - --metrics-bind-address=":{{ .Values.service.metrics.port }}"
+            - --health-probe-bind-address=:{{ .Values.service.health.port }}
+            - --metrics-bind-address=:{{ .Values.service.metrics.port }}
           ports:
             - name: http
               containerPort: {{ .Values.service.health.port }}
