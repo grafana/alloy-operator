@@ -70,7 +70,7 @@ jobs:
 
       - name: Parse version
         id: parse-version
-        uses: booxmedialtd/ws-action-parse-semver@v1
+        uses: booxmedialtd/ws-action-parse-semver@v1.4.7
         with:
           input_string: ${{ steps.parse-chart.outputs.version }}
 
