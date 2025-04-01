@@ -5,6 +5,16 @@ nameOverride: null
 # resource names.
 fullnameOverride: null
 
+global:
+  image:
+    # -- Global image registry override.
+    # @section -- Image Settings
+    registry: ""
+
+    # -- Global image pull secrets.
+    # @section -- Image Settings
+    pullSecrets: []
+
 # Handling of the CustomResourceDefinitions (CRDs)
 crds:
   # -- Should this chart deploy the Alloy CRD?
@@ -68,9 +78,9 @@ podAnnotations: {}
 podLabels: {}
 
 # -- Set the security context for the pod.
+# Example: podSecurityContext: { fsGroup: 2000 }
 # @section -- Pod Settings
 podSecurityContext: {}
-  # fsGroup: 2000
 
 # -- Set the security context for the operator container.
 # @section -- Container Settings

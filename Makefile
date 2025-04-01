@@ -23,7 +23,7 @@ help: ## Display this help.
 ##@ Build
 
 .PHONY: build
-build: fetch-alloy build-image
+build: fetch-alloy build-image build-chart
 
 .PHONY: build-alloy
 fetch-alloy: operator/helm-charts/alloy/Chart.yaml ## Download the Alloy helm chart.
@@ -31,7 +31,7 @@ fetch-alloy: operator/helm-charts/alloy/Chart.yaml ## Download the Alloy helm ch
 vendir.lock.yml: vendir.yml
 	vendir sync
 
-operator/helm-charts/alloy/Chart.yaml: vendir.lock.yml
+operator/helm-charts/alloy/Chart.yaml operator/helm-charts/alloy/values.yaml: vendir.lock.yml
 	vendir sync --locked
 	yq 'del(.dependencies[] | select(.name == "crds"))' -i operator/helm-charts/alloy/Chart.yaml
 	yq 'del(.crds)' -i operator/helm-charts/alloy/values.yaml
@@ -69,10 +69,13 @@ endif
 charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml: vendir.lock.yml
 	vendir sync --locked
 
-charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml : operator/manifests/crd.yaml
+charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml: operator/manifests/crd.yaml
 	cp $< $@
 
-build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
+charts/alloy-operator/alloy-values.yaml: operator/helm-charts/alloy/values.yaml
+	cp $< $@
+
+build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
 
 .PHONY: clean
 clean: ## Clean up build artifacts.

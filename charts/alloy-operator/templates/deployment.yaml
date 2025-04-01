@@ -22,9 +22,13 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.image.pullSecrets }}
+      {{- if or .Values.global.image.pullSecrets .Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+        {{- if .Values.global.image.pullSecrets }}
+        {{- toYaml .Values.global.image.pullSecrets | nindent 4 }}
+        {{- else }}
+        {{- toYaml .Values.image.pullSecrets | nindent 4 }}
+        {{- end }}
       {{- end }}
       serviceAccountName: {{ include "alloy-operator.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
@@ -33,7 +37,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.global.image.registry | default .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --leader-elect

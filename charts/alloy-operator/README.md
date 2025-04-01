@@ -1,6 +1,6 @@
 # alloy-operator
 
-![Version: 0.2.1-beta.1](https://img.shields.io/badge/Version-0.2.1--beta.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.12.5](https://img.shields.io/badge/AppVersion-0.12.5-informational?style=flat-square)
+![Version: 0.2.2-beta.1](https://img.shields.io/badge/Version-0.2.2--beta.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.12.5](https://img.shields.io/badge/AppVersion-0.12.5-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -31,7 +31,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | nodeSelector | object | `{}` | Set the node selector for the pod. |
 | podAnnotations | object | `{}` | Additional annotations to add to the pod. |
 | podLabels | object | `{}` | Additional labels to add to the pod. |
-| podSecurityContext | object | `{}` | Set the security context for the pod. |
+| podSecurityContext | object | `{}` | Set the security context for the pod. Example: podSecurityContext: { fsGroup: 2000 } |
 | tolerations | list | `[]` | Set the tolerations for the pod. |
 
 ### CRDs
@@ -45,6 +45,8 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.image.pullSecrets | list | `[]` | Global image pull secrets. |
+| global.image.registry | string | `""` | Global image registry override. |
 | image.pullPolicy | string | `"IfNotPresent"` | The pull policy for images. |
 | image.pullSecrets | list | `[]` | Optional set of image pull secrets. |
 | image.registry | string | `"ghcr.io"` | Alloy Operator image registry |
