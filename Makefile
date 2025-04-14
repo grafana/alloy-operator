@@ -1,9 +1,9 @@
-VERSION ?= $(shell yq eval '.version' operator/helm-charts/alloy/Chart.yaml)
 IMG ?= ghcr.io/grafana/alloy-operator:$(VERSION)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+VERSION ?= $(shell yq eval '.version' operator/helm-charts/alloy/Chart.yaml)
 
 ##@ General
 
@@ -30,16 +30,13 @@ charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz:
 ##@ Build
 
 .PHONY: build
-build: fetch-alloy build-image build-chart
+build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-chart
 
-.PHONY: build-alloy
-fetch-alloy: operator/helm-charts/alloy/Chart.yaml ## Download the Alloy helm chart.
-
-UPSTREAM_ALLOY_HELM_CHART_FILES := $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
-UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES := $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
-UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES := $(filter-out alloy/values.yaml alloy/Chart.yaml alloy/Chart.lock $(UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES), $(UPSTREAM_ALLOY_HELM_CHART_FILES))
-UNMODIFIED_OPERATOR_ALLOY_HELM_CHART_FILES := $(patsubst %, operator/helm-charts/%, $(UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES))
-OPERATOR_ALLOY_HELM_CHART_FILES := $(UNMODIFIED_OPERATOR_ALLOY_HELM_CHART_FILES) operator/helm-charts/alloy/Chart.yaml operator/helm-charts/alloy/values.yaml
+UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
+UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
+UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES = $(filter-out alloy/values.yaml alloy/Chart.yaml alloy/Chart.lock $(UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES), $(UPSTREAM_ALLOY_HELM_CHART_FILES))
+UNMODIFIED_OPERATOR_ALLOY_HELM_CHART_FILES = $(patsubst %, operator/helm-charts/%, $(UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES))
+OPERATOR_ALLOY_HELM_CHART_FILES = $(UNMODIFIED_OPERATOR_ALLOY_HELM_CHART_FILES) operator/helm-charts/alloy/Chart.yaml operator/helm-charts/alloy/values.yaml
 operator/helm-charts/%: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
 	@mkdir -p $(shell dirname $@)
 	tar xzf $< -C operator/helm-charts $* && touch $@
