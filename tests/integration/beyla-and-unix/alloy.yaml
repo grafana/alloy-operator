@@ -38,6 +38,11 @@ spec:
               }
             }
           }
+
+          metrics {
+            features = ["application"]
+          }
+
           output {
             traces = [otelcol.exporter.otlp.local_tempo.input]
           }

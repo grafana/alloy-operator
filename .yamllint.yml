@@ -11,6 +11,7 @@ ignore:
   - charts/alloy-helm-chart/charts/**/*
   - charts/alloy-operator/alloy-values.yaml
   - charts/alloy-operator/charts/**/crds
+  - tests/integration/**/kubeconfig.yaml
 rules:
   line-length:
     max: 200
