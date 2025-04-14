@@ -1,0 +1,10 @@
+---
+apiVersion: v2
+name: alloy-helm-chart
+description: A fake chart for holding the current Alloy helm chart
+type: library
+version: 0.1.0
+dependencies:
+  - name: alloy
+    repository: https://grafana.github.io/helm-charts
+    version: 0.12.5

@@ -5,10 +5,21 @@
 
 version: 2
 updates:
+  - package-ecosystem: helm
+    directory: /charts/alloy-helm-chart
+    schedule:
+      interval: daily
+    labels:
+      - dependencies
+      - helm
+
   - package-ecosystem: docker
     directory: /operator
     schedule:
       interval: daily
+    labels:
+      - dependencies
+      - docker
 
   - package-ecosystem: github-actions
     directory: /
