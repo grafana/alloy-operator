@@ -3,6 +3,7 @@ HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm search repo alloy --output json | jq -r '.[].version')
 VERSION ?= $(shell yq eval '.version' operator/helm-charts/alloy/Chart.yaml)
 
 ##@ General
@@ -26,6 +27,14 @@ help: ## Display this help.
 
 charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz:
 	cd charts/alloy-helm-chart && helm dependency update
+
+.PHONY: update-alloy-to-latest
+update-alloy-to-latest: ## Updates the Alloy chart to the latest version in the Helm repository
+	@echo "Upgrading Alloy from $(ALLOY_HELM_CHART_VERSION) to $(LATEST_ALLOY_HELM_CHART_VERSION)"
+	cd charts/alloy-helm-chart && \
+		yq eval '.version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' Chart.yaml > Chart_new.yaml && mv Chart_new.yaml Chart.yaml && \
+		yq eval '.dependencies[0].version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' Chart.yaml > Chart_new.yaml && mv Chart_new.yaml Chart.yaml && \
+		helm dependency update
 
 ##@ Build
 
