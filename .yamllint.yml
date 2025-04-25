@@ -10,7 +10,7 @@ ignore:
   - charts/**/templates
   - charts/alloy-helm-chart/charts/**/*
   - charts/alloy-operator/alloy-values.yaml
-  - charts/alloy-operator/charts/**/crds
+  - charts/alloy-operator/customResourceDefinitions/*
   - tests/integration/**/kubeconfig.yaml
 rules:
   line-length:

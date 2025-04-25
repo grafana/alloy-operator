@@ -1,0 +1,110 @@
+{{- if and (or .Values.crds.deployAlloyCRD .Values.crds.deployPodLogsCRD) .Values.crds.upgradeJob.enabled }}
+{{- if .Values.crds.deployAlloyCRD }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alloy-operator.fullname" . }}-alloy-crd
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  collectors.grafana.com_alloy.yaml:
+    {{ .Files.Get "customResourceDefinitions/collectors.grafana.com_alloy.yaml" | nindent 4 }}
+{{- end }}
+{{- if .Values.crds.deployPodLogsCRD }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alloy-operator.fullname" . }}-podlogs-crd
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  monitoring.grafana.com_podlogs.yaml:
+    {{ .Files.Get "customResourceDefinitions/monitoring.grafana.com_podlogs.yaml" | nindent 4 }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "alloy-operator.fullname" . }}-upgrade
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    {{- with .Values.crds.upgradeJob.annotations }}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+  labels:
+    {{- with .Values.crds.upgradeJob.labels }}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      {{- with .Values.crds.upgradeJob.podLabels }}
+      labels:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.crds.upgradeJob.podAnnotations }}
+      annotations:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- if or .Values.global.image.pullSecrets .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- if .Values.global.image.pullSecrets }}
+        {{ toYaml .Values.global.image.pullSecrets | nindent 8 }}
+        {{- else }}
+        {{ toYaml .Values.crds.upgradeJob.image.pullSecrets | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      serviceAccountName: {{ .Values.crds.upgradeJob.serviceAccount.name | default (include "alloy-operator.fullname" .) }}
+      containers:
+        - name: kubectl
+          {{- $kubernetesVersion := regexFind "v\\d+\\.\\d+\\.\\d+" .Capabilities.KubeVersion.Version }}
+          image: "{{ .Values.global.image.registry | default .Values.crds.upgradeJob.image.registry }}/{{ .Values.crds.upgradeJob.image.repository }}:{{ .Values.crds.upgradeJob.image.tag | default $kubernetesVersion }}"
+          imagePullPolicy: "{{ .Values.crds.upgradeJob.image.pullPolicy }}"
+          command:
+            - kubectl
+          args:
+            - apply
+            - --server-side
+            - --filename
+{{- if .Values.crds.deployAlloyCRD }}
+            - /crds/alloy/collectors.grafana.com_alloy.yaml
+{{- end }}
+{{- if .Values.crds.deployPodLogsCRD }}
+            - /crds/podlogs/monitoring.grafana.com_podlogs.yaml
+{{- end }}
+          volumeMounts:
+{{- if .Values.crds.deployAlloyCRD }}
+            - name: alloy-crd
+              mountPath: /crds/alloy
+              subPath: collectors.grafana.com_alloy.yaml
+{{- end }}
+{{- if .Values.crds.deployPodLogsCRD }}
+            - name: podlogs-crd
+              mountPath: /crds/podlogs
+              subPath: monitoring.grafana.com_podlogs.yaml
+{{- end }}
+      volumes:
+{{- if .Values.crds.deployAlloyCRD }}
+        - name: alloy-crd
+          configMap:
+            name: {{ include "alloy-operator.fullname" . }}-alloy-crd
+{{- end }}
+{{- if .Values.crds.deployPodLogsCRD }}
+        - name: podlogs-crd
+          configMap:
+            name: {{ include "alloy-operator.fullname" . }}-podlogs-crd
+{{- end }}
+{{- end }}

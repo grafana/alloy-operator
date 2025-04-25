@@ -1,6 +1,6 @@
 # alloy-operator
 
-![Version: 0.2.5-beta.3](https://img.shields.io/badge/Version-0.2.5--beta.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.2](https://img.shields.io/badge/AppVersion-1.0.2-informational?style=flat-square)
+![Version: 0.2.6-beta.1](https://img.shields.io/badge/Version-0.2.6--beta.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.2](https://img.shields.io/badge/AppVersion-1.0.2-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -33,6 +33,12 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 |-----|------|---------|-------------|
 | crds.deployAlloyCRD | bool | `true` | Should this chart deploy the Alloy CRD? |
 | crds.deployPodLogsCRD | bool | `false` | Should this chart deploy the PodLogs CRD? |
+
+### Upgrade CRD Job
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| crds.upgradeJob.image.pullPolicy | string | `"IfNotPresent"` | The tag to use for the kubectl image. The default is the current Kubernetes cluster version |
 
 ### Image Settings
 
@@ -94,6 +100,19 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| crds.upgradeJob.annotations | object | `{}` |  |
+| crds.upgradeJob.enabled | bool | `false` | Utilize a pre-install/pre-upgrade job to upgrade the CRDs. |
+| crds.upgradeJob.image.pullSecrets | list | `[]` |  |
+| crds.upgradeJob.image.registry | string | `"registry.k8s.io"` |  |
+| crds.upgradeJob.image.repository | string | `"kubectl"` |  |
+| crds.upgradeJob.labels | object | `{}` |  |
+| crds.upgradeJob.podAnnotations | object | `{}` |  |
+| crds.upgradeJob.podLabels | object | `{}` |  |
+| crds.upgradeJob.serviceAccount.annotations | object | `{}` |  |
+| crds.upgradeJob.serviceAccount.automountServiceAccountToken | bool | `true` |  |
+| crds.upgradeJob.serviceAccount.create | bool | `true` |  |
+| crds.upgradeJob.serviceAccount.labels | object | `{}` |  |
+| crds.upgradeJob.serviceAccount.name | string | `""` |  |
 | fullnameOverride | string | `nil` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
 | nameOverride | string | `nil` | Overrides the chart's name. Used to change the infix in the resource names. |
 
