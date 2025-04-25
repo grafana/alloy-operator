@@ -87,17 +87,18 @@ else
 	docker run --rm --volume "$(shell pwd):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:latest --chart-search-root charts/alloy-operator
 endif
 
-charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
-	tar xvf $< --strip-components=3 -C charts/alloy-operator/charts/pod-logs-crd alloy/charts/crds/crds/monitoring.grafana.com_podlogs.yaml
-	touch charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml
+charts/alloy-operator/charts/podlogs-crd/templates/crds/monitoring.grafana.com_podlogs.yaml: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
+	tar xvf $< --strip-components=3 -C charts/alloy-operator/charts/podlogs-crd/templates alloy/charts/crds/crds/monitoring.grafana.com_podlogs.yaml
+	touch charts/alloy-operator/charts/podlogs-crd/templates/crds/monitoring.grafana.com_podlogs.yaml
 
-charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml:
+charts/alloy-operator/charts/alloy-crd/templates/crds/collectors.grafana.com_alloy.yaml:
 	kustomize build operator/config/crd > $@
 
 charts/alloy-operator/alloy-values.yaml: operator/helm-charts/alloy/values.yaml
 	cp $< $@
 
-build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/pod-logs-crd/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
+build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml charts/alloy-operator/charts/alloy-crd/templates/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/podlogs-crd/templates/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
+	make -C charts/alloy-operator build
 
 .PHONY: clean
 clean: ## Clean up build artifacts.
@@ -108,6 +109,9 @@ clean: ## Clean up build artifacts.
 	rm -f charts/alloy-helm-chart/Chart.lock
 
 ##@ Test
+
+test: ## Run all tests.
+	make -C charts/alloy-operator test
 
 .PHONY: lint
 lint: lint-yaml lint-markdown ## Runs all linters.

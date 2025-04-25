@@ -1,4 +1,4 @@
 ---
 apiVersion: v2
-name: pod-logs-crd
+name: podlogs-crd
 version: 0.0.0

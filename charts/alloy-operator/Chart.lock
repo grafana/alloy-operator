@@ -2,7 +2,7 @@ dependencies:
 - name: alloy-crd
   repository: ""
   version: 0.0.0
-- name: pod-logs-crd
+- name: podlogs-crd
   repository: ""
   version: 0.0.0
 digest: sha256:3a300da40f811f11cdaf0b5e8f7bf2de2a3abe3d0c5005a2c0825963d16d8f4a

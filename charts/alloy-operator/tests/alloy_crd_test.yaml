@@ -1,0 +1,16 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test Alloy CRD
+templates:
+  - charts/alloy-crd/templates/crds/collectors.grafana.com_alloy.yaml
+tests:
+  - it: deploys the Alloy CRD by default
+    asserts:
+      - containsDocument:
+          apiVersion: apiextensions.k8s.io/v1
+          kind: CustomResourceDefinition
+          name: alloys.collectors.grafana.com
+      - not: true
+        containsDocument:
+          apiVersion: apiextensions.k8s.io/v1
+          kind: CustomResourceDefinition
+          name: podlogs.monitoring.grafana.com
