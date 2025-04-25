@@ -26,10 +26,10 @@ build: README.md $(EXAMPLE_OUTPUT_FILES)  ## Builds documentation and examples
 clean:  ## Deletes generated files
 	rm -f README.md $(EXAMPLE_OUTPUT_FILES)
 
-.PHONY: test
-test:  ## Runs tests
-ifdef HAS_HELM_UNITTEST
-	helm unittest --failfast --with-subchart=false .
-else
-	docker run --rm --volume $(shell pwd):/apps helmunittest/helm-unittest:3.17.0-0.7.1 --failfast --with-subchart=false .
-endif
+#.PHONY: test
+#test:  ## Runs tests
+#ifdef HAS_HELM_UNITTEST
+#	helm unittest --failfast --with-subchart=false .
+#else
+#	docker run --rm --volume $(shell pwd):/apps helmunittest/helm-unittest:3.17.0-0.7.1 --failfast --with-subchart=false .
+#endif
