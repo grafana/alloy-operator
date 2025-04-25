@@ -1,0 +1,62 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Upgrade CRD Job test
+templates:
+  - crd-upgrade/job.yaml
+tests:
+  - it: creates the upgrade job
+    set:
+      crds:
+        upgradeJob:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          name: RELEASE-NAME-alloy-operator-alloy-crd
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: batch/v1
+          kind: Job
+          name: RELEASE-NAME-alloy-operator-upgrade
+  - it: can upgrade both CRDs
+    set:
+      crds:
+        deployAlloyCRD: true
+        deployPodLogsCRD: true
+        upgradeJob:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          name: RELEASE-NAME-alloy-operator-alloy-crd
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          name: RELEASE-NAME-alloy-operator-podlogs-crd
+      - documentIndex: 2
+        containsDocument:
+          apiVersion: batch/v1
+          kind: Job
+          name: RELEASE-NAME-alloy-operator-upgrade
+  - it: can upgrade only the PodLogs CRD
+    set:
+      crds:
+        deployAlloyCRD: false
+        deployPodLogsCRD: true
+        upgradeJob:
+          enabled: true
+    asserts:
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: v1
+          kind: ConfigMap
+          name: RELEASE-NAME-alloy-operator-podlogs-crd
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: batch/v1
+          kind: Job
+          name: RELEASE-NAME-alloy-operator-upgrade

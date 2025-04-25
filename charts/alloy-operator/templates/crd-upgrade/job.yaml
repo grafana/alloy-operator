@@ -11,8 +11,8 @@ metadata:
     "helm.sh/hook-weight": "-2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 data:
-  collectors.grafana.com_alloy.yaml:
-    {{ .Files.Get "customResourceDefinitions/collectors.grafana.com_alloy.yaml" | nindent 4 }}
+  collectors.grafana.com_alloy.yaml: |-
+    {{- .Files.Get "customResourceDefinitions/collectors.grafana.com_alloy.yaml" | nindent 4 }}
 {{- end }}
 {{- if .Values.crds.deployPodLogsCRD }}
 ---
@@ -26,8 +26,8 @@ metadata:
     "helm.sh/hook-weight": "-2"
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 data:
-  monitoring.grafana.com_podlogs.yaml:
-    {{ .Files.Get "customResourceDefinitions/monitoring.grafana.com_podlogs.yaml" | nindent 4 }}
+  monitoring.grafana.com_podlogs.yaml: |-
+    {{- .Files.Get "customResourceDefinitions/monitoring.grafana.com_podlogs.yaml" | nindent 4 }}
 {{- end }}
 ---
 apiVersion: batch/v1
@@ -89,12 +89,10 @@ spec:
 {{- if .Values.crds.deployAlloyCRD }}
             - name: alloy-crd
               mountPath: /crds/alloy
-              subPath: collectors.grafana.com_alloy.yaml
 {{- end }}
 {{- if .Values.crds.deployPodLogsCRD }}
             - name: podlogs-crd
               mountPath: /crds/podlogs
-              subPath: monitoring.grafana.com_podlogs.yaml
 {{- end }}
       volumes:
 {{- if .Values.crds.deployAlloyCRD }}
