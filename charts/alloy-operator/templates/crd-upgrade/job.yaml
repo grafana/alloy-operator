@@ -43,12 +43,14 @@ metadata:
     {{ toYaml . | nindent 4 }}
     {{- end }}
   labels:
+    {{- include "alloy-operator.labels" . | nindent 4 }}
     {{- with .Values.crds.upgradeJob.labels }}
     {{ toYaml . | nindent 4 }}
     {{- end }}
 spec:
   backoffLimit: 3
   template:
+    {{- if or .Values.crds.upgradeJob.podLabels .Values.crds.upgradeJob.podAnnotations }}
     metadata:
       {{- with .Values.crds.upgradeJob.podLabels }}
       labels:
@@ -58,7 +60,9 @@ spec:
       annotations:
         {{ toYaml . | nindent 8 }}
       {{- end }}
+    {{- end }}
     spec:
+      restartPolicy: OnFailure
       {{- if or .Values.global.image.pullSecrets .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- if .Values.global.image.pullSecrets }}
@@ -67,7 +71,7 @@ spec:
         {{ toYaml .Values.crds.upgradeJob.image.pullSecrets | nindent 8 }}
         {{- end }}
       {{- end }}
-      serviceAccountName: {{ .Values.crds.upgradeJob.serviceAccount.name | default (include "alloy-operator.fullname" .) }}
+      serviceAccountName: {{ .Values.crds.upgradeJob.serviceAccount.name | default (printf "%s-upgrade" (include "alloy-operator.fullname" .)) }}
       containers:
         - name: kubectl
           {{- $kubernetesVersion := regexFind "v\\d+\\.\\d+\\.\\d+" .Capabilities.KubeVersion.Version }}

@@ -362,3 +362,161 @@ spec:
               memory: 64Mi
           securityContext:
             runAsNonRoot: true
+---
+# Source: alloy-operator/templates/crd-upgrade/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: alloy-operator-upgrade
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-4"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    app.kubernetes.io/name: alloy-operator
+    app.kubernetes.io/instance: alloy-operator
+    app.kubernetes.io/version: "1.0.2"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: alloy-operator/templates/crd-upgrade/job.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-operator-alloy-crd
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  collectors.grafana.com_alloy.yaml: |-
+    apiVersion: apiextensions.k8s.io/v1
+    kind: CustomResourceDefinition
+    metadata:
+      name: alloys.collectors.grafana.com
+    spec:
+      group: collectors.grafana.com
+      names:
+        kind: Alloy
+        listKind: AlloyList
+        plural: alloys
+        singular: alloy
+      scope: Namespaced
+      versions:
+      - name: v1alpha1
+        schema:
+          openAPIV3Schema:
+            description: Alloy is the Schema for the alloys API
+            properties:
+              apiVersion:
+                description: 'APIVersion defines the versioned schema of this representation
+                  of an object. Servers should convert recognized schemas to the latest
+                  internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                type: string
+              kind:
+                description: 'Kind is a string value representing the REST resource this
+                  object represents. Servers may infer this from the endpoint the client
+                  submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                type: string
+              metadata:
+                type: object
+              spec:
+                description: Spec defines the desired state of Alloy
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              status:
+                description: Status defines the observed state of Alloy
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+            type: object
+        served: true
+        storage: true
+        subresources:
+          status: {}
+---
+# Source: alloy-operator/templates/crd-upgrade/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alloy-operator-upgrade
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+  - apiGroups:
+      - "apiextensions.k8s.io"
+    resources:
+      - "customresourcedefinitions"
+    verbs:
+      - create
+      - patch
+      - update
+      - get
+      - list
+    resourceNames:
+      - alloys.collectors.grafana.com
+---
+# Source: alloy-operator/templates/crd-upgrade/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alloy-operator-upgrade
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-3"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+subjects:
+  - kind: ServiceAccount
+    name: alloy-operator-upgrade
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: alloy-operator-upgrade
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: alloy-operator/templates/crd-upgrade/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alloy-operator-upgrade
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    app.kubernetes.io/name: alloy-operator
+    app.kubernetes.io/instance: alloy-operator
+    app.kubernetes.io/version: "1.0.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: alloy-operator-upgrade
+      containers:
+        - name: kubectl
+          image: "registry.k8s.io/kubectl:v1.32.0"
+          imagePullPolicy: "IfNotPresent"
+          command:
+            - kubectl
+          args:
+            - apply
+            - --server-side
+            - --filename
+            - /crds/alloy/collectors.grafana.com_alloy.yaml
+          volumeMounts:
+            - name: alloy-crd
+              mountPath: /crds/alloy
+      volumes:
+        - name: alloy-crd
+          configMap:
+            name: alloy-operator-alloy-crd

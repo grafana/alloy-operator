@@ -1,0 +1,4 @@
+crds:
+  deployAlloyCRD: true
+  upgradeJob:
+    enabled: true
