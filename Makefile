@@ -129,3 +129,8 @@ ifdef HAS_MARKDOWNLINT
 else
 	docker run -v $(shell pwd):/workdir davidanson/markdownlint-cli2 $(MARKDOWN_FILES)
 endif
+
+##@ Release
+
+release: ## Release the Alloy Operator Helm chart
+	gh workflow run release.yaml
