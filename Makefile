@@ -87,17 +87,24 @@ else
 	docker run --rm --volume "$(shell pwd):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:latest --chart-search-root charts/alloy-operator
 endif
 
-charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
-	tar xvf $< --strip-components=3 -C charts/alloy-operator/charts/podlogs-crd/templates alloy/charts/crds/crds/monitoring.grafana.com_podlogs.yaml
-	touch charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml
+charts/alloy-operator/templates/crds/monitoring.grafana.com_podlogs.yaml: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
+	echo "{{- if .Values.crds.deployPodLogsCRD }}" > $@
+	tar xvf $< --to-stdout alloy/charts/crds/crds/monitoring.grafana.com_podlogs.yaml >> $@
+	echo "{{- end }}" >> $@
 
-charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml:
-	kustomize build operator/config/crd > $@
+charts/alloy-operator/templates/crds/collectors.grafana.com_alloy.yaml:
+	echo "{{- if .Values.crds.deployAlloyCRD }}" > $@
+	kustomize build operator/config/crd >> $@
+	echo "{{- end }}" >> $@
 
 charts/alloy-operator/alloy-values.yaml: operator/helm-charts/alloy/values.yaml
 	cp $< $@
 
-build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml  ## Build the Helm chart.
+.PHONY: build-chart-crds
+build-chart-crds: charts/alloy-operator/templates/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/templates/crds/monitoring.grafana.com_podlogs.yaml
+
+.PHONY: build-chart
+build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml build-chart-crds  ## Build the Helm chart.
 	make -C charts/alloy-operator build
 
 .PHONY: clean
