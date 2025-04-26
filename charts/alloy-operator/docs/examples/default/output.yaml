@@ -6,57 +6,12 @@ metadata:
   name: alloy-operator
   namespace: default
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
----
-# Source: alloy-operator/templates/crds/collectors.grafana.com_alloy.yaml
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: alloys.collectors.grafana.com
-spec:
-  group: collectors.grafana.com
-  names:
-    kind: Alloy
-    listKind: AlloyList
-    plural: alloys
-    singular: alloy
-  scope: Namespaced
-  versions:
-  - name: v1alpha1
-    schema:
-      openAPIV3Schema:
-        description: Alloy is the Schema for the alloys API
-        properties:
-          apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
-            type: string
-          kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
-            type: string
-          metadata:
-            type: object
-          spec:
-            description: Spec defines the desired state of Alloy
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-          status:
-            description: Status defines the observed state of Alloy
-            type: object
-            x-kubernetes-preserve-unknown-fields: true
-        type: object
-    served: true
-    storage: true
-    subresources:
-      status: {}
 ---
 # Source: alloy-operator/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -65,7 +20,7 @@ metadata:
   name:
     alloy-operator-alloy-editor-role
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -97,7 +52,7 @@ metadata:
   name:
     alloy-operator-alloy-viewer-role
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -188,7 +143,7 @@ metadata:
   name:
     alloy-operator-rolebinding
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -211,7 +166,7 @@ metadata:
     alloy-operator-leader-election-role
   namespace: default
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -257,7 +212,7 @@ metadata:
     alloy-operator-leader-election-rolebinding
   namespace: default
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -278,7 +233,7 @@ kind: Service
 metadata:
   name: alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -304,7 +259,7 @@ kind: Deployment
 metadata:
   name: alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.2.6-beta.3
+    helm.sh/chart: alloy-operator-0.2.6-beta.4
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: alloy-operator
     app.kubernetes.io/version: "1.0.2"
@@ -318,7 +273,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: alloy-operator-0.2.6-beta.3
+        helm.sh/chart: alloy-operator-0.2.6-beta.4
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: alloy-operator
         app.kubernetes.io/version: "1.0.2"

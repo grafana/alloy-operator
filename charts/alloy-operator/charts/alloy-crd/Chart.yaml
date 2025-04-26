@@ -1,0 +1,4 @@
+---
+apiVersion: v2
+name: alloy-crd
+version: 0.0.0

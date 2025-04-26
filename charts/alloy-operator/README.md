@@ -1,6 +1,6 @@
 # alloy-operator
 
-![Version: 0.2.6-beta.3](https://img.shields.io/badge/Version-0.2.6--beta.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.2](https://img.shields.io/badge/AppVersion-1.0.2-informational?style=flat-square)
+![Version: 0.2.6-beta.4](https://img.shields.io/badge/Version-0.2.6--beta.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.2](https://img.shields.io/badge/AppVersion-1.0.2-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -13,6 +13,13 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 ## Source Code
 
 * <https://github.com/grafana/alloy-operator>
+
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+|  | alloy-crd | 0.0.0 |
+|  | podlogs-crd | 0.0.0 |
 
 ## Values
 

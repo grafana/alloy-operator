@@ -1,3 +1,0 @@
-{{- if .Values.crds.deployPodLogsCRD }}
-{{- .Files.Get "customResourceDefinitions/monitoring.grafana.com_podlogs.yaml" }}
-{{- end }}

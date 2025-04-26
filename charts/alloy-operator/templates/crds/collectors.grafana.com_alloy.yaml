@@ -1,3 +1,0 @@
-{{- if .Values.crds.deployAlloyCRD }}
-{{- .Files.Get "customResourceDefinitions/collectors.grafana.com_alloy.yaml" }}
-{{- end }}

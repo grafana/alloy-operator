@@ -6,8 +6,17 @@ icon: https://raw.githubusercontent.com/grafana/grafana/main/public/img/grafana_
 sources:
   - https://github.com/grafana/alloy-operator
 type: application
-version: 0.2.6-beta.3
+version: 0.2.6-beta.4
 appVersion: "1.0.2"
 maintainers:
   - email: pete.wall@grafana.com
     name: petewall
+dependencies:
+  - name: alloy-crd
+    version: 0.0.0
+    repository: ""
+    condition: crds.deployAlloyCRD
+  - name: podlogs-crd
+    version: 0.0.0
+    repository: ""
+    condition: crds.deployPodLogsCRD

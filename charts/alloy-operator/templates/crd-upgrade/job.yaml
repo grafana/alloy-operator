@@ -12,7 +12,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 data:
   collectors.grafana.com_alloy.yaml: |-
-    {{- .Files.Get "customResourceDefinitions/collectors.grafana.com_alloy.yaml" | nindent 4 }}
+    {{- (index .Subcharts "alloy-crd").Files.Get "crds/collectors.grafana.com_alloy.yaml" | nindent 4 }}
 {{- end }}
 {{- if .Values.crds.deployPodLogsCRD }}
 ---
@@ -27,7 +27,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 data:
   monitoring.grafana.com_podlogs.yaml: |-
-    {{- .Files.Get "customResourceDefinitions/monitoring.grafana.com_podlogs.yaml" | nindent 4 }}
+    {{- (index .Subcharts "podlogs-crd").Files.Get "crds/monitoring.grafana.com_podlogs.yaml" | nindent 4 }}
 {{- end }}
 ---
 apiVersion: batch/v1
