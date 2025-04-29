@@ -131,7 +131,7 @@ lint-markdown: $(MARKDOWN_FILES)  ## Lint markdown files.
 ifdef HAS_MARKDOWNLINT
 	markdownlint-cli2 $(MARKDOWN_FILES)
 else
-	docker run -v $(shell pwd):/workdir davidanson/markdownlint-cli2 $(MARKDOWN_FILES)
+	docker run --rm --volume $(shell pwd):/workdir davidanson/markdownlint-cli2 $(MARKDOWN_FILES)
 endif
 
 .PHONY: lint-zizmor
@@ -139,7 +139,7 @@ lint-zizmor: ## Statically analyze GitHub Action workflows
 ifdef HAS_ZIZMOR
 	zizmor .
 else
-	docker run -v $(shell pwd):/src ghcr.io/woodruffw/zizmor@sha256:ebb58dabdf1cd44db1c260a81b555e94ea6dba798cd1bfde378cbfed8f493dde /src  # v1.6.0
+	docker run --rm --volume $(shell pwd):/src ghcr.io/woodruffw/zizmor@sha256:ebb58dabdf1cd44db1c260a81b555e94ea6dba798cd1bfde378cbfed8f493dde /src  # v1.6.0
 endif
 
 ##@ Release
