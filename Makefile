@@ -1,6 +1,7 @@
 IMG ?= ghcr.io/grafana/alloy-operator:$(VERSION)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
+HAS_ZIZMOR := $(shell command -v zizmor;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm search repo alloy --output json | jq -r '.[].version')
@@ -117,7 +118,7 @@ clean: ## Clean up build artifacts.
 #	make -C charts/alloy-operator test
 
 .PHONY: lint
-lint: lint-yaml lint-markdown ## Runs all linters.
+lint: lint-yaml lint-markdown lint-zizmor ## Runs all linters.
 
 YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*")
 .PHONY: lint-yaml
@@ -131,6 +132,14 @@ ifdef HAS_MARKDOWNLINT
 	markdownlint-cli2 $(MARKDOWN_FILES)
 else
 	docker run -v $(shell pwd):/workdir davidanson/markdownlint-cli2 $(MARKDOWN_FILES)
+endif
+
+.PHONY: lint-zizmor
+lint-zizmor: ## Statically analyze GitHub Action workflows
+ifdef HAS_ZIZMOR
+	zizmor .
+else
+	docker run -v $(shell pwd):/src ghcr.io/woodruffw/zizmor@sha256:ebb58dabdf1cd44db1c260a81b555e94ea6dba798cd1bfde378cbfed8f493dde /src  # v1.6.0
 endif
 
 ##@ Release
