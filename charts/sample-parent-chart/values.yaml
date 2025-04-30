@@ -1,0 +1,18 @@
+---
+nameOverride: ""
+fullnameOverride: ""
+
+# -- Example:
+# alloyInstances:
+#  test1:
+#    alloy:
+#      configMap:
+#        content: |-
+#          prometheus.exporter.self "default" {}
+alloyInstances: {}
+
+alloy-operator:
+  crds:
+    deployAlloyCRD: false
+    upgradeJob:
+      enabled: false

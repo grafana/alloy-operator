@@ -1,0 +1,11 @@
+{{- if .Values.alloyInstances }}
+  {{- include "crdValidation" . }}
+{{- end }}
+{{- range $name, $spec := .Values.alloyInstances }}
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: {{ $name }}
+spec: {{ $spec | toYaml | nindent 2 }}
+{{- end }}

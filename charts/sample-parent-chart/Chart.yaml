@@ -1,0 +1,10 @@
+apiVersion: v2
+name: sample-parent-chart
+description: A sample parent Helm chart for the Alloy Operator
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+dependencies:
+  - name: alloy-operator
+    repository: "file://../../charts/alloy-operator"
+    version: "0.2.6-beta.4"

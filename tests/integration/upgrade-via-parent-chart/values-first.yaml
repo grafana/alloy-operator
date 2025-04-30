@@ -1,0 +1,9 @@
+---
+alloyInstances: {}
+
+alloy-operator:
+  replicaCount: 0
+  crds:
+    deployAlloyCRD: false
+    upgradeJob:
+      enabled: false

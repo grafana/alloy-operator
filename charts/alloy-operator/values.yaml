@@ -144,27 +144,3 @@ crds:
   # -- Should this chart deploy the PodLogs CRD?
   # @section -- CRDs
   deployPodLogsCRD: false
-
-  upgradeJob:
-    # -- Utilize a pre-install/pre-upgrade job to upgrade the CRDs.
-    enabled: false
-
-    serviceAccount:
-      create: true
-      name: ""
-      annotations: {}
-      labels: {}
-      automountServiceAccountToken: true
-
-    labels: {}
-    annotations: {}
-    podLabels: {}
-    podAnnotations: {}
-
-    image:
-      registry: registry.k8s.io
-      repository: kubectl
-      # -- The tag to use for the kubectl image. The default is the current Kubernetes cluster version
-      # @section -- Upgrade CRD Job
-      pullPolicy: IfNotPresent
-      pullSecrets: []

@@ -3,9 +3,9 @@ HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
 
-ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm search repo alloy --output json | jq -r '.[].version')
-VERSION ?= $(shell yq eval '.version' operator/helm-charts/alloy/Chart.yaml)
+ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+ALLOY_OPERATOR_HELM_CHART_VERSION = $(shell yq '.version' charts/alloy-operator/Chart.yaml)
 
 ##@ General
 
@@ -40,7 +40,7 @@ update-alloy-to-latest: ## Updates the Alloy chart to the latest version in the 
 ##@ Build
 
 .PHONY: build
-build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-chart
+build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-chart build-test-chart
 
 UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
@@ -78,8 +78,8 @@ push-image: ## Push docker image with the manager.
 	docker push ${IMG}
 
 # Alloy Operator Helm chart files
-charts/alloy-operator/Chart.yaml: operator/helm-charts/alloy/Chart.yaml
-	yq ".appVersion = \"$(VERSION)\"" -i charts/alloy-operator/Chart.yaml
+charts/alloy-operator/Chart.yaml: charts/alloy-helm-chart/Chart.yaml
+	yq ".appVersion = \"$(ALLOY_HELM_CHART_VERSION)\"" -i charts/alloy-operator/Chart.yaml
 
 charts/alloy-operator/README.md: charts/alloy-operator/values.yaml charts/alloy-operator/Chart.yaml
 ifdef HAS_HELM_DOCS
@@ -103,6 +103,14 @@ build-chart-crds: charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana
 .PHONY: build-chart
 build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml build-chart-crds  ## Build the Helm chart.
 	make -C charts/alloy-operator build
+
+charts/sample-parent-chart/Chart.yaml: charts/alloy-operator/Chart.yaml
+	cd charts/sample-parent-chart && \
+		yq eval '.dependencies[0].version = "$(ALLOY_OPERATOR_HELM_CHART_VERSION)"' Chart.yaml > Chart.new.yaml && mv Chart.new.yaml Chart.yaml && \
+		helm dependency update
+
+.PHONY: build-test-chart
+build-test-chart: charts/sample-parent-chart/Chart.yaml   ## Build the test Helm chart.
 
 .PHONY: clean
 clean: ## Clean up build artifacts.
