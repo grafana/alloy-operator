@@ -86,6 +86,7 @@ jobs:
           helm repo add opencost https://opencost.github.io/opencost-helm-chart
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm package charts/alloy-operator --destination "${PACKAGE_PATH}"
+          cp charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml "${PACKAGE_PATH}/collectors.grafana.com_alloy.yaml"
 
       - name: Create release on grafana/alloy-operator
         uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631  # v2.2.2
@@ -96,7 +97,9 @@ jobs:
           prerelease: ${{ steps.parse-version.outputs.prerelease != '' }}
           token: ${{ secrets.GH_BOT_ACCESS_TOKEN }}
           generate_release_notes: true
-          files: ${{ env.PACKAGE_PATH }}/${{ steps.parse-chart.outputs.packagename }}.tgz
+          files: |
+            ${{ env.PACKAGE_PATH }}/${{ steps.parse-chart.outputs.packagename }}.tgz
+            ${{ env.PACKAGE_PATH }}/collectors.grafana.com_alloy.yaml
           fail_on_unmatched_files: true
 
       # Note that this creates a release in grafana/helm-charts GitHub Repository with a new tag.
