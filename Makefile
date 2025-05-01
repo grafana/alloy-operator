@@ -1,10 +1,10 @@
-IMG ?= ghcr.io/grafana/alloy-operator:$(VERSION)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
 
 LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm search repo alloy --output json | jq -r '.[].version')
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+ALLOY_OPERATOR_IMAGE = ghcr.io/grafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
 ALLOY_OPERATOR_HELM_CHART_VERSION = $(shell yq '.version' charts/alloy-operator/Chart.yaml)
 
 ##@ General
@@ -62,20 +62,20 @@ operator/helm-charts/alloy/values.yaml: charts/alloy-helm-chart/charts/alloy-$(A
 operator/manifests/crd.yaml:
 	kustomize build operator/config/crd > $@
 
-operator/manifests/operator.yaml:
-	cd operator/config/manager && kustomize edit set image controller=${IMG}
+operator/manifests/operator.yaml: charts/alloy-helm-chart/Chart.yaml
+	cd operator/config/manager && kustomize edit set image controller=${ALLOY_OPERATOR_IMAGE}
 	kustomize build operator/config/default > $@
 
 .PHONY: build-image
 PLATFORMS ?= linux/arm64,linux/amd64
 build-image: .temp/image-built
-.temp/image-built: operator/Dockerfile operator/watches.yaml $(OPERATOR_ALLOY_HELM_CHART_FILES) ## Build docker image with the manager.
-	docker buildx build --platform $(PLATFORMS) --tag ${IMG} operator
+.temp/image-built: operator/Dockerfile operator/watches.yaml $(OPERATOR_ALLOY_HELM_CHART_FILES) charts/alloy-helm-chart/Chart.yaml ## Build docker image with the manager.
+	docker buildx build --platform $(PLATFORMS) --tag ${ALLOY_OPERATOR_IMAGE} operator
 	mkdir -p .temp && touch .temp/image-built
 
 .PHONY: push-image
-push-image: ## Push docker image with the manager.
-	docker push ${IMG}
+push-image: charts/alloy-helm-chart/Chart.yaml ## Push docker image with the manager.
+	docker push ${ALLOY_OPERATOR_IMAGE}
 
 # Alloy Operator Helm chart files
 charts/alloy-operator/Chart.yaml: charts/alloy-helm-chart/Chart.yaml

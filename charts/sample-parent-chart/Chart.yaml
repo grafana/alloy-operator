@@ -7,4 +7,4 @@ appVersion: 0.1.0
 dependencies:
   - name: alloy-operator
     repository: "file://../../charts/alloy-operator"
-    version: "0.2.6-beta.4"
+    version: "0.2.6"
