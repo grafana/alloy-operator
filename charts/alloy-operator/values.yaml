@@ -125,7 +125,8 @@ readinessProbe:
 
 # -- Set the node selector for the pod.
 # @section -- Pod Settings
-nodeSelector: {}
+nodeSelector:
+  kubernetes.io/os: linux
 
 # -- Set the tolerations for the pod.
 # @section -- Pod Settings
