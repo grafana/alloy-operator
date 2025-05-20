@@ -1,6 +1,6 @@
 # alloy-operator
 
-![Version: 0.2.7](https://img.shields.io/badge/Version-0.2.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
+![Version: 0.2.8](https://img.shields.io/badge/Version-0.2.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.0.3](https://img.shields.io/badge/AppVersion-1.0.3-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -28,7 +28,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Set the affinity for the pod. |
-| nodeSelector | object | `{}` | Set the node selector for the pod. |
+| nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the pod. |
 | podAnnotations | object | `{}` | Additional annotations to add to the pod. |
 | podLabels | object | `{}` | Additional labels to add to the pod. |
 | podSecurityContext | object | `{}` | Set the security context for the pod. Example: podSecurityContext: { fsGroup: 2000 } |
