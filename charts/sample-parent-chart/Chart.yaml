@@ -1,3 +1,4 @@
+---
 apiVersion: v2
 name: sample-parent-chart
 description: A sample parent Helm chart for the Alloy Operator
