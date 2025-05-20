@@ -68,13 +68,13 @@ operator/manifests/operator.yaml: charts/alloy-helm-chart/Chart.yaml
 
 .PHONY: build-image
 PLATFORMS ?= linux/arm64,linux/amd64
-build-image: .temp/image-built
-.temp/image-built: operator/Dockerfile operator/watches.yaml $(OPERATOR_ALLOY_HELM_CHART_FILES) charts/alloy-helm-chart/Chart.yaml ## Build docker image with the manager.
+build-image: .temp/image-built-${ALLOY_HELM_CHART_VERSION}
+.temp/image-built-${ALLOY_HELM_CHART_VERSION}: operator/Dockerfile operator/watches.yaml $(OPERATOR_ALLOY_HELM_CHART_FILES) charts/alloy-helm-chart/Chart.yaml ## Build docker image with the manager.
 	docker buildx build --platform $(PLATFORMS) --tag ${ALLOY_OPERATOR_IMAGE} operator
-	mkdir -p .temp && touch .temp/image-built
+	mkdir -p .temp && touch .temp/image-built-${ALLOY_HELM_CHART_VERSION}
 
 .PHONY: push-image
-push-image: charts/alloy-helm-chart/Chart.yaml ## Push docker image with the manager.
+push-image: .temp/image-built-${ALLOY_HELM_CHART_VERSION} charts/alloy-helm-chart/Chart.yaml ## Push docker image with the manager.
 	docker push ${ALLOY_OPERATOR_IMAGE}
 
 # Alloy Operator Helm chart files
