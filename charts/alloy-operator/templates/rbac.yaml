@@ -148,6 +148,12 @@ rules:
     verbs:
       - '*'
   - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - '*'
+  - apiGroups:
       - "networking.k8s.io"
     resources:
       - ingresses
