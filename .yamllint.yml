@@ -7,11 +7,12 @@ yaml-files:
 extends: default
 
 ignore:
-  - charts/**/templates
-  - charts/alloy-helm-chart/charts/**/*
-  - charts/alloy-operator/alloy-values.yaml
-  - charts/alloy-operator/customResourceDefinitions/*
-  - tests/integration/**/kubeconfig.yaml
+  - charts/**/templates                             # Chart template files, which are often templated
+  - charts/alloy-helm-chart/charts/**/*             # Local copy of the Alloy Helm chart
+  - charts/alloy-operator/alloy-values.yaml         # Upstream Alloy Helm chart values.yaml
+  - charts/alloy-operator/charts/alloy-crd/crds/*   # Alloy CRD
+  - charts/alloy-operator/charts/podlogs-crd/crds/* # PodLogs CRD
+  - tests/integration/**/kubeconfig.yaml            # Integration test kubeconfig files
 rules:
   line-length:
     max: 200
