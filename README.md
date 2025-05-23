@@ -7,7 +7,7 @@ The Alloy Operator is a Kubernetes Operator that manages the lifecycle of
 
 ## Usage
 
-To use the Alloy Operator, there are three steps to follow:
+To use the Alloy Operator, follow these steps:
 
 1. Deploy the Alloy Operator.
 1. Deploy an Alloy instance.
