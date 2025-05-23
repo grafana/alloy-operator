@@ -1,0 +1,49 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-test
+spec:
+  alloy:
+    configMap:
+      content: |-
+        // Self Metrics
+        prometheus.exporter.self "default" {}
+
+        prometheus.scrape "default" {
+          targets    = prometheus.exporter.self.default.targets
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        // Kubernetes Cluster Metrics
+        discovery.kubernetes "kube_state_metrics" {
+          role = "pod"
+          selectors {
+            role = "pod"
+            label = "app.kubernetes.io/name=kube-state-metrics"
+          }
+          namespaces {
+            names = ["kube-state-metrics"]
+          }
+        }
+
+        prometheus.scrape "kube_state_metrics" {
+          targets    = discovery.kubernetes.kube_state_metrics.targets
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        // Delivery
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+          }
+        }
+    resources:
+      requests:
+        cpu: 100m
+  controller:
+    type: statefulset
+    replicas: 3
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
