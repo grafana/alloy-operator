@@ -110,6 +110,7 @@ rules:
       - events
     verbs:
       - create
+  # Rules which allow the management of Alloys.
   - apiGroups:
       - collectors.grafana.com
     resources:
@@ -124,13 +125,7 @@ rules:
       - patch
       - update
       - watch
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - clusterrolebindings
-      - clusterroles
-    verbs:
-      - '*'
+  # Rules which allow the management of ConfigMaps, ServiceAccounts, and Services.
   - apiGroups:
       - ""
     resources:
@@ -139,6 +134,7 @@ rules:
       - services
     verbs:
       - '*'
+  # Rules which allow the management of DaemonSets, Deployments, and StatefulSets.
   - apiGroups:
       - apps
     resources:
@@ -147,6 +143,33 @@ rules:
       - statefulsets
     verbs:
       - '*'
+  # Rules which allow the management of Horizontal Pod Autoscalers.
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - '*'
+  # Rules which allow for the management of Prometheus Operator objects.
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - podmonitors
+      - servicemonitors
+      - probes
+      - scrapeconfigs
+    verbs:
+      - get
+      - list
+      - watch
+  # Rules which allow the management of Ingresses.
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - '*'
+  # Rules which allow the management of PodDisruptionBudgets.
   - apiGroups:
       - policy
     resources:
