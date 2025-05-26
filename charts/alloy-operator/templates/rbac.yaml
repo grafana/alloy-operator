@@ -162,6 +162,8 @@ rules:
       - get
       - list
       - watch
+      - create
+      - patch
   # Rules which allow the management of Ingresses.
   - apiGroups:
       - networking.k8s.io
@@ -177,13 +179,16 @@ rules:
     verbs:
       - '*'
   # Rules which allow mimir.rules.kubernetes to work.
-  - apiGroups: ["monitoring.coreos.com"]
+  - apiGroups: 
+      - "monitoring.coreos.com"
     resources:
       - prometheusrules
     verbs:
       - get
       - list
       - watch
+      - create
+      - patch
   - nonResourceURLs:
       - /metrics
     verbs:
