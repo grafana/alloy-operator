@@ -91,17 +91,17 @@ endif
 charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
 	tar xvf $< --to-stdout alloy/charts/crds/crds/monitoring.grafana.com_podlogs.yaml > $@
 
-charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml:
+charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml:
 	kustomize build operator/config/crd > $@
 
 charts/alloy-operator/alloy-values.yaml: operator/helm-charts/alloy/values.yaml
 	cp $< $@
 
 .PHONY: build-chart-crds
-build-chart-crds: charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml
+build-chart-crds: charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml charts/alloy-operator/charts/podlogs-crd/crds/monitoring.grafana.com_podlogs.yaml
 
-.PHONY: build-chart
-build-chart: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml build-chart-crds  ## Build the Helm chart.
+.PHONY: build-charts
+build-charts: charts/alloy-operator/README.md charts/alloy-operator/Chart.yaml charts/alloy-operator/alloy-values.yaml build-chart-crds  ## Build the Helm chart.
 	make -C charts/alloy-operator build
 
 charts/sample-parent-chart/Chart.yaml: charts/alloy-operator/Chart.yaml

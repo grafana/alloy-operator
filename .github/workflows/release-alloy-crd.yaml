@@ -62,7 +62,7 @@ jobs:
         id: parse-chart
         working-directory: source
         env:
-          CHART_NAME: alloy-operator
+          CHART_NAME: alloy-crd
         run: |
           name="$(yq ".name" "charts/${CHART_NAME}/Chart.yaml")"
           version="$(yq ".version" "charts/${CHART_NAME}/Chart.yaml")"
@@ -82,23 +82,7 @@ jobs:
 
       - name: Create Helm package
         working-directory: source
-        run: |
-          helm package charts/alloy-operator --destination "${PACKAGE_PATH}"
-          cp charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml "${PACKAGE_PATH}/collectors.grafana.com_alloy.yaml"
-
-      - name: Create release on grafana/alloy-operator
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631  # v2.2.2
-        with:
-          name: ${{ steps.parse-chart.outputs.tagVersion }}
-          repository: grafana/alloy-operator
-          tag_name: ${{ steps.parse-chart.outputs.tagVersion }}
-          prerelease: ${{ steps.parse-version.outputs.prerelease != '' }}
-          token: ${{ secrets.GH_BOT_ACCESS_TOKEN }}
-          generate_release_notes: true
-          files: |
-            ${{ env.PACKAGE_PATH }}/${{ steps.parse-chart.outputs.packagename }}.tgz
-            ${{ env.PACKAGE_PATH }}/collectors.grafana.com_alloy.yaml
-          fail_on_unmatched_files: true
+        run: helm package charts/alloy-crd --destination "${PACKAGE_PATH}"
 
       # Note that this creates a release in grafana/helm-charts GitHub Repository with a new tag.
       # The tag name in grafana/helm-charts is <package>-<version>, while the

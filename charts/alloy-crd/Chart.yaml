@@ -1,0 +1,13 @@
+---
+apiVersion: v2
+name: alloy-crd
+description: A Helm chart the Alloy CustomResourceDefinition, allowing for discrete deployments of the Alloy CRD independently of the Alloy Operator.
+icon: https://raw.githubusercontent.com/grafana/grafana/main/public/img/grafana_icon.svg
+sources:
+  - https://github.com/grafana/alloy-operator
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+maintainers:
+  - email: pete.wall@grafana.com
+    name: petewall
