@@ -159,9 +159,7 @@ rules:
       - probes
       - scrapeconfigs
     verbs:
-      - get
-      - list
-      - watch
+      - '*'
   # Rules which allow the management of Ingresses.
   - apiGroups:
       - networking.k8s.io
@@ -177,13 +175,12 @@ rules:
     verbs:
       - '*'
   # Rules which allow mimir.rules.kubernetes to work.
-  - apiGroups: ["monitoring.coreos.com"]
+  - apiGroups: 
+      - "monitoring.coreos.com"
     resources:
       - prometheusrules
     verbs:
-      - get
-      - list
-      - watch
+      - '*'
   - nonResourceURLs:
       - /metrics
     verbs:
