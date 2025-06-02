@@ -15,6 +15,5 @@ jobs:
       charts_dir: charts
       cr_configfile: cr.yaml
       ct_configfile: ct.yaml
-      helm_tag_prefix: helm
     secrets:
-      vault_repo_secret_name: alloy-operator-gh-app
+      vault_repo_secret_name: github-app
