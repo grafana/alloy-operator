@@ -12,7 +12,7 @@ EXAMPLE_OUTPUT_FILES := $(EXAMPLE_VALUES_FILES:values.yaml=output.yaml)
 docs/examples/%/output.yaml: docs/examples/%/values.yaml values.yaml Chart.yaml
 	helm template $(EXAMPLE_RELEASE_NAME) . -f $< > $@
 
-README.md: values.yaml Chart.yaml
+README.md: README.md.gotmpl values.yaml Chart.yaml
 ifdef HAS_HELM_DOCS
 	helm-docs --chart-to-generate .
 else
