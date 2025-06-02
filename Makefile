@@ -40,7 +40,7 @@ update-alloy-to-latest: ## Updates the Alloy chart to the latest version in the 
 ##@ Build
 
 .PHONY: build
-build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-chart build-test-chart
+build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-charts build-test-chart
 
 UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
