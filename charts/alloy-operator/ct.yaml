@@ -1,7 +1,11 @@
 ---
 remote: origin
 target-branch: main
-chart-dirs: ["charts"]
+chart-dirs:
+  - charts
+excluded-charts:
+  - alloy-crd
+  - sample-parent-chart
 chart-repos:
   - grafana=https://grafana.github.io/helm-charts
 check-version-increment: false

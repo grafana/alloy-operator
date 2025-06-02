@@ -1,5 +1,5 @@
 ---
-name: Release Helm charts
+name: Release Alloy CRD Helm chart
 # yamllint disable-line rule:truthy
 on:
   workflow_dispatch:
@@ -14,6 +14,6 @@ jobs:
     with:
       charts_dir: charts
       cr_configfile: cr.yaml
-      ct_configfile: ct.yaml
+      ct_configfile: charts/alloy-crd/ct.yaml
     secrets:
       vault_repo_secret_name: github-app

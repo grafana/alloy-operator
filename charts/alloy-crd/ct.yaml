@@ -1,0 +1,10 @@
+---
+remote: origin
+target-branch: main
+chart-dirs:
+  - charts
+excluded-charts:
+  - alloy-operator
+  - sample-parent-chart
+check-version-increment: false
+validate-maintainers: true
