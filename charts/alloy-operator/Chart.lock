@@ -1,0 +1,9 @@
+dependencies:
+- name: alloy-crd
+  repository: file://../alloy-crd
+  version: 1.0.0
+- name: podlogs-crd
+  repository: ""
+  version: 0.0.0
+digest: sha256:e2d973fb075401749e4aff0b20995b08536c34c9f8de534af1f6a11b62c656ab
+generated: "2025-06-03T14:57:20.310139-05:00"

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10
+
+* Update Alloy to 1.1.0 (@petewall)
+
 ## 0.2.9
 
 * Added more integration tests (@petewall)
