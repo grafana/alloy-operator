@@ -13,6 +13,7 @@ bin
 *.swp
 *.swo
 *~
+.vscode
 
 # A fake chart for holding the current Alloy helm chart
 charts/alloy-helm-chart/charts
