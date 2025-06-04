@@ -1,3 +1,4 @@
+HAS_ACTIONLINT := $(shell command -v actionlint;)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
@@ -126,7 +127,16 @@ clean: ## Clean up build artifacts.
 #	make -C charts/alloy-operator test
 
 .PHONY: lint
-lint: lint-yaml lint-markdown lint-zizmor ## Runs all linters.
+lint: lint-yaml lint-markdown lint-actionlint lint-zizmor ## Runs all linters.
+
+GITHUB_ACTION_FILES ?= $(shell find .github/workflows -name "*.yaml" -or -name "*.yml")
+.PHONY: lint-actionlint
+lint-actionlint: ## Lint GitHub Action workflows.
+ifdef HAS_ACTIONLINT
+	actionlint $(GITHUB_ACTION_FILES)
+else
+	docker run --rm --volume $(shell pwd):/src --workdir /src rhysd/actionlint:latest -color $(GITHUB_ACTION_FILES)
+endif
 
 YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*")
 .PHONY: lint-yaml

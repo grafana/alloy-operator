@@ -1,6 +1,0 @@
-{
-  "properties": {
-    "fullnameOverride": { "type": "string" },
-    "nameOverride": { "type": "string" }
-  }
-}

@@ -110,5 +110,5 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| fullnameOverride | string | `nil` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
-| nameOverride | string | `nil` | Overrides the chart's name. Used to change the infix in the resource names. |
+| fullnameOverride | string | `""` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
+| nameOverride | string | `""` | Overrides the chart's name. Used to change the infix in the resource names. |
