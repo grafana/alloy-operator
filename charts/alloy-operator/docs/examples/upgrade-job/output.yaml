@@ -358,8 +358,8 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           resources:
-            limits: null
-            requests: null
+            limits: {}
+            requests: {}
           securityContext:
             runAsNonRoot: true
       nodeSelector:

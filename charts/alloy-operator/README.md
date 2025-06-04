@@ -79,8 +79,8 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| resources.limits | string | `nil` | Set the resource limits for the pod. |
-| resources.requests | string | `nil` | Set the resource requests for the pod. |
+| resources.limits | object | `{}` | Set the resource limits for the pod. |
+| resources.requests | object | `{}` | Set the resource requests for the pod. |
 
 ### Container Settings
 

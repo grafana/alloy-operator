@@ -19,8 +19,12 @@ else
 	docker run --rm --volume "$(shell pwd):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:latest
 endif
 
+.SECONDEXPANSION:
+values.schema.json: values.yaml $$(wildcard schema-mods/*)
+	../../scripts/schema-gen.sh .
+
 .PHONY: build
-build: README.md $(EXAMPLE_OUTPUT_FILES)  ## Builds documentation and examples
+build: README.md values.schema.json $(EXAMPLE_OUTPUT_FILES)  ## Builds documentation and examples
 
 .PHONY: clean
 clean:  ## Deletes generated files

@@ -3,6 +3,7 @@
 ## Next
 
 * Removing default resource requests and limits (@petewall)
+* Adding values.schema.json to validate the inputs (@petewall)
 
 ## 0.2.10
 

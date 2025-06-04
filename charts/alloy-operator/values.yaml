@@ -101,13 +101,13 @@ service:
 resources:
   # -- Set the resource requests for the pod.
   # @section -- Resources
-  requests:
+  requests: {}
 #    cpu: 10m
 #    memory: 64Mi
 
   # -- Set the resource limits for the pod.
   # @section -- Resources
-  limits:
+  limits: {}
 #    cpu: 500m
 #    memory: 128Mi
 
