@@ -126,6 +126,10 @@ clean: ## Clean up build artifacts.
 #test: ## Run all tests.
 #	make -C charts/alloy-operator test
 
+.PHONY: test
+test:
+	make -C charts/alloy-operator test
+
 .PHONY: lint
 lint: lint-yaml lint-markdown lint-actionlint lint-zizmor ## Runs all linters.
 

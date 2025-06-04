@@ -36,12 +36,13 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| affinity | object | `{}` | Set the affinity for the pod. |
-| nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the pod. |
-| podAnnotations | object | `{}` | Additional annotations to add to the pod. |
-| podLabels | object | `{}` | Additional labels to add to the pod. |
-| podSecurityContext | object | `{}` | Set the security context for the pod. Example: podSecurityContext: { fsGroup: 2000 } |
-| tolerations | list | `[]` | Set the tolerations for the pod. |
+| affinity | object | `{}` | Set the affinity for the Alloy Operator pods. |
+| nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the Alloy Operator pods. |
+| podAnnotations | object | `{}` | Additional annotations to add to the Alloy Operator pods. |
+| podLabels | object | `{}` | Additional labels to add to the Alloy Operator pods. |
+| podSecurityContext | object | `{}` | Set the security context for the Alloy Operator pods. Example: podSecurityContext: { fsGroup: 2000 } |
+| priorityClassName | string | `""` | Sets the priority class name for the Alloy Operator pods. |
+| tolerations | list | `[]` | Set the tolerations for the Alloy Operator pods. |
 
 ### CRDs
 
@@ -85,8 +86,8 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| resources.limits | object | `{}` | Set the resource limits for the pod. |
-| resources.requests | object | `{}` | Set the resource requests for the pod. |
+| resources.limits | object | `{}` | Set the resource limits for the Alloy Operator pods. |
+| resources.requests | object | `{}` | Set the resource requests for the Alloy Operator pods. |
 
 ### Container Settings
 

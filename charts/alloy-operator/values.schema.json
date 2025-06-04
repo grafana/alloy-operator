@@ -86,6 +86,9 @@
         "podSecurityContext": {
             "type": "object"
         },
+        "priorityClassName": {
+            "type": "string"
+        },
         "rbac": {
             "type": "object",
             "properties": {

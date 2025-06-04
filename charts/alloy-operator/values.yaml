@@ -65,18 +65,22 @@ rbac:
   # @section -- RBAC Settings
   create: true
 
-# -- Additional annotations to add to the pod.
+# -- Additional annotations to add to the Alloy Operator pods.
 # @section -- Pod Settings
 podAnnotations: {}
 
-# -- Additional labels to add to the pod.
+# -- Additional labels to add to the Alloy Operator pods.
 # @section -- Pod Settings
 podLabels: {}
 
-# -- Set the security context for the pod.
+# -- Set the security context for the Alloy Operator pods.
 # Example: podSecurityContext: { fsGroup: 2000 }
 # @section -- Pod Settings
 podSecurityContext: {}
+
+# -- Sets the priority class name for the Alloy Operator pods.
+# @section -- Pod Settings
+priorityClassName: ""
 
 # -- Set the security context for the operator container.
 # @section -- Container Settings
@@ -103,15 +107,15 @@ service:
     # @section -- Service
     port: 8082
 
-# Sets the resources for the pod.
+# Sets the resources for the Alloy Operator pods.
 resources:
-  # -- Set the resource requests for the pod.
+  # -- Set the resource requests for the Alloy Operator pods.
   # @section -- Resources
   requests: {}
   # cpu: 10m
   # memory: 64Mi
 
-  # -- Set the resource limits for the pod.
+  # -- Set the resource limits for the Alloy Operator pods.
   # @section -- Resources
   limits: {}
   # cpu: 500m
@@ -129,16 +133,16 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 10
 
-# -- Set the node selector for the pod.
+# -- Set the node selector for the Alloy Operator pods.
 # @section -- Pod Settings
 nodeSelector:
   kubernetes.io/os: linux
 
-# -- Set the tolerations for the pod.
+# -- Set the tolerations for the Alloy Operator pods.
 # @section -- Pod Settings
 tolerations: []
 
-# -- Set the affinity for the pod.
+# -- Set the affinity for the Alloy Operator pods.
 # @section -- Pod Settings
 affinity: {}
 
