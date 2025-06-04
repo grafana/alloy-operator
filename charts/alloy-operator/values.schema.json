@@ -86,6 +86,14 @@
         "podSecurityContext": {
             "type": "object"
         },
+        "rbac": {
+            "type": "object",
+            "properties": {
+                "create": {
+                    "type": "boolean"
+                }
+            }
+        },
         "readinessProbe": {
             "type": "object",
             "properties": {

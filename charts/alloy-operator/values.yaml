@@ -59,6 +59,12 @@ serviceAccount:
   # @section -- Service Account Settings
   name: ""
 
+# RBAC settings
+rbac:
+  # -- Whether to create the necessary RBAC resources for the Alloy Operator.
+  # @section -- RBAC Settings
+  create: true
+
 # -- Additional annotations to add to the pod.
 # @section -- Pod Settings
 podAnnotations: {}
