@@ -69,6 +69,12 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | livenessProbe | object | `{"initialDelaySeconds":15,"periodSeconds":20}` | Liveness probe settings |
 | readinessProbe | object | `{"initialDelaySeconds":5,"periodSeconds":10}` | Readiness probe settings |
 
+### RBAC Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| rbac.create | bool | `true` | Whether to create the necessary RBAC resources for the Alloy Operator. |
+
 ### Deployment Settings
 
 | Key | Type | Default | Description |

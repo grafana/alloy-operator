@@ -5,6 +5,7 @@
 * Removing default resource requests and limits (@petewall)
 * Adding values.schema.json to validate the inputs (@petewall)
 * Add GitHub Action linting (@petewall)
+* Add the ability to enable or disable RBAC object creation (@petewall)
 
 ## 0.2.10
 
