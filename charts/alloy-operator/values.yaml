@@ -97,19 +97,8 @@ service:
     # @section -- Service
     port: 8082
 
-# Sets the resources for the pod.
-resources:
-  # -- Set the resource requests for the pod.
-  # @section -- Resources
-  requests:
-    cpu: 10m
-    memory: 64Mi
-
-  # -- Set the resource limits for the pod.
-  # @section -- Resources
-  limits:
-    cpu: 500m
-    memory: 128Mi
+# -- Resource requests and limits to apply to the Grafana Alloy Operator container.
+resources: {}
 
 # -- Liveness probe settings
 # @section -- Probes
