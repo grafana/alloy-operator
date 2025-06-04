@@ -1,9 +1,9 @@
 ---
 # -- Overrides the chart's name. Used to change the infix in the resource names.
-nameOverride: null
+nameOverride: ""
 # -- Overrides the chart's computed fullname. Used to change the full prefix of
 # resource names.
-fullnameOverride: null
+fullnameOverride: ""
 
 global:
   image:
@@ -101,15 +101,15 @@ service:
 resources:
   # -- Set the resource requests for the pod.
   # @section -- Resources
-  requests:
-    cpu: 10m
-    memory: 64Mi
+  requests: {}
+  # cpu: 10m
+  # memory: 64Mi
 
   # -- Set the resource limits for the pod.
   # @section -- Resources
-  limits:
-    cpu: 500m
-    memory: 128Mi
+  limits: {}
+  # cpu: 500m
+  # memory: 128Mi
 
 # -- Liveness probe settings
 # @section -- Probes

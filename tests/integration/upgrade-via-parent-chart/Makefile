@@ -22,7 +22,7 @@ deploy: $(KUBECONFIG)
 	@helm upgrade --install sample-parent-chart ../../../charts/sample-parent-chart -f values-first.yaml --wait
 
 	@echo "Deploying the Alloy CRD..."
-	@kubectl apply -f ../../../charts/alloy-operator/charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml
+	@kubectl apply -f ../../../charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml
 
 	@echo "Upgrading the test chart..."
 	@helm upgrade sample-parent-chart ../../../charts/sample-parent-chart -f values-second.yaml --wait

@@ -79,8 +79,8 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| resources.limits | object | `{"cpu":"500m","memory":"128Mi"}` | Set the resource limits for the pod. |
-| resources.requests | object | `{"cpu":"10m","memory":"64Mi"}` | Set the resource requests for the pod. |
+| resources.limits | object | `{}` | Set the resource limits for the pod. |
+| resources.requests | object | `{}` | Set the resource requests for the pod. |
 
 ### Container Settings
 
@@ -110,5 +110,5 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| fullnameOverride | string | `nil` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
-| nameOverride | string | `nil` | Overrides the chart's name. Used to change the infix in the resource names. |
+| fullnameOverride | string | `""` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
+| nameOverride | string | `""` | Overrides the chart's name. Used to change the infix in the resource names. |
