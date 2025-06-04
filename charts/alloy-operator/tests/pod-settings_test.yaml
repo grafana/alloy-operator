@@ -1,0 +1,16 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Pod Settings
+templates:
+  - deployment.yaml
+tests:
+  - it: can set the priority class name
+    set:
+      priorityClassName: high-priority
+    asserts:
+      - containsDocument:
+          apiVersion: apps/v1
+          kind: Deployment
+          name: RELEASE-NAME-alloy-operator
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: high-priority
