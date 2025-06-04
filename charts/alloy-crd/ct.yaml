@@ -4,6 +4,7 @@ target-branch: main
 chart-dirs:
   - charts
 excluded-charts:
+  - alloy-helm-chart
   - alloy-operator
   - sample-parent-chart
 check-version-increment: false

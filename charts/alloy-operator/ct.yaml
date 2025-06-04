@@ -5,6 +5,7 @@ chart-dirs:
   - charts
 excluded-charts:
   - alloy-crd
+  - alloy-helm-chart
   - sample-parent-chart
 chart-repos:
   - grafana=https://grafana.github.io/helm-charts
