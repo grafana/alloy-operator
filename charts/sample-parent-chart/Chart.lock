@@ -1,6 +1,6 @@
 dependencies:
 - name: alloy-operator
   repository: file://../../charts/alloy-operator
-  version: 0.2.10
-digest: sha256:77001a9222e6bac5dc51ea916513f98dcae244d6a1fc88e14278911e713b1218
-generated: "2025-06-03T14:58:26.918055-05:00"
+  version: 0.3.0
+digest: sha256:b466123244c37d34088d974357120e7c88523a0db57e07103842ef53b8f2d443
+generated: "2025-06-04T15:48:47.281911-05:00"

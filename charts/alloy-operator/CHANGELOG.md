@@ -1,6 +1,8 @@
 # Changelog
 
-## Next
+## Unreleased
+
+## 0.3.0
 
 * Removing default resource requests and limits (@petewall, @kespineira)
 * Adding values.schema.json to validate the inputs (@petewall)
