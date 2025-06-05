@@ -22,8 +22,8 @@ jobs:
       packages: write
     with:
       charts_dir: charts
-      cr_configfile: ${ env.CR_CONFIGFILE }
-      ct_configfile: ${ env.CT_CONFIGFILE }
+      cr_configfile: cr.yaml
+      ct_configfile: charts/alloy-operator/ct.yaml
     secrets:
       vault_repo_secret_name: github-app
 
