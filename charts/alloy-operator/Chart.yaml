@@ -14,7 +14,7 @@ maintainers:
 dependencies:
   - name: alloy-crd
     version: 1.0.0
-    repository: file://../alloy-crd
+    repository: https://grafana.github.io/helm-charts
     condition: crds.deployAlloyCRD
   - name: podlogs-crd
     version: 0.0.0
