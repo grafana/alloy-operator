@@ -27,7 +27,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | Repository | Name | Version |
 |------------|------|---------|
 |  | podlogs-crd | 0.0.0 |
-| file://../alloy-crd | alloy-crd | 1.0.0 |
+| https://grafana.github.io/helm-charts | alloy-crd | 1.0.0 |
 <!-- markdownlint-enable no-bare-urls -->
 
 ## Values
