@@ -151,6 +151,13 @@ rules:
       - horizontalpodautoscalers
     verbs:
       - '*'
+  # Rules which allow the management of Vertical Pod Autoscalers.
+  - apiGroups:
+      - autoscaling.k8s.io
+    resources:
+      - verticalpodautoscalers
+    verbs:
+      - '*'
   # Rules which allow for the management of Prometheus Operator objects.
   - apiGroups:
       - monitoring.coreos.com
