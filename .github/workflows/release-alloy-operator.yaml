@@ -124,6 +124,7 @@ jobs:
         run: |
           "${CR_TOOL_PATH}/cr" package "${CHARTPATH}" --config cr.yaml --package-path "${CR_PACKAGE_PATH}"
           echo "Result of chart package:"
+          cp charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml "${CR_PACKAGE_PATH}/collectors.grafana.com_alloy.yaml"
           ls -l "${CR_PACKAGE_PATH}"
 
       - name: Make github release
@@ -134,6 +135,7 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ env.CR_PACKAGE_PATH }}/${{ steps.parse-chart.outputs.packagename }}.tgz
+            ${{ env.CR_PACKAGE_PATH }}/collectors.grafana.com_alloy.yaml
           tag_name: ${{ steps.parse-chart.outputs.tagname }}
           token: ${{ env.AUTHTOKEN }}
           fail_on_unmatched_files: true
