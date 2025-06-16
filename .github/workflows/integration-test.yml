@@ -5,10 +5,12 @@ on:
   push:
     branches: ["main"]
     paths:
-      - charts/alloy-operator
+      - charts/**
+      - tests/**
   pull_request:
     paths:
-      - charts/alloy-operator
+      - charts/**
+      - tests/**
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
