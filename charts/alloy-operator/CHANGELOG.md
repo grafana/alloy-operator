@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Update Alloy to 1.1.1 (@petewall)
+
 ## 0.3.0
 
 * Removing default resource requests and limits (@petewall, @kespineira)
