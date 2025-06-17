@@ -70,11 +70,19 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | livenessProbe | object | `{"initialDelaySeconds":15,"periodSeconds":20}` | Liveness probe settings |
 | readinessProbe | object | `{"initialDelaySeconds":5,"periodSeconds":10}` | Readiness probe settings |
 
+### Alloy Management Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| namespaces | list | `[]` | Restrict the Alloy Operator to only manage Alloy instances in the given list of namespaces. |
+| ownNamespaceOnly | bool | `false` | Restrict the Alloy Operator to its own namespace only. Overrides the `namespaces` setting. |
+
 ### RBAC Settings
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | rbac.create | bool | `true` | Whether to create the necessary RBAC resources for the Alloy Operator. |
+| rbac.createClusterRoles | bool | `true` | Create ClusterRoles for the Alloy Operator. If set to false, only Roles and RoleBindings will be created. This setting requires the use of `namespaces` or `ownNamespaceOnly` to be set. |
 
 ### Deployment Settings
 

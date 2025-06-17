@@ -1,0 +1,46 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - RBAC Validation
+templates:
+  - rbac/validation.yaml
+tests:
+  - it: deploys fine by default
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: displays an error if clusterRoles are not allowed, but namespaces are not set
+    set:
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - failedTemplate:
+          errorMessage: |-
+            execution error at (alloy-operator/templates/rbac/validation.yaml:21:8): 
+            The Alloy Operator requires namespaces to be set when not using ClusterRoles.
+            Please set the list of namespaces to manage Alloy instances:
+            alloy-operator:
+              namespaces: ["namespace1", "namespace2"]
+            
+            Or, only allow management of Alloy instances within the same namespace (i.e. "NAMESPACE")
+            alloy-operator:
+              ownNamespaceOnly: true
+            
+            Or, allow the creation of ClusterRoles and ClusterRoleBindings:
+            alloy-operator:
+              rbac:
+                createClusterRoles: true
+
+  - it: deploys fine when namespaces are set
+    set:
+      namespaces: ["alpha", "bravo"]
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: deploys fine when ownNamespaceOnly is set
+    set:
+      ownNamespaceOnly: true
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - notFailedTemplate: {}

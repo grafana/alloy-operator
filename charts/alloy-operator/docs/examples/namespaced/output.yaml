@@ -61,6 +61,11 @@ rules:
   - apiGroups: ["autoscaling"]
     resources: ["horizontalpodautoscalers"]
     verbs: ["*"]
+  # Rules which allow the management of Ingresses.
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["*"]
+  
   # Rules which allow the management of PodDisruptionBudgets.
   - apiGroups: ["policy"]
     resources: ["poddisruptionbudgets"]
@@ -242,6 +247,9 @@ spec:
             - --leader-election-id=test-alloy-operator
             - --health-probe-bind-address=:8081
             - --metrics-bind-address=:8082
+          env:
+            - name: WATCH_NAMESPACE
+              value: "alpha,bravo"
           ports:
             - name: http
               containerPort: 8081

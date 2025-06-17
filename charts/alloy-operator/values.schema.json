@@ -69,6 +69,9 @@
         "nameOverride": {
             "type": "string"
         },
+        "namespaces": {
+            "type": "array"
+        },
         "nodeSelector": {
             "type": "object",
             "properties": {
@@ -76,6 +79,9 @@
                     "type": "string"
                 }
             }
+        },
+        "ownNamespaceOnly": {
+            "type": "boolean"
         },
         "podAnnotations": {
             "type": "object"
@@ -93,6 +99,9 @@
             "type": "object",
             "properties": {
                 "create": {
+                    "type": "boolean"
+                },
+                "createClusterRoles": {
                     "type": "boolean"
                 }
             }

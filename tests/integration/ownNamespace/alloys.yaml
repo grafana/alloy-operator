@@ -1,0 +1,60 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-alpha
+  namespace: alpha
+spec:
+  alloy:
+    configMap:
+      content: |-
+        prometheus.exporter.self "default" {}
+
+        prometheus.scrape "default" {
+          targets    = prometheus.exporter.self.default.targets
+          forward_to = [prometheus.relabel.default.receiver]
+        }
+        
+        prometheus.relabel "default" {
+          rule {
+            replacement  = "alpha"
+            target_label = "alloy_instance"
+          }
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+          }
+        }
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-test
+  namespace: operator
+spec:
+  alloy:
+    configMap:
+      content: |-
+        prometheus.exporter.self "default" {}
+
+        prometheus.scrape "default" {
+          targets    = prometheus.exporter.self.default.targets
+          forward_to = [prometheus.relabel.default.receiver]
+        }
+        
+        prometheus.relabel "default" {
+          rule {
+            replacement  = "test"
+            target_label = "alloy_instance"
+          }
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+          }
+        }

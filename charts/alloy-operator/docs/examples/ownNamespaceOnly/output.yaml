@@ -242,6 +242,9 @@ spec:
             - --leader-election-id=test-alloy-operator
             - --health-probe-bind-address=:8081
             - --metrics-bind-address=:8082
+          env:
+            - name: WATCH_NAMESPACE
+              value: "default"
           ports:
             - name: http
               containerPort: 8081
