@@ -44,3 +44,11 @@ tests:
         createClusterRoles: false
     asserts:
       - notFailedTemplate: {}
+
+  - it: deploys fine if rbac objects are not being created
+    set:
+      ownNamespaceOnly: true
+      rbac:
+        create: false
+    asserts:
+      - notFailedTemplate: {}
