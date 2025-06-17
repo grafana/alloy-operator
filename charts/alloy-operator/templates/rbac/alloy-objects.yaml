@@ -1,7 +1,7 @@
 {{- define "alloy-operator.rbac.alloyObjectRules" }}
 # Rules which allow the management of ConfigMaps, ServiceAccounts, and Services.
 - apiGroups: [""]
-  resources: ["configmaps", "serviceaccounts", "services"]
+  resources: ["configmaps", "secrets", "serviceaccounts", "services"]
   verbs: ["*"]
 
 # Rules which allow the management of DaemonSets, Deployments, and StatefulSets.
