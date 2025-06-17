@@ -26,8 +26,6 @@ spec:
         name: k8s-monitoring-test
       interval: 1m
   dependsOn:
-    - name: kube-state-metrics
-      namespace: kube-state-metrics
     - name: prometheus
       namespace: prometheus
   values:
@@ -35,17 +33,5 @@ spec:
       - env:
           PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
         queries:
-          - query: alloy_build_info{job="integrations/self"}
+          - query: alloy_build_info{service="alloy-test"}
             type: promql
-
-          - query: kube_deployment_status_replicas{deployment="alloy-test"}
-            type: promql
-            expect:
-              operator: <=
-              value: 2
-
-          - query: kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="alloy-test"}
-            type: promql
-            expect:
-              operator: <=
-              value: 2

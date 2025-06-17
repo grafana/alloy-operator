@@ -40,13 +40,21 @@ spec:
         }
     resources:
       requests:
-        cpu: 100m
+        cpu: 1m
+      limits:
+        cpu: 1m
   controller:
     type: deployment
     autoscaling:
-      horizontal:
+      vertical:
         enabled: true
-        minReplicas: 2
-        maxReplicas: 10
-        targetCPUUtilizationPercentage: 50
-        targetMemoryUtilizationPercentage: 0
+        resourcePolicy:
+          containerPolicies:
+            - containerName: alloy
+              controlledResources:
+                - cpu
+              controlledValues: "RequestsAndLimits"
+              maxAllowed:
+                cpu: 1
+              minAllowed:
+                cpu: 50m

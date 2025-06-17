@@ -14,7 +14,7 @@ spec:
           targets    = prometheus.exporter.self.default.targets
           forward_to = [prometheus.relabel.default.receiver]
         }
-        
+
         prometheus.relabel "default" {
           rule {
             replacement  = "alpha"
@@ -44,7 +44,7 @@ spec:
           targets    = prometheus.exporter.self.default.targets
           forward_to = [prometheus.relabel.default.receiver]
         }
-        
+
         prometheus.relabel "default" {
           rule {
             replacement  = "bravo"
