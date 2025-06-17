@@ -70,7 +70,10 @@
             "type": "string"
         },
         "namespaces": {
-            "type": "array"
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
         },
         "nodeSelector": {
             "type": "object",
