@@ -1,0 +1,21 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-test
+spec:
+  alloy:
+    configMap:
+      content: |-
+        prometheus.operator.servicemonitors "default" {
+          forward_to = [prometheus.remote_write.local_prom.receiver]
+        }
+
+        prometheus.remote_write "local_prom" {
+          endpoint {
+            url = "http://prometheus-server.prometheus.svc:9090/api/v1/write"
+          }
+        }
+
+  serviceMonitor:
+    enabled: true

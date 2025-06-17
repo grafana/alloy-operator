@@ -1,0 +1,237 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Alloy Objects RBAC
+templates:
+  - rbac/alloy-objects.yaml
+tests:
+  - it: creates the alloy-objects ClusterRole with correct permissions
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: rules
+          value:
+            - apiGroups:
+                - ""
+              resources:
+                - configmaps
+                - secrets
+                - serviceaccounts
+                - services
+              verbs:
+                - '*'
+            - apiGroups:
+                - apps
+              resources:
+                - daemonsets
+                - deployments
+                - statefulsets
+              verbs:
+                - '*'
+            - apiGroups:
+                - autoscaling
+              resources:
+                - horizontalpodautoscalers
+              verbs:
+                - '*'
+            - apiGroups:
+                - networking.k8s.io
+              resources:
+                - ingresses
+              verbs:
+                - '*'
+            - apiGroups:
+                - policy
+              resources:
+                - poddisruptionbudgets
+              verbs:
+                - '*'
+            - apiGroups:
+                - rbac.authorization.k8s.io
+              resources:
+                - clusterroles
+                - clusterrolebindings
+              verbs:
+                - '*'
+      - documentIndex: 1
+        equal:
+          path: roleRef
+          value:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: RELEASE-NAME-alloy-operator
+      - documentIndex: 1
+        equal:
+          path: subjects
+          value:
+            - kind: ServiceAccount
+              name: RELEASE-NAME-alloy-operator
+              namespace: NAMESPACE
+
+  - it: can deploy VerticalPodAutoscalers if the cluster supports them
+    capabilities:
+      apiVersions:
+        - autoscaling.k8s.io/v1
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: rules
+          value:
+            - apiGroups:
+                - ""
+              resources:
+                - configmaps
+                - secrets
+                - serviceaccounts
+                - services
+              verbs:
+                - '*'
+            - apiGroups:
+                - apps
+              resources:
+                - daemonsets
+                - deployments
+                - statefulsets
+              verbs:
+                - '*'
+            - apiGroups:
+                - autoscaling
+              resources:
+                - horizontalpodautoscalers
+              verbs:
+                - '*'
+            - apiGroups:
+                - autoscaling.k8s.io
+              resources:
+                - verticalpodautoscalers
+              verbs:
+                - '*'
+            - apiGroups:
+                - networking.k8s.io
+              resources:
+                - ingresses
+              verbs:
+                - '*'
+            - apiGroups:
+                - policy
+              resources:
+                - poddisruptionbudgets
+              verbs:
+                - '*'
+            - apiGroups:
+                - rbac.authorization.k8s.io
+              resources:
+                - clusterroles
+                - clusterrolebindings
+              verbs:
+                - '*'
+
+  - it: can deploy ServiceMonitors if the cluster supports them
+    capabilities:
+      apiVersions:
+        - monitoring.coreos.com/v1
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: rules
+          value:
+            - apiGroups:
+                - ""
+              resources:
+                - configmaps
+                - secrets
+                - serviceaccounts
+                - services
+              verbs:
+                - '*'
+            - apiGroups:
+                - apps
+              resources:
+                - daemonsets
+                - deployments
+                - statefulsets
+              verbs:
+                - '*'
+            - apiGroups:
+                - autoscaling
+              resources:
+                - horizontalpodautoscalers
+              verbs:
+                - '*'
+            - apiGroups:
+                - monitoring.coreos.com
+              resources:
+                - servicemonitors
+              verbs:
+                - '*'
+            - apiGroups:
+                - networking.k8s.io
+              resources:
+                - ingresses
+              verbs:
+                - '*'
+            - apiGroups:
+                - policy
+              resources:
+                - poddisruptionbudgets
+              verbs:
+                - '*'
+            - apiGroups:
+                - rbac.authorization.k8s.io
+              resources:
+                - clusterroles
+                - clusterrolebindings
+              verbs:
+                - '*'
+
+  - it: creates multiple alloy-objects Roles when using the namespaces option
+    set:
+      namespaces: ["alpha", "bravo"]
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - hasDocuments:
+          count: 4
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator
+          namespace: alpha
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator
+          namespace: alpha
+      - documentIndex: 2
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator
+          namespace: bravo
+      - documentIndex: 3
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator
+          namespace: bravo
+
+  - it: creates an alloy-manager Role for its own namespace when using the ownNamespaceOnly option
+    set:
+      ownNamespaceOnly: true
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator
+          namespace: NAMESPACE
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator
+          namespace: NAMESPACE

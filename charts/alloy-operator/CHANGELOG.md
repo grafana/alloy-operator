@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Add the ability to restrict the Alloy Operator to specific namespaces (@petewall)
+
 ## 0.3.1
 
 * Update Alloy to 1.1.1 (@petewall)

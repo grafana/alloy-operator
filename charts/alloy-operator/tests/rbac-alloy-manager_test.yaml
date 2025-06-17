@@ -1,0 +1,93 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Alloy Manager RBAC
+templates:
+  - rbac/alloy-manager.yaml
+tests:
+  - it: creates the alloy-manager ClusterRole with correct permissions
+    asserts:
+      - documentIndex: 0
+        equal:
+          path: rules
+          value:
+            - apiGroups:
+                - collectors.grafana.com
+              resources:
+                - alloys
+                - alloys/status
+                - alloys/finalizers
+              verbs:
+                - create
+                - delete
+                - get
+                - list
+                - patch
+                - update
+                - watch
+      - documentIndex: 1
+        equal:
+          path: roleRef
+          value:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: RELEASE-NAME-alloy-operator-alloy-manager
+      - documentIndex: 1
+        equal:
+          path: subjects
+          value:
+            - kind: ServiceAccount
+              name: RELEASE-NAME-alloy-operator
+              namespace: NAMESPACE
+
+  - it: creates multiple alloy-manager Roles when using the namespaces option
+    set:
+      namespaces: ["alpha", "bravo"]
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - hasDocuments:
+          count: 4
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: alpha
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: alpha
+      - documentIndex: 2
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: bravo
+      - documentIndex: 3
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: bravo
+
+  - it: creates an alloy-manager Role for its own namespace when using the ownNamespaceOnly option
+    set:
+      ownNamespaceOnly: true
+      rbac:
+        createClusterRoles: false
+    asserts:
+      - hasDocuments:
+          count: 2
+      - documentIndex: 0
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: Role
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: NAMESPACE
+      - documentIndex: 1
+        containsDocument:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: RoleBinding
+          name: RELEASE-NAME-alloy-operator-alloy-manager
+          namespace: NAMESPACE
