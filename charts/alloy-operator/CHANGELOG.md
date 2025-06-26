@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.3.3
+
+* Ensure that the Deployment and Service objects are properly namespaced (@petewall)
+* Remove extra files from the Helm chart that are not needed (@petewall)
+
 ## 0.3.2
 
 * Add the ability to restrict the Alloy Operator to specific namespaces (@petewall)

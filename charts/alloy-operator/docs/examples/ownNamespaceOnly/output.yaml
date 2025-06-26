@@ -4,9 +4,9 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: test-alloy-operator
-  namespace: default
+  namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -19,7 +19,7 @@ kind: ClusterRole
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -77,7 +77,7 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -89,7 +89,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
-    namespace: default
+    namespace: operator
 ---
 # Source: alloy-operator/templates/rbac/alloy-objects.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -97,7 +97,7 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -109,16 +109,16 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
-    namespace: default
+    namespace: operator
 ---
 # Source: alloy-operator/templates/rbac/leader-election.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: test-alloy-operator-leader-election-role
-  namespace: default
+  namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -161,9 +161,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: test-alloy-operator-leader-election-rolebinding
-  namespace: default
+  namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -175,15 +175,16 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
-    namespace: default
+    namespace: operator
 ---
 # Source: alloy-operator/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: test-alloy-operator
+  namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -208,8 +209,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-alloy-operator
+  namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.3.2
+    helm.sh/chart: alloy-operator-0.3.3
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.1.1"
@@ -223,7 +225,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: alloy-operator-0.3.2
+        helm.sh/chart: alloy-operator-0.3.3
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: test
         app.kubernetes.io/version: "1.1.1"
@@ -241,7 +243,7 @@ spec:
             - --metrics-bind-address=:8082
           env:
             - name: WATCH_NAMESPACE
-              value: "default"
+              value: "operator"
           ports:
             - name: http
               containerPort: 8081

@@ -10,7 +10,7 @@ EXAMPLE_VALUES_FILES := $(shell find docs/examples -name values.yaml)
 EXAMPLE_OUTPUT_FILES := $(EXAMPLE_VALUES_FILES:values.yaml=output.yaml)
 
 docs/examples/%/output.yaml: docs/examples/%/values.yaml values.yaml Chart.yaml
-	helm template $(EXAMPLE_RELEASE_NAME) . -f $< > $@
+	helm template --namespace operator $(EXAMPLE_RELEASE_NAME) . -f $< > $@
 
 README.md: README.md.gotmpl values.yaml Chart.yaml
 ifdef HAS_HELM_DOCS

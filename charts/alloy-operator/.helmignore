@@ -1,4 +1,7 @@
+docs
 schema-mods
 tests
-Makefile
+CHANGELOG.md
 ct.yaml
+Makefile
+README.md.gotmpl

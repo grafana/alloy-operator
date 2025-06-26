@@ -42,11 +42,11 @@ app.kubernetes.io/name: {{ include "alloy-operator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/* Create the name of the service account to use */}}
+{{/* The name of the service account to use */}}
 {{- define "alloy-operator.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "alloy-operator.fullname" .) .Values.serviceAccount.name }}
+{{- .Values.serviceAccount.name | default (include "alloy-operator.fullname" .)  }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- .Values.serviceAccount.name | default "default" }}
 {{- end }}
 {{- end }}
