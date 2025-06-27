@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.4
+
+* Update Alloy to 1.1.2 (@petewall)
+
 ## 0.3.3
 
 * Ensure that the Deployment and Service objects are properly namespaced (@petewall)

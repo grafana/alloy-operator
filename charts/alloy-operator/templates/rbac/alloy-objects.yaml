@@ -23,9 +23,9 @@
   resources: ["servicemonitors"]
   verbs: ["*"]
 {{- end }}
-# Rules which allow the management of Ingresses.
+# Rules which allow the management of Ingresses and NetworkPolicies.
 - apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses"]
+  resources: ["ingresses", "networkpolicies"]
   verbs: ["*"]
 # Rules which allow the management of PodDisruptionBudgets.
 - apiGroups: ["policy"]
