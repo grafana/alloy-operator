@@ -33,7 +33,7 @@ jobs:
         id: list_tests
         working-directory: tests/integration
         run: |
-          tests=$(find . -name Makefile -exec dirname {} \;)
+          tests=$(find * -name test-plan.yaml -exec dirname {} \;)
           echo "Tests: ${tests}"
           echo "tests=$(echo "${tests}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')" >> "${GITHUB_OUTPUT}"
 
@@ -108,8 +108,6 @@ jobs:
           KUBECONFIG: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
 
       - name: Run test
-        working-directory: "helm-chart-toolbox/tools/helm-test"
-#        working-directory: "source/tests/integration/${{ matrix.test }}"
-        run: helm-test "${TEST_DIRECTORY}"
+        run: helm-chart-toolbox/tools/helm-test/helm-test "${TEST_DIRECTORY}"
         env:
           TEST_DIRECTORY: "source/tests/integration/${{ matrix.test }}"
