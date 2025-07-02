@@ -8,8 +8,7 @@ subject:
   namespace: operator
 
   postInstall:
-    manifests:
-      - alloy.yaml
+    files: [alloy.yaml]
 
 cluster:
   type: kind
@@ -22,7 +21,6 @@ cluster:
       - role: worker
 
 dependencies:
-  - preset: fluxcd
   - preset: prometheus
   - preset: loki
   - preset: grafana

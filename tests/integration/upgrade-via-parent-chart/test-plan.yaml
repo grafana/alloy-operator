@@ -1,19 +1,23 @@
 apiVersion: helm-chart-toolbox.grafana.com/v1
 kind: TestPlan
-name: basic
+name: upgrade-via-parent-chart
 
 subject:
-  releaseName: alloy-operator
-  path: ../../../charts/alloy-operator
-  namespace: operator
+  releaseName: sample-parent-chart
+  path: ../../../charts/sample-parent-chart
+  valuesFile: values-first.yaml
 
   postInstall:
-    files: [alloy.yaml]
+    files: [../../../charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml]
+
+  upgrade:
+    valuesFile: values-second.yaml
 
 cluster:
   type: kind
 
 dependencies:
+  - directory: dependencies
   - preset: prometheus
   - preset: grafana
     overrides:
