@@ -1,0 +1,38 @@
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: basic
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+
+  postInstall:
+    manifests:
+      - alloy.yaml
+
+cluster:
+  type: kind
+
+dependencies:
+  - preset: fluxcd
+  - preset: prometheus
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          queries:
+            - query: alloy_build_info{job="integrations/self"}
+              type: promql

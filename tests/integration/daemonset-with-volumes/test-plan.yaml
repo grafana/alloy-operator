@@ -1,0 +1,77 @@
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: daemonset-with-volumes
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    manifests:
+      - alloy.yaml
+
+cluster:
+  type: kind
+  config:
+    apiVersion: kind.x-k8s.io/v1alpha4
+    kind: Cluster
+    nodes:
+      - role: control-plane
+      - role: worker
+      - role: worker
+
+dependencies:
+  - preset: fluxcd
+  - preset: prometheus
+  - preset: loki
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+            - name: Loki
+              type: loki
+              url: http://loki-gateway.loki.svc:8080
+              basicAuth: true
+              basicAuthUser: loki
+              jsonData:
+                httpHeaderName1: X-Scope-OrgID
+              secureJsonData:
+                basicAuthPassword: lokipassword
+                httpHeaderValue1: "1"
+  - manifest:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: loki
+        namespace: loki
+      stringData:
+        tenantId: "1"
+        username: "loki"
+        password: "lokipassword"
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            CLUSTER: daemonset-test-cluster
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+            LOKI_URL: http://loki.loki.svc:3100/loki/api/v1/query
+            LOKI_TENANTID: 1
+            LOKI_USER: loki
+            LOKI_PASS: lokipassword
+          queries:
+            - query: count(alloy_build_info{cluster="$CLUSTER", job="integrations/self"})
+              type: promql
+              expect:
+                operator: ==
+                value: 3
+            - query: count_over_time({cluster="$CLUSTER", container="alloy-operator", namespace="operator"}[1h])
+              type: logql
