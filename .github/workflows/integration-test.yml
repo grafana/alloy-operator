@@ -87,7 +87,4 @@ jobs:
           KUBECONFIG: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
 
       - name: Run test
-        working-directory: "tests/integration/${{ matrix.test }}"
-        run: make run-test
-        env:
-          KUBECONFIG: "kubeconfig.yaml"
+        uses: grafana/hackathon-13-helm-chart-toolbox-action@v0
