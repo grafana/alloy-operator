@@ -1,11 +1,10 @@
 apiVersion: helm-chart-toolbox.grafana.com/v1
 kind: TestPlan
-name: basic
+name: service-monitor
 
 subject:
   releaseName: alloy-operator
   path: ../../../charts/alloy-operator
-  namespace: operator
 
   postInstall:
     files: [alloy.yaml]
@@ -14,6 +13,7 @@ cluster:
   type: kind
 
 dependencies:
+  - file: prom-operator-crds.yaml
   - preset: prometheus
   - preset: grafana
     overrides:
@@ -33,5 +33,5 @@ tests:
         - env:
             PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
           queries:
-            - query: alloy_build_info{job="integrations/self"}
+            - query: alloy_build_info{service="alloy-test"}
               type: promql

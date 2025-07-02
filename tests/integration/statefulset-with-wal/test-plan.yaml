@@ -1,6 +1,6 @@
 apiVersion: helm-chart-toolbox.grafana.com/v1
 kind: TestPlan
-name: beyla-and-unix
+name: statefulset-with-wal
 
 subject:
   releaseName: alloy-operator
@@ -11,11 +11,10 @@ subject:
     files: [alloy.yaml]
 
 cluster:
-  type: minikube
+  type: kind
 
 dependencies:
   - preset: prometheus
-  - preset: tempo
   - preset: grafana
     overrides:
       datasources:
@@ -26,30 +25,29 @@ dependencies:
               type: prometheus
               url: http://prometheus-server.prometheus.svc:9090
               isDefault: true
-            - name: Tempo
-              type: tempo
-              url: http://tempo.tempo.svc:3200
 
 tests:
   - type: query-test
     values:
       tests:
         - env:
+            CLUSTER: statefulset-with-wal
             PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
-            TEMPO_URL: http://tempo.tempo.svc:3200/api/search
           queries:
-            # Unix node metrics
-            - query: node_cpu_seconds_total{job="integrations/unix"}
+            # DPM check to ensure clustering is working
+            - query: avg(count_over_time(scrape_samples_scraped{cluster="$CLUSTER"}[1m]))
+              type: promql
+              expect:
+                value: 1
+                operator: ==
+
+            # Kubernetes service discovery is working
+            - query: kubernetes_build_info{cluster="$CLUSTER"}
               type: promql
 
-            # Beyla internal metrics
-            - query: beyla_internal_build_info{job="beyla"}
+            # PVC and WAL are working
+            - query: prometheus_remote_write_wal_storage_active_series{cluster="$CLUSTER"}
               type: promql
-
-            # Beyla application metrics
-            - query: '{k8s_deployment_name="alloy-operator", job="operator/alloy-operator", source="beyla"}'
-              type: promql
-
-            # Beyla application traces
-            - query: '{resource.k8s.deployment.name="alloy-operator"}'
-              type: traceql
+              expect:
+                value: 0
+                operator: "<"
