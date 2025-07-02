@@ -51,6 +51,27 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
         with:
           persist-credentials: 'false'
+          path: source
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: 'false'
+          repository: grafana/hackathon-13-helm-chart-toolbox
+          path: helm-chart-toolbox
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@bda4c8187e436462be0d072e728b67afa215c593  # v2.6.3
+
+      - name: Create Kind cluster
+        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
+        with:
+          install_only: true
+
+      - name: Create Minikube cluster
+        uses: medyagh/setup-minikube@cea33675329b799adccc9526aa5daccc26cd5052  # v0.0.19
+        with:
+          start: false
 
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@6bf37f6a560fd84982d67f853162e4b3c2235edb  # v2.6.4
@@ -87,4 +108,8 @@ jobs:
           KUBECONFIG: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
 
       - name: Run test
-        uses: grafana/hackathon-13-helm-chart-toolbox-action@v0
+        working-directory: "helm-chart-toolbox/tools/helm-test"
+#        working-directory: "source/tests/integration/${{ matrix.test }}"
+        run: helm-test "${TEST_DIRECTORY}"
+        env:
+          TEST_DIRECTORY: "source/tests/integration/${{ matrix.test }}"
