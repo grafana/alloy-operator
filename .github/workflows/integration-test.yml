@@ -60,15 +60,15 @@ jobs:
           repository: grafana/hackathon-13-helm-chart-toolbox
           path: helm-chart-toolbox
 
-      - name: Setup Flux CLI
+      - name: Install Flux CLI
         uses: fluxcd/flux2/action@bda4c8187e436462be0d072e728b67afa215c593  # v2.6.3
 
-      - name: Create Kind cluster
+      - name: Install Kind CLI
         uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
         with:
           install_only: true
 
-      - name: Create Minikube cluster
+      - name: Install Minikube CLI
         uses: medyagh/setup-minikube@cea33675329b799adccc9526aa5daccc26cd5052  # v0.0.19
         with:
           start: false
