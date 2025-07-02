@@ -111,3 +111,4 @@ jobs:
         run: helm-chart-toolbox/tools/helm-test/helm-test "${TEST_DIRECTORY}"
         env:
           TEST_DIRECTORY: "source/tests/integration/${{ matrix.test }}"
+          DELETE_CLUSTER: true
