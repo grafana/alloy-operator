@@ -17,7 +17,6 @@ cluster:
   type: kind
 
 dependencies:
-  - directory: dependencies
   - preset: prometheus
   - preset: grafana
     overrides:
