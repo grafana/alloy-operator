@@ -1,0 +1,59 @@
+
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: vpa
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: kind
+
+dependencies:
+  - directory: dependencies
+  - preset: prometheus
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          queries:
+            - query: alloy_build_info{job="integrations/self"}
+              type: promql
+
+            # Uncomment when we can figure out how to get the VPA to trigger adjusting the resources
+            #  - query: kube_pod_container_resource_requests{namespace="default", container="alloy"}
+            #    type: promql
+            #    expect:
+            #      operator: "<"
+            #      value: 0.001
+            #  - query: kube_pod_container_resource_limits{namespace="default", container="alloy"}
+            #    type: promql
+            #    expect:
+            #      operator: "<"
+            #      value: 0.001
+            - query: kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_maxallowed_cpu{namespace="default", container="alloy"}
+              type: promql
+              expect:
+                value: 1
+            - query: kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_minallowed_cpu{namespace="default", container="alloy"}
+              type: promql
+              expect:
+                value: 0.05
