@@ -21,7 +21,7 @@ endif
 
 .SECONDEXPANSION:
 values.schema.json: values.yaml $$(wildcard schema-mods/*)
-	../../scripts/schema-gen.sh .
+	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/hackathon-13-helm-chart-toolbox-schema-generator:0.1.0 --chart /chart > $@
 
 .PHONY: build
 build: README.md values.schema.json $(EXAMPLE_OUTPUT_FILES)  ## Builds documentation and examples
