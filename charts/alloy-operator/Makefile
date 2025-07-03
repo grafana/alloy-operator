@@ -1,4 +1,3 @@
-HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_HELM_UNITTEST := $(shell helm plugin list | grep unittest 2> /dev/null)
 
 .PHONY: help
@@ -13,11 +12,7 @@ docs/examples/%/output.yaml: docs/examples/%/values.yaml values.yaml Chart.yaml
 	helm template --namespace operator $(EXAMPLE_RELEASE_NAME) . -f $< > $@
 
 README.md: README.md.gotmpl values.yaml Chart.yaml
-ifdef HAS_HELM_DOCS
-	helm-docs --chart-to-generate .
-else
-	docker run --rm --volume "$(shell pwd):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:latest
-endif
+	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/hackathon-13-helm-chart-toolbox-doc-generator:0.1.0 --chart /chart > $@
 
 .SECONDEXPANSION:
 values.schema.json: values.yaml $$(wildcard schema-mods/*)
