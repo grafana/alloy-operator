@@ -1,4 +1,3 @@
 */kubeconfig.yaml
-*/.randomNumber
-*/dependencies/grafana-cloud-credentials.yaml
-*/dependencies/test-variables.yaml
+*/.random
+*/grafana-cloud-credentials.yaml

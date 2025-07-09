@@ -1,0 +1,38 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: remote-config
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: kind
+  appendRandomNumber: true
+
+dependencies:
+  - preset: test-parameters
+  - preset: test-parameters
+    namespace: toolbox
+  - file: grafana-cloud-credentials.yaml
+  - file: grafana-cloud-credentials.yaml
+    namespace: toolbox
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            NAMESPACE: default
+            PROMETHEUS_URL: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/api/v1/query
+          envFrom:
+            - secretRef: {name: grafana-cloud-credentials}
+            - configMapRef: {name: test-parameters}
+          queries:
+            - query: alloy_build_info{collector_id=~"alloy-operator-$clusterName-$NAMESPACE-alloy-client-.*"}
+              type: promql
