@@ -12,11 +12,11 @@ docs/examples/%/output.yaml: docs/examples/%/values.yaml values.yaml Chart.yaml
 	helm template --namespace operator $(EXAMPLE_RELEASE_NAME) . -f $< > $@
 
 README.md: README.md.gotmpl values.yaml Chart.yaml
-	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/hackathon-13-helm-chart-toolbox-doc-generator:0.1.0 --chart /chart > $@
+	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/helm-chart-toolbox-doc-generator --chart /chart > $@
 
 .SECONDEXPANSION:
 values.schema.json: values.yaml $$(wildcard schema-mods/*)
-	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/hackathon-13-helm-chart-toolbox-schema-generator:0.1.0 --chart /chart > $@
+	docker run --rm --volume $(shell pwd):/chart ghcr.io/grafana/helm-chart-toolbox-schema-generator --chart /chart > $@
 
 .PHONY: build
 build: README.md values.schema.json $(EXAMPLE_OUTPUT_FILES)  ## Builds documentation and examples
