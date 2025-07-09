@@ -5,10 +5,12 @@ on:
   push:
     branches: ["main"]
     paths:
+      - .github/workflows/integration-test.yml
       - charts/**
       - tests/**
   pull_request:
     paths:
+      - .github/workflows/integration-test.yml
       - charts/**
       - tests/**
 
