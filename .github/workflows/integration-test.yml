@@ -35,7 +35,7 @@ jobs:
         id: list_tests
         working-directory: tests/integration
         run: |
-          tests=$(find * -name test-plan.yaml -exec dirname {} \;)
+          tests=$(find . -name test-plan.yaml -exec dirname {} \;)
           echo "Tests: ${tests}"
           echo "tests=$(echo "${tests}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')" >> "${GITHUB_OUTPUT}"
 

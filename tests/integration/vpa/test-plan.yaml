@@ -1,4 +1,4 @@
-
+---
 apiVersion: helm-chart-toolbox.grafana.com/v1
 kind: TestPlan
 name: vpa
