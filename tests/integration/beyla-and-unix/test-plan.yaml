@@ -1,0 +1,56 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: beyla-and-unix
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: minikube
+
+dependencies:
+  - preset: prometheus
+  - preset: tempo
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+            - name: Tempo
+              type: tempo
+              url: http://tempo.tempo.svc:3200
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+            TEMPO_URL: http://tempo.tempo.svc:3200/api/search
+          queries:
+            # Unix node metrics
+            - query: node_cpu_seconds_total{job="integrations/unix"}
+              type: promql
+
+            # Beyla internal metrics
+            - query: beyla_internal_build_info{job="beyla"}
+              type: promql
+
+            # Beyla application metrics
+            - query: '{k8s_deployment_name="alloy-operator", job="operator/alloy-operator", source="beyla"}'
+              type: promql
+
+            # Beyla application traces
+            - query: '{resource.k8s.deployment.name="alloy-operator"}'
+              type: traceql

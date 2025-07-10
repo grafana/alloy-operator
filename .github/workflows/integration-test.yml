@@ -5,10 +5,12 @@ on:
   push:
     branches: ["main"]
     paths:
+      - .github/workflows/integration-test.yml
       - charts/**
       - tests/**
   pull_request:
     paths:
+      - .github/workflows/integration-test.yml
       - charts/**
       - tests/**
 
@@ -33,7 +35,7 @@ jobs:
         id: list_tests
         working-directory: tests/integration
         run: |
-          tests=$(find . -name Makefile -exec dirname {} \;)
+          tests=$(find . -name test-plan.yaml -exec dirname {} \;)
           echo "Tests: ${tests}"
           echo "tests=$(echo "${tests}" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')" >> "${GITHUB_OUTPUT}"
 
@@ -51,43 +53,33 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
         with:
           persist-credentials: 'false'
+          path: source
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: 'false'
+          repository: grafana/helm-chart-toolbox
+          path: helm-chart-toolbox
+
+      - name: Install Flux CLI
+        uses: fluxcd/flux2/action@bda4c8187e436462be0d072e728b67afa215c593  # v2.6.3
+
+      - name: Install Kind CLI
+        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
+        with:
+          install_only: true
+
+      - name: Install Minikube CLI
+        uses: medyagh/setup-minikube@cea33675329b799adccc9526aa5daccc26cd5052  # v0.0.19
+        with:
+          start: false
 
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@6bf37f6a560fd84982d67f853162e4b3c2235edb  # v2.6.4
 
-      - name: Check for cluster config
-        id: check-cluster-config
-        working-directory: "tests/integration/${{ matrix.test }}"
-        run: |
-          if [ -f "kind-cluster-config.yaml" ]; then
-            echo "cluster-type=kind-with-config" >> "${GITHUB_OUTPUT}"
-          elif [ -f "minikube-cluster-config.yaml" ]; then
-            echo "cluster-type=minikube" >> "${GITHUB_OUTPUT}"
-          else
-            echo "cluster-type=kind" >> "${GITHUB_OUTPUT}"
-          fi
-
-      - name: Create Kind cluster
-        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'kind' }}
-        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
-        with:
-          kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
-
-      - name: Create Kind cluster with special config
-        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'kind-with-config' }}
-        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
-        with:
-          config: "tests/integration/${{ matrix.test }}/kind-cluster-config.yaml"
-          kubeconfig: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
-
-      - name: Create Minikube cluster
-        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'minikube' }}
-        uses: medyagh/setup-minikube@e3c7f79eb1e997eabccc536a6cf318a2b0fe19d9  # v0.0.20
-        env:
-          KUBECONFIG: "tests/integration/${{ matrix.test }}/kubeconfig.yaml"
-
       - name: Run test
-        working-directory: "tests/integration/${{ matrix.test }}"
-        run: make run-test
+        run: helm-chart-toolbox/tools/helm-test/helm-test "${TEST_DIRECTORY}"
         env:
-          KUBECONFIG: "kubeconfig.yaml"
+          TEST_DIRECTORY: "source/tests/integration/${{ matrix.test }}"
+          DELETE_CLUSTER: true

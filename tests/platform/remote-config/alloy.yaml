@@ -17,8 +17,8 @@ spec:
       - name: CLUSTER_NAME
         valueFrom:
           configMapKeyRef:
-            key: CLUSTER
-            name: test-variables
+            key: clusterName
+            name: test-parameters
       - name: NAMESPACE
         valueFrom:
           fieldRef:

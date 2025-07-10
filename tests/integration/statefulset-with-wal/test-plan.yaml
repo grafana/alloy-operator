@@ -1,0 +1,54 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: statefulset-with-wal
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: kind
+
+dependencies:
+  - preset: prometheus
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            CLUSTER: statefulset-with-wal
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          queries:
+            # DPM check to ensure clustering is working
+            - query: avg(count_over_time(scrape_samples_scraped{cluster="$CLUSTER"}[1m]))
+              type: promql
+              expect:
+                value: 1
+                operator: ==
+
+            # Kubernetes service discovery is working
+            - query: kubernetes_build_info{cluster="$CLUSTER"}
+              type: promql
+
+            # PVC and WAL are working
+            - query: prometheus_remote_write_wal_storage_active_series{cluster="$CLUSTER"}
+              type: promql
+              expect:
+                value: 0
+                operator: "<"

@@ -1,0 +1,51 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: hpa
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: kind
+
+dependencies:
+  - file: kube-state-metrics.yaml
+  - preset: prometheus
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          queries:
+            - query: alloy_build_info{job="integrations/self"}
+              type: promql
+
+            - query: kube_deployment_status_replicas{deployment="alloy-test"}
+              type: promql
+              expect:
+                operator: <=
+                value: 2
+
+            - query: kube_horizontalpodautoscaler_status_current_replicas{horizontalpodautoscaler="alloy-test"}
+              type: promql
+              expect:
+                operator: <=
+                value: 2

@@ -1,0 +1,44 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: namespaced
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+  valuesFile: values.yaml
+
+  postInstall:
+    files: [alloys.yaml]
+
+cluster:
+  type: kind
+
+dependencies:
+  - file: namespaces.yaml
+  - preset: prometheus
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-server.prometheus.svc:9090
+              isDefault: true
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
+          queries:
+            - query: alloy_build_info{job="integrations/self", alloy_instance="alpha"}
+              type: promql
+            - query: count(alloy_build_info{job="integrations/self", alloy_instance="bravo"}) or vector(0)
+              type: promql
+              expect:
+                value: 0
