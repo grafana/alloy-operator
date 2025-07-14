@@ -38,6 +38,9 @@
         "image": {
             "type": "object",
             "properties": {
+                "digest": {
+                    "type": "string"
+                },
                 "pullPolicy": {
                     "type": "string"
                 },
