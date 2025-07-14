@@ -57,7 +57,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 |-----|------|---------|-------------|
 | global.image.pullSecrets | list | `[]` | Global image pull secrets. |
 | global.image.registry | string | `""` | Global image registry override. |
-| image.digest | string | `""` | Alloy Operator image digest. If set, will override the tag. Format: sha256:<digest>. |
+| image.digest | string | `""` | Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;. |
 | image.pullPolicy | string | `"IfNotPresent"` | The pull policy for images. |
 | image.pullSecrets | list | `[]` | Optional set of image pull secrets. |
 | image.registry | string | `"ghcr.io"` | Alloy Operator image registry |

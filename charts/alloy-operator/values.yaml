@@ -40,7 +40,7 @@ image:
   # @section -- Image Settings
   tag: ""
 
-  # -- Alloy Operator image digest. If set, will override the tag. Format: sha256:<digest>.
+  # -- Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;.
   # @section -- Image Settings
   digest: ""
 
