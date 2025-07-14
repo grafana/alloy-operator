@@ -40,6 +40,10 @@ image:
   # @section -- Image Settings
   tag: ""
 
+  # -- Alloy Operator image digest. If set, will override the tag. Format: sha256:<digest>.
+  # @section -- Image Settings
+  digest: ""
+
   # -- The pull policy for images.
   # @section -- Image Settings
   pullPolicy: IfNotPresent

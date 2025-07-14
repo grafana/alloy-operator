@@ -50,3 +50,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- .Values.serviceAccount.name | default "default" }}
 {{- end }}
 {{- end }}
+
+{{/* Calculate the image identifier to use */}}
+{{- define "alloy-operator.imageIdentifier" -}}
+{{- if .Values.image.digest }}
+  {{- $digest := .Values.image.digest }}
+  {{- if not (hasPrefix "sha256:" $digest) }}
+    {{- $digest = printf "sha256:%s" $digest }}
+  {{- end }}
+  {{- printf "@%s" $digest }}
+{{- else if .Values.image.tag }}
+  {{- printf ":%s" .Values.image.tag }}
+{{- else }}
+  {{- printf ":%s" .Chart.AppVersion }}
+{{- end }}
+{{- end }}
