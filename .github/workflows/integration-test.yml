@@ -63,7 +63,7 @@ jobs:
           path: helm-chart-toolbox
 
       - name: Install Flux CLI
-        uses: fluxcd/flux2/action@bda4c8187e436462be0d072e728b67afa215c593  # v2.6.3
+        uses: fluxcd/flux2/action@6bf37f6a560fd84982d67f853162e4b3c2235edb  # v2.6.4
 
       - name: Install Kind CLI
         uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3  # v1.12.0
