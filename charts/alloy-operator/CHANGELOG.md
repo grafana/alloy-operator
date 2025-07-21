@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.3.6
+
+* Update Alloy to 1.2.0 (@petewall)
+
+## 0.3.5
+
+* Convert to the new test system (@petewall)
+* Allow for setting image by digest (@petewall)
+
 ## 0.3.4
 
 * Update Alloy to 1.1.2 (@petewall)
