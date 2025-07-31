@@ -1,0 +1,58 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: operator-logs
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+  values:
+    extraArgs:
+      - --zap-encoder=json
+      - --zap-log-level=debug
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: kind
+
+dependencies:
+  - preset: loki
+  - preset: grafana
+    overrides:
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Loki
+              type: loki
+              url: http://loki-gateway.loki.svc:8080
+              basicAuth: true
+              basicAuthUser: loki
+              jsonData:
+                httpHeaderName1: X-Scope-OrgID
+              secureJsonData:
+                basicAuthPassword: lokipassword
+                httpHeaderValue1: "1"
+              isDefault: true
+
+tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        - kind: Lease
+          name: alloy-operator
+          namespace: operator
+  - type: query-test
+    values:
+      tests:
+        - env:
+            LOKI_URL: http://loki.loki.svc:3100/loki/api/v1/query
+            LOKI_TENANTID: 1
+            LOKI_USER: loki
+            LOKI_PASS: lokipassword
+          queries:
+            - query: count_over_time({job="loki.source.kubernetes.operator_pods"}[1h] | json | level = "debug")
+              type: logql

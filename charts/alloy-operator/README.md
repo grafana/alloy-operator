@@ -5,7 +5,7 @@
 
 # alloy-operator
 
-![Version: 0.3.6](https://img.shields.io/badge/Version-0.3.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.2.0](https://img.shields.io/badge/AppVersion-1.2.0-informational?style=flat-square)
+![Version: 0.3.7](https://img.shields.io/badge/Version-0.3.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.2.0](https://img.shields.io/badge/AppVersion-1.2.0-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -51,6 +51,12 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | crds.deployAlloyCRD | bool | `true` | Should this chart deploy the Alloy CRD? |
 | crds.deployPodLogsCRD | bool | `false` | Should this chart deploy the PodLogs CRD? |
 
+### Operator Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| extraArgs | list | `[]` | Additional arguments to pass to the Alloy Operator. |
+
 ### Image Settings
 
 | Key | Type | Default | Description |
@@ -63,6 +69,12 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | image.registry | string | `"ghcr.io"` | Alloy Operator image registry |
 | image.repository | string | `"grafana/alloy-operator"` | Alloy Operator image repository |
 | image.tag | string | `""` | Alloy Operator image tag. When empty, the Chart's appVersion is used. |
+
+### Leader Election Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| leaderElection.enabled | bool | `true` | Whether to enable leader election for the Alloy Operator. This is important when using multiple replicas or when rolling updates. If set to false, you risk having split-brain scenarios where multiple instances of the Alloy Operator try to manage the same Alloy instances. |
 
 ### Probes
 

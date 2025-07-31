@@ -27,6 +27,18 @@ namespaces: []
 # @section -- Alloy Management Settings
 ownNamespaceOnly: false
 
+# Leader election settings.
+leaderElection:
+  # -- Whether to enable leader election for the Alloy Operator. This is important when using multiple replicas or
+  # when rolling updates. If set to false, you risk having split-brain scenarios where multiple instances of the
+  # Alloy Operator try to manage the same Alloy instances.
+  # @section -- Leader Election Settings
+  enabled: true
+
+# -- Additional arguments to pass to the Alloy Operator.
+# @section -- Operator Settings
+extraArgs: []
+
 image:
   # -- Alloy Operator image registry
   # @section -- Image Settings
