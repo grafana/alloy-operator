@@ -29,6 +29,16 @@ dependencies:
               isDefault: true
 
 tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: StatefulSet
+          name: alloy-test
+          namespace: default
+        - kind: PodDisruptionBudget
+          name: alloy-test
+          namespace: default
   - type: query-test
     values:
       tests:

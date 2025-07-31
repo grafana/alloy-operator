@@ -56,6 +56,13 @@ dependencies:
         password: "lokipassword"
 
 tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-logs
+          namespace: default
   - type: query-test
     values:
       tests:

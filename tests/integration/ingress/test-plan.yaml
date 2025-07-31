@@ -14,29 +14,14 @@ subject:
 cluster:
   type: kind
 
-dependencies:
-  - file: kube-state-metrics.yaml
-  - preset: prometheus
-  - preset: grafana
-    overrides:
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              url: http://prometheus-server.prometheus.svc:9090
-              isDefault: true
-
 tests:
-  - type: query-test
+  - type: kubernetes-objects-test
     values:
-      tests:
-        - env:
-            PROMETHEUS_URL: http://prometheus-server.prometheus.svc:9090/api/v1/query
-          queries:
-            - query: alloy_build_info{job="integrations/self"}
-              type: promql
-
-            - query: kube_ingress_info{ingress="alloy-test"}
-              type: promql
+      checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-test
+          namespace: default
+        - kind: Ingress
+          name: alloy-test
+          namespace: default

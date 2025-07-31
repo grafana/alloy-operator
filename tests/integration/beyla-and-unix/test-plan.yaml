@@ -32,6 +32,13 @@ dependencies:
               url: http://tempo.tempo.svc:3200
 
 tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-test
+          namespace: default
   - type: query-test
     values:
       tests:
