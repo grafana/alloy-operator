@@ -30,6 +30,19 @@ dependencies:
               isDefault: true
 
 tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-test
+          namespace: operator
+        # Ensure that the Alloy instance in the non-monitored namespace has not been reconciled
+        - kind: DaemonSet
+          name: alloy-bravo
+          namespace: bravo
+          expect:
+            count: 0
   - type: query-test
     values:
       tests:

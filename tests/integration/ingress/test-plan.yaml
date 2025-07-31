@@ -18,6 +18,10 @@ tests:
   - type: kubernetes-objects-test
     values:
       checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-test
+          namespace: default
         - kind: Ingress
           name: alloy-test
           namespace: default

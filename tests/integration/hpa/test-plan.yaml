@@ -32,6 +32,10 @@ tests:
   - type: kubernetes-objects-test
     values:
       checks:
+        # Check that the Alloy instance has been reconciled
+        - kind: Deployment
+          name: alloy-test
+          namespace: default
         - kind: HorizontalPodAutoscaler
           name: alloy-test
           namespace: default

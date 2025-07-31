@@ -39,12 +39,6 @@ dependencies:
               isDefault: true
 
 tests:
-  - type: kubernetes-objects-test
-    values:
-      checks:
-        - kind: Lease
-          name: alloy-operator
-          namespace: operator
   - type: query-test
     values:
       tests:
