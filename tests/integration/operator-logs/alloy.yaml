@@ -1,0 +1,35 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-logs
+spec:
+  alloy:
+    configMap:
+      content: |-
+        discovery.kubernetes "operator_pods" {
+          role = "pod"
+          namespaces {
+            names = ["operator"]
+          }
+          selectors {
+            role = "pod"
+            label = "app.kubernetes.io/name=alloy-operator"
+          }
+        }
+
+        loki.source.kubernetes "operator_pods" {
+          targets    = discovery.kubernetes.operator_pods.targets
+          forward_to = [loki.write.loki.receiver]
+        }
+
+        loki.write "loki" {
+          endpoint {
+            url = "http://loki.loki.svc:3100/loki/api/v1/push"
+            tenant_id = "1"
+            basic_auth {
+              username = "loki"
+              password = "lokipassword"
+            }
+          }
+        }

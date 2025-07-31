@@ -8,6 +8,9 @@ subject:
   path: ../../../charts/alloy-operator
   namespace: operator
 
+  values:
+    leaderElection: {enabled: false}
+
   postInstall:
     files: [alloy.yaml]
 
@@ -28,6 +31,19 @@ dependencies:
               isDefault: true
 
 tests:
+  - type: kubernetes-objects-test
+    values:
+      checks:
+        # Check that leader election is not enabled
+        - kind: Lease
+          name: alloy-operator
+          namespace: operator
+          expect:
+            count: 0
+        # Check that the Alloy instance has been reconciled
+        - kind: DaemonSet
+          name: alloy-test
+          namespace: default
   - type: query-test
     values:
       tests:

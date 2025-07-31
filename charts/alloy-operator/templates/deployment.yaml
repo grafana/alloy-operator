@@ -44,10 +44,15 @@ spec:
           image: "{{ .Values.global.image.registry | default .Values.image.registry }}/{{ .Values.image.repository }}{{ include "alloy-operator.imageIdentifier" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - --leader-elect
-            - --leader-election-id={{ include "alloy-operator.fullname" . }}
             - --health-probe-bind-address=:{{ .Values.service.health.port }}
             - --metrics-bind-address=:{{ .Values.service.metrics.port }}
+{{- if .Values.leaderElection.enabled }}
+            - --leader-elect
+            - --leader-election-id={{ include "alloy-operator.fullname" . }}
+{{- end }}
+{{ range .Values.extraArgs }}
+            - {{ . | quote }}
+{{- end }}
 {{- $namespaces := .Values.namespaces }}
 {{- if .Values.ownNamespaceOnly }}
   {{- $namespaces = list .Release.Namespace }}

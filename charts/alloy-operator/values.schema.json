@@ -16,6 +16,9 @@
                 }
             }
         },
+        "extraArgs": {
+            "type": "array"
+        },
         "fullnameOverride": {
             "type": "string"
         },
@@ -55,6 +58,14 @@
                 },
                 "tag": {
                     "type": "string"
+                }
+            }
+        },
+        "leaderElection": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
                 }
             }
         },
