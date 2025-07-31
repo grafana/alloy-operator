@@ -33,7 +33,7 @@ tests:
       checks:
         # Check that the Alloy instance has been reconciled
         - kind: StatefulSet
-          name: alloy-test
+          name: alloy-metrics
           namespace: default
   - type: query-test
     values:
