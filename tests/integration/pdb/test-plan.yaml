@@ -33,7 +33,7 @@ tests:
     values:
       checks:
         # Check that the Alloy instance has been reconciled
-        - kind: DaemonSet
+        - kind: StatefulSet
           name: alloy-test
           namespace: default
         - kind: PodDisruptionBudget
