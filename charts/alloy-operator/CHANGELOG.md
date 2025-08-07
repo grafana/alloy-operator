@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.8
+
+* Update Alloy to 1.2.1 (@petewall)
+
 ## 0.3.7
 
 * Add the ability to pass extra arguments to the Alloy Operator container (@petewall)
