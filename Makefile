@@ -6,7 +6,6 @@ HAS_ZIZMOR := $(shell command -v zizmor;)
 LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm show chart grafana/alloy | yq -r '.version')
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 ALLOY_OPERATOR_IMAGE = ghcr.io/grafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
-#ALLOY_OPERATOR_IMAGE = petewallgrafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
 ALLOY_OPERATOR_HELM_CHART_VERSION = $(shell yq '.version' charts/alloy-operator/Chart.yaml)
 
 ##@ General
