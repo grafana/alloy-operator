@@ -31,9 +31,9 @@
 - apiGroups: ["policy"]
   resources: ["poddisruptionbudgets"]
   verbs: ["*"]
-# Rules which allow the management of ClusterRoles and ClusterRoleBindings.
+# Rules which allow the management of ClusterRoles, ClusterRoleBindings, Roles, and RoleBindings.
 - apiGroups: ["rbac.authorization.k8s.io"]
-  resources: ["clusterroles", "clusterrolebindings"]
+  resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
   verbs: ["*"]
 {{- end }}
 

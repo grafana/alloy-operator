@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.9
+
+* Add the ability to create and manage Roles and RoleBindings (@petewall)
+
 ## 0.3.8
 
 * Update Alloy to 1.2.1 (@petewall)
