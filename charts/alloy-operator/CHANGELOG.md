@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Add the ability to deploy a ServiceMonitor for the Alloy Operator (@petewall)
+
 ## 0.3.9
 
 * Add the ability to create and manage Roles and RoleBindings (@petewall)
