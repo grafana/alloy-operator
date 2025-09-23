@@ -178,6 +178,32 @@ tolerations: []
 # @section -- Pod Settings
 affinity: {}
 
+serviceMonitor:
+  # -- Whether to create a ServiceMonitor
+  # @section -- Service Monitor
+  enabled: false
+  # -- Set of labels to transfer from the Kubernetes Service onto the target
+  # @section -- Service Monitor
+  additionalLabels: {}
+  # -- Set how frequently Prometheus should scrape
+  # @section -- Service Monitor
+  interval: 60s
+  # -- Set timeout for scrape
+  # @section -- Service Monitor
+  scrapeTimeout: 10s
+  # -- Set path to metrics path
+  # @section -- Service Monitor
+  telemetryPath: /metrics
+  # -- Set of labels to transfer from the Kubernetes Service onto the target
+  # @section -- Service Monitor
+  targetLabels: []
+  # -- Set ServiceMonitor metricRelabelings to apply to metrics after scraping.
+  # @section -- Service Monitor
+  metricRelabelings: []
+  # -- Set ServiceMonitor relabelings to apply before scraping.
+  # @section -- Service Monitor
+  relabelings: []
+
 # Handling of the CustomResourceDefinitions (CRDs)
 crds:
   # -- Should this chart deploy the Alloy CRD?

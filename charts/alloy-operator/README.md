@@ -134,6 +134,19 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | serviceAccount.labels | object | `{}` | Additional labels to add to the service account |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
 
+### Service Monitor
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| serviceMonitor.additionalLabels | object | `{}` | Set of labels to transfer from the Kubernetes Service onto the target |
+| serviceMonitor.enabled | bool | `false` | Whether to create a ServiceMonitor |
+| serviceMonitor.interval | string | `"60s"` | Set how frequently Prometheus should scrape |
+| serviceMonitor.metricRelabelings | list | `[]` | Set ServiceMonitor metricRelabelings to apply to metrics after scraping. |
+| serviceMonitor.relabelings | list | `[]` | Set ServiceMonitor relabelings to apply before scraping. |
+| serviceMonitor.scrapeTimeout | string | `"10s"` | Set timeout for scrape |
+| serviceMonitor.targetLabels | list | `[]` | Set of labels to transfer from the Kubernetes Service onto the target |
+| serviceMonitor.telemetryPath | string | `"/metrics"` | Set path to metrics path |
+
 ### Other Values
 
 | Key | Type | Default | Description |
