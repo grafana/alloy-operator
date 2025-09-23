@@ -200,6 +200,35 @@
                 }
             }
         },
+        "serviceMonitor": {
+            "type": "object",
+            "properties": {
+                "additionalLabels": {
+                    "type": "object"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "metricRelabelings": {
+                    "type": "array"
+                },
+                "relabelings": {
+                    "type": "array"
+                },
+                "scrapeTimeout": {
+                    "type": "string"
+                },
+                "targetLabels": {
+                    "type": "array"
+                },
+                "telemetryPath": {
+                    "type": "string"
+                }
+            }
+        },
         "tolerations": {
             "type": "array"
         }

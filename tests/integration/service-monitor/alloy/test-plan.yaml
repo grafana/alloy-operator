@@ -1,11 +1,11 @@
 ---
 apiVersion: helm-chart-toolbox.grafana.com/v1
 kind: TestPlan
-name: service-monitor
+name: alloy-service-monitor
 
 subject:
   releaseName: alloy-operator
-  path: ../../../charts/alloy-operator
+  path: ../../../../charts/alloy-operator
 
   postInstall:
     files: [alloy.yaml]
