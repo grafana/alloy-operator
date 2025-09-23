@@ -141,8 +141,8 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | serviceMonitor.additionalLabels | object | `{}` | Set of labels to transfer from the Kubernetes Service onto the target |
 | serviceMonitor.enabled | bool | `false` | Whether to create a ServiceMonitor |
 | serviceMonitor.interval | string | `"60s"` | Set how frequently Prometheus should scrape |
-| serviceMonitor.metricRelabelings | list | `[]` | MetricRelabelConfigs to apply to samples before ingestion |
-| serviceMonitor.relabelings | list | `[]` | Set relabel_configs as per https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config |
+| serviceMonitor.metricRelabelings | list | `[]` | Set ServiceMonitor metricRelabelings to apply to metrics after scraping. |
+| serviceMonitor.relabelings | list | `[]` | Set ServiceMonitor relabelings to apply before scraping. |
 | serviceMonitor.scrapeTimeout | string | `"10s"` | Set timeout for scrape |
 | serviceMonitor.targetLabels | list | `[]` | Set of labels to transfer from the Kubernetes Service onto the target |
 | serviceMonitor.telemetryPath | string | `"/metrics"` | Set path to metrics path |

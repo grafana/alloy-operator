@@ -194,10 +194,10 @@ serviceMonitor:
   # -- Set of labels to transfer from the Kubernetes Service onto the target
   # @section -- Service Monitor
   targetLabels: []
-  # -- MetricRelabelConfigs to apply to samples before ingestion
+  # -- Set ServiceMonitor metricRelabelings to apply to metrics after scraping.
   # @section -- Service Monitor
   metricRelabelings: []
-  # -- Set relabel_configs as per https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config
+  # -- Set ServiceMonitor relabelings to apply before scraping.
   # @section -- Service Monitor
   relabelings: []
 
