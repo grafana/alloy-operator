@@ -232,6 +232,13 @@ spec:
         app.kubernetes.io/managed-by: Helm
     spec:
       serviceAccountName: test-alloy-operator
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: alloy-operator
           image: "ghcr.io/grafana/alloy-operator:1.2.1"
@@ -265,6 +272,10 @@ spec:
             limits: {}
             requests: {}
           securityContext:
-            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
       nodeSelector:
         kubernetes.io/os: linux

@@ -102,11 +102,6 @@ podAnnotations: {}
 # @section -- Pod Settings
 podLabels: {}
 
-# -- Set the security context for the Alloy Operator pods.
-# Example: podSecurityContext: { fsGroup: 2000 }
-# @section -- Pod Settings
-podSecurityContext: {}
-
 # -- Sets the priority class name for the Alloy Operator pods.
 # @section -- Pod Settings
 priorityClassName: ""
@@ -114,12 +109,20 @@ priorityClassName: ""
 # -- Set the security context for the operator container.
 # @section -- Container Settings
 securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+# -- Set the security context for the Alloy Operator pods.
+# @section -- Pod Settings
+podSecurityContext:
+  fsGroup: 1000
+  runAsGroup: 1000
   runAsNonRoot: true
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsUser: 1000
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
 
 service:
   # -- The type of service to create for the operator.

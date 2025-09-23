@@ -142,7 +142,7 @@ else
 	docker run --rm --volume $(shell pwd):/src --workdir /src rhysd/actionlint:latest -color $(GITHUB_ACTION_FILES)
 endif
 
-YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*")
+YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*" -not -path "./charts/alloy-operator/docs/examples/*/output.yaml")
 .PHONY: lint-yaml
 lint-yaml: $(YAML_FILES) ## Lint yaml files.
 	@yamllint $(YAML_FILES)
