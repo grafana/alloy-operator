@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Restrict pod and container security contexts (@petewall)
 * Add the ability to deploy a ServiceMonitor for the Alloy Operator (@petewall)
 
 ## 0.3.9
