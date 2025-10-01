@@ -50,6 +50,8 @@ tests:
               resources:
                 - clusterroles
                 - clusterrolebindings
+                - roles
+                - rolebindings
               verbs:
                 - '*'
       - documentIndex: 1
@@ -123,6 +125,8 @@ tests:
               resources:
                 - clusterroles
                 - clusterrolebindings
+                - roles
+                - rolebindings
               verbs:
                 - '*'
 
@@ -182,6 +186,8 @@ tests:
               resources:
                 - clusterroles
                 - clusterrolebindings
+                - roles
+                - rolebindings
               verbs:
                 - '*'
 
