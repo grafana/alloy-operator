@@ -11,13 +11,13 @@
 - apiGroups: ["autoscaling"]
   resources: ["horizontalpodautoscalers"]
   verbs: ["*"]
-{{- if .Capabilities.APIVersions.Has "autoscaling.k8s.io/v1" -}}
+{{- if .Capabilities.APIVersions.Has "autoscaling.k8s.io/v1" }}
 # Rules which allow the management of VerticalPodAutoscalers.
 - apiGroups: ["autoscaling.k8s.io"]
   resources: ["verticalpodautoscalers"]
   verbs: ["*"]
 {{- end }}
-{{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" -}}
+{{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" }}
 # Rules which allow the management of ServiceMonitor.
 - apiGroups: ["monitoring.coreos.com"]
   resources: ["servicemonitors"]
