@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.10
+
+* Update Alloy to 1.3.0 (@petewall)
+* Fix conditional syntax for API version checks (@siryur)
 * Restrict pod and container security contexts (@petewall)
 * Add the ability to deploy a ServiceMonitor for the Alloy Operator (@petewall)
 
