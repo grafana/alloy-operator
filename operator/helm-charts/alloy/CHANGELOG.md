@@ -10,12 +10,16 @@ internal API changes are not present.
 Unreleased
 ----------
 
-- Add support to provide extraLabels to alloy.controler (@evkuzin)
-- Add option to not expose http server port. (@kun98-liu)
+1.3.0 (2025-09-30)
+----------
 
-### Enhancements
+### Bug fixes
 
-- Add support for configuring initialDelaySeconds and timeoutSeconds in Helm chart for readiness probe. (@peter-meltcafe)
+- Update to Grafana Alloy v1.11.0. (@kalleep)
+
+- Avoid unnecessary pod restarts when the config reloader is enabled by not setting `checksum/config` pod annotation. (@ebuildy)
+
+- Remove readiness probe using curl when http server port is disabled. (@kalleep)
 
 1.2.1 (2025-08-07)
 ----------
@@ -23,6 +27,12 @@ Unreleased
 ### Enhancements
 
 - Update to Grafana Alloy v1.10.1. (@kalleep)
+
+- Add support for configuring initialDelaySeconds and timeoutSeconds in Helm chart for readiness probe. (@peter-meltcafe)
+
+- Add option to not expose http server port. (@kun98-liu)
+
+- Add support to provide extraLabels to alloy.controler (@evkuzin)
 
 1.2.0 (2025-07-16)
 ----------

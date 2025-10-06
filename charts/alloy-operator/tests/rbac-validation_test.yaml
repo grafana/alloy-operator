@@ -14,7 +14,6 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: |-
-            execution error at (alloy-operator/templates/rbac/validation.yaml:16:6): 
             The Alloy Operator requires namespaces to be set when not using ClusterRoles.
             Please set the list of namespaces to manage Alloy instances:
             alloy-operator:
