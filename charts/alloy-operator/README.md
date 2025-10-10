@@ -40,7 +40,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the Alloy Operator pods. |
 | podAnnotations | object | `{}` | Additional annotations to add to the Alloy Operator pods. |
 | podLabels | object | `{}` | Additional labels to add to the Alloy Operator pods. |
-| podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}}` | Set the security context for the Alloy Operator pods. |
+| podSecurityContext | object | `{"enabled":true,"fsGroup":1000,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}}` | Set the security context for the Alloy Operator pods. Set enabled to false to disable security context entirely. |
 | priorityClassName | string | `""` | Sets the priority class name for the Alloy Operator pods. |
 | tolerations | list | `[]` | Set the tolerations for the Alloy Operator pods. |
 
@@ -114,7 +114,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true}` | Set the security context for the operator container. |
+| securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Set the security context for the operator container. Set enabled to false to disable security context entirely. |
 
 ### Service
 
