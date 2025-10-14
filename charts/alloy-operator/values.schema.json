@@ -109,6 +109,9 @@
         "podSecurityContext": {
             "type": "object",
             "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
                 "fsGroup": {
                     "type": "integer"
                 },
@@ -173,6 +176,9 @@
         "securityContext": {
             "type": "object",
             "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
                 "allowPrivilegeEscalation": {
                     "type": "boolean"
                 },
