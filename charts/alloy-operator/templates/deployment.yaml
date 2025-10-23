@@ -32,8 +32,8 @@ spec:
         {{- end }}
       {{- end }}
       serviceAccountName: {{ include "alloy-operator.serviceAccountName" . }}
-      {{- with .Values.podSecurityContext }}
-      securityContext:{{ toYaml . | nindent 8 }}
+      {{- if and .Values.podSecurityContext .Values.podSecurityContext.enabled }}
+      securityContext:{{ toYaml (omit .Values.podSecurityContext "enabled") | nindent 8 }}
       {{- end }}
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
@@ -84,8 +84,8 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.securityContext }}
-          securityContext:{{- toYaml . | nindent 12 }}
+          {{- if and .Values.securityContext .Values.securityContext.enabled }}
+          securityContext:{{- toYaml (omit .Values.securityContext "enabled") | nindent 12 }}
           {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
