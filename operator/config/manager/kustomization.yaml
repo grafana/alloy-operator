@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: ghcr.io/grafana/alloy-operator
-  newTag: 0.12.5
+  newTag: 0.12.5@sha256:85d376212cee4b26e2cf7d92da2c5e0d103b34c8cc0671f182ddb64e8d6209bd
