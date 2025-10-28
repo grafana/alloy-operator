@@ -32,11 +32,14 @@ charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz:
 
 .PHONY: update-alloy-to-latest
 update-alloy-to-latest: ## Updates the Alloy chart to the latest version in the Helm repository
+ifneq ($(ALLOY_HELM_CHART_VERSION),$(LATEST_ALLOY_HELM_CHART_VERSION))
 	@echo "Upgrading Alloy from $(ALLOY_HELM_CHART_VERSION) to $(LATEST_ALLOY_HELM_CHART_VERSION)"
 	cd charts/alloy-helm-chart && \
 		yq eval '.version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' -i Chart.yaml && \
-		yq eval '.dependencies[0].version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' -i Chart.yaml && \
-		helm dependency update
+		yq eval '.dependencies[0].version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' -i Chart.yaml
+else
+	@echo "Alloy is already at the latest version ($(ALLOY_HELM_CHART_VERSION))"
+endif
 
 ##@ Build
 
@@ -123,11 +126,8 @@ clean: ## Clean up build artifacts.
 
 ##@ Test
 
-#test: ## Run all tests.
-#	make -C charts/alloy-operator test
-
 .PHONY: test
-test:
+test: ## Run all tests.
 	make -C charts/alloy-operator test
 
 .PHONY: lint
