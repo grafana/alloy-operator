@@ -7,6 +7,8 @@ updates:
     directory: /charts/alloy-helm-chart
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
       - helm
@@ -15,6 +17,8 @@ updates:
     directory: /operator
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
       - docker
@@ -23,6 +27,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     labels:
       - dependencies
       - github-actions
