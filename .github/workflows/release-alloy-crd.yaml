@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    uses: grafana/helm-charts/.github/workflows/update-helm-repo.yaml@0b2c5a7aad1a11c1516aae3972d2961d41838167
+    uses: grafana/helm-charts/.github/workflows/update-helm-repo.yaml@af9ef28257450b1bbf292a9de8bc42d3eeef3c42
     permissions:
       contents: write
       id-token: write
