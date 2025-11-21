@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Update Operator Framework to 1.42.0 (@petewall)
+
 ## 0.3.12
 
 * Update Alloy to 1.4.0 (@petewall)
