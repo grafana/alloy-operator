@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Update Operator Framework to 1.42.0 (@petewall)
+* Add the ability to make pod and container security contexts optional, or override the fs, group, and user IDs (@petewall)
 
 ## 0.3.12
 

@@ -1,5 +1,14 @@
 {
   "properties": {
-    "namespaces": {"items": { "type": "string" }}
+    "namespaces": {"items": { "type": "string" }},
+    "podSecurityContext": {
+      "type": ["null", "object"],
+      "properties": {
+        "fsGroup": {"type": ["null", "integer"]},
+        "runAsGroup": {"type": ["null", "integer"]},
+        "runAsUser": {"type": ["null", "integer"]}
+      }
+    },
+    "securityContext": {"type": ["null", "object"]}
   }
 }

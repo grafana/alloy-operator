@@ -107,19 +107,31 @@
             "type": "object"
         },
         "podSecurityContext": {
-            "type": "object",
+            "type": [
+                "null",
+                "object"
+            ],
             "properties": {
                 "fsGroup": {
-                    "type": "integer"
+                    "type": [
+                        "null",
+                        "integer"
+                    ]
                 },
                 "runAsGroup": {
-                    "type": "integer"
+                    "type": [
+                        "null",
+                        "integer"
+                    ]
                 },
                 "runAsNonRoot": {
                     "type": "boolean"
                 },
                 "runAsUser": {
-                    "type": "integer"
+                    "type": [
+                        "null",
+                        "integer"
+                    ]
                 },
                 "seccompProfile": {
                     "type": "object",
@@ -171,7 +183,10 @@
             }
         },
         "securityContext": {
-            "type": "object",
+            "type": [
+                "null",
+                "object"
+            ],
             "properties": {
                 "allowPrivilegeEscalation": {
                     "type": "boolean"
