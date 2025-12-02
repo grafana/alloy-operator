@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.3.14
 
+* Update Alloy to 1.5.0 (@petewall)
 * Update Operator Framework to 1.42.0 (@petewall)
 * Add the ability to make pod and container security contexts optional, or override the fs, group, and user IDs (@petewall)
 
