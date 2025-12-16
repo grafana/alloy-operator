@@ -5,6 +5,7 @@ HAS_ZIZMOR := $(shell command -v zizmor;)
 
 LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm show chart grafana/alloy | yq -r '.version')
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+ALLOY_BINARY_VERSION := $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
 ALLOY_OPERATOR_IMAGE = ghcr.io/grafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
 ALLOY_OPERATOR_HELM_CHART_VERSION = $(shell yq '.version' charts/alloy-operator/Chart.yaml)
 
@@ -44,7 +45,7 @@ endif
 ##@ Build
 
 .PHONY: build
-build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-charts build-test-chart
+build: README.md charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-charts build-test-chart
 
 UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
@@ -84,6 +85,21 @@ push-image: .temp/image-built-${ALLOY_HELM_CHART_VERSION} charts/alloy-helm-char
 # Alloy Operator Helm chart files
 charts/alloy-operator/Chart.yaml: charts/alloy-helm-chart/Chart.yaml
 	yq ".appVersion = \"$(ALLOY_HELM_CHART_VERSION)\"" -i charts/alloy-operator/Chart.yaml
+
+TABLE_START := $(shell grep --line-number "Version table start" README.md | sed -e "s/^\([0-9]*\):.*/\1/")
+TABLE_END := $(shell grep --line-number "Version table end" README.md | sed -e "s/^\([0-9]*\):.*/\1/")
+README_LENGTH := $(shell wc -l < README.md)
+README.md: charts/alloy-operator/Chart.yaml charts/alloy-helm-chart/Chart.yaml
+	@head -n $(TABLE_START) $@ > $@.temp
+	@echo "" >> $@.temp
+	@echo "| Component        | Version |" >> $@.temp
+	@echo "|------------------|---------|" >> $@.temp
+	echo "| Alloy Operator   | $(ALLOY_OPERATOR_HELM_CHART_VERSION) |" >> $@.temp
+	echo "| Alloy Helm chart | $(ALLOY_HELM_CHART_VERSION) |" >> $@.temp
+	echo "| Alloy binary     | $(ALLOY_BINARY_VERSION) |" >> $@.temp
+	@echo "" >> $@.temp
+	@tail -n +$(TABLE_END) $@ >> $@.temp
+	@mv $@.temp $@
 
 charts/alloy-operator/README.md: charts/alloy-operator/values.yaml charts/alloy-operator/Chart.yaml
 ifdef HAS_HELM_DOCS
