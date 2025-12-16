@@ -5,9 +5,21 @@ The Alloy Operator is a Kubernetes Operator that manages the lifecycle of
 [Operator SDK](https://sdk.operatorframework.io/) using the
 [Alloy Helm chart](https://github.com/grafana/alloy/tree/main/operations/helm/charts/alloy) as its base.
 
+## Current version
+
+[//]: # (Version table start)
+
+| Component        | Version |
+|------------------|---------|
+| Alloy Operator   | 0.3.15 |
+| Alloy Helm chart | 1.5.1 |
+| Alloy binary     | v1.12.1 |
+
+[//]: # (Version table end)
+
 ## Usage
 
-To use the Alloy Operator, there are three steps to follow:
+To use the Alloy Operator, there are two steps to follow:
 
 1. Deploy the Alloy Operator.
 1. Deploy an Alloy instance.
