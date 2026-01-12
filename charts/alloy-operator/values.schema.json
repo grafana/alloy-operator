@@ -112,6 +112,9 @@
                 "object"
             ],
             "properties": {
+                "runAsNonRoot": {
+                    "type": "boolean"
+                },
                 "fsGroup": {
                     "type": [
                         "null",
@@ -124,22 +127,11 @@
                         "integer"
                     ]
                 },
-                "runAsNonRoot": {
-                    "type": "boolean"
-                },
                 "runAsUser": {
                     "type": [
                         "null",
                         "integer"
                     ]
-                },
-                "seccompProfile": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string"
-                        }
-                    }
                 }
             }
         },

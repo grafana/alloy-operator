@@ -5,7 +5,7 @@
 
 # alloy-operator
 
-![Version: 0.3.15](https://img.shields.io/badge/Version-0.3.15-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.5.1](https://img.shields.io/badge/AppVersion-1.5.1-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.5.1](https://img.shields.io/badge/AppVersion-1.5.1-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -40,7 +40,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the Alloy Operator pods. |
 | podAnnotations | object | `{}` | Additional annotations to add to the Alloy Operator pods. |
 | podLabels | object | `{}` | Additional labels to add to the Alloy Operator pods. |
-| podSecurityContext | object | `{"fsGroup":1000,"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}}` | Set the security context for the Alloy Operator pods. |
+| podSecurityContext | object | `{"runAsNonRoot":true}` | Set the security context for the Alloy Operator pods. |
 | priorityClassName | string | `""` | Sets the priority class name for the Alloy Operator pods. |
 | tolerations | list | `[]` | Set the tolerations for the Alloy Operator pods. |
 
