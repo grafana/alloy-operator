@@ -117,12 +117,7 @@ securityContext:
 # -- Set the security context for the Alloy Operator pods.
 # @section -- Pod Settings
 podSecurityContext:
-  fsGroup: 1000
-  runAsGroup: 1000
   runAsNonRoot: true
-  runAsUser: 1000
-  seccompProfile:
-    type: RuntimeDefault
 
 service:
   # -- The type of service to create for the operator.
