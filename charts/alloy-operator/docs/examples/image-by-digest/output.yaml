@@ -9,7 +9,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 ---
@@ -22,7 +22,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -80,7 +80,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -100,7 +100,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -121,7 +121,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -166,7 +166,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -187,7 +187,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -214,7 +214,7 @@ metadata:
     helm.sh/chart: alloy-operator-0.4.0
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.5.1"
+    app.kubernetes.io/version: "1.5.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -228,7 +228,7 @@ spec:
         helm.sh/chart: alloy-operator-0.4.0
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: test
-        app.kubernetes.io/version: "1.5.1"
+        app.kubernetes.io/version: "1.5.2"
         app.kubernetes.io/managed-by: Helm
     spec:
       serviceAccountName: test-alloy-operator

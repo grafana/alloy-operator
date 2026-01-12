@@ -3,6 +3,7 @@
 ## 0.4.0
 
 * Remove some of the special pod security contexts, because their values may cause issues on certain platforms (@petewall)
+* Update Alloy to 1.5.2 (@petewall)
 
 ## 0.3.15
 
