@@ -3,8 +3,8 @@ apiVersion: v2
 name: alloy-helm-chart
 description: A fake chart for holding the current Alloy helm chart
 type: library
-version: 1.5.3
+version: 1.6.0
 dependencies:
   - name: alloy
     repository: https://grafana.github.io/helm-charts
-    version: 1.5.3
+    version: 1.6.0
