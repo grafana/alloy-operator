@@ -23,9 +23,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f  # v3.12.0
 
+#      - name: Set up yq
+#        run: |
+#          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+#          brew install yq
+
       - name: Get Version
         id: get-version
-        run: echo "version=$(cat yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)" >> "${GITHUB_OUTPUT}"
+        run: echo "version=$(yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)" >> "${GITHUB_OUTPUT}"
 
       - name: Docker meta
         id: meta
