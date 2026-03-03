@@ -35,6 +35,9 @@
                             "type": "string"
                         }
                     }
+                },
+                "namespaceOverride": {
+                    "type": "string"
                 }
             }
         },
@@ -81,6 +84,9 @@
             }
         },
         "nameOverride": {
+            "type": "string"
+        },
+        "namespaceOverride": {
             "type": "string"
         },
         "namespaces": {

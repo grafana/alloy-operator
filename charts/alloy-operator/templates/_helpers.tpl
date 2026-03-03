@@ -51,6 +51,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- end }}
 
+{{/* Namespace to deploy resources into */}}
+{{- define "alloy-operator.namespace" -}}
+{{- .Values.namespaceOverride | default ((.Values.global).namespaceOverride) | default .Release.Namespace -}}
+{{- end }}
+
 {{/* Calculate the image identifier to use */}}
 {{- define "alloy-operator.imageIdentifier" -}}
 {{- if .Values.image.digest }}

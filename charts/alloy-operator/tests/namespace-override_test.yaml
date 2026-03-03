@@ -1,0 +1,71 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Namespace Override
+templates:
+  - deployment.yaml
+  - serviceaccount.yaml
+  - service.yaml
+  - rbac/leader-election.yaml
+  - rbac/alloy-manager.yaml
+  - rbac/alloy-objects.yaml
+tests:
+  - it: uses global.namespaceOverride for all resources
+    set:
+      global:
+        namespaceOverride: observability
+    asserts:
+      - template: deployment.yaml
+        equal:
+          path: metadata.namespace
+          value: observability
+      - template: serviceaccount.yaml
+        equal:
+          path: metadata.namespace
+          value: observability
+      - template: service.yaml
+        equal:
+          path: metadata.namespace
+          value: observability
+      - template: rbac/leader-election.yaml
+        documentIndex: 0
+        equal:
+          path: metadata.namespace
+          value: observability
+      - template: rbac/leader-election.yaml
+        documentIndex: 1
+        equal:
+          path: metadata.namespace
+          value: observability
+      - template: rbac/leader-election.yaml
+        documentIndex: 1
+        equal:
+          path: subjects[0].namespace
+          value: observability
+      - template: rbac/alloy-manager.yaml
+        documentIndex: 1
+        equal:
+          path: subjects[0].namespace
+          value: observability
+      - template: rbac/alloy-objects.yaml
+        documentIndex: 1
+        equal:
+          path: subjects[0].namespace
+          value: observability
+
+  - it: uses namespaceOverride (chart-level) over global.namespaceOverride
+    set:
+      namespaceOverride: my-namespace
+      global:
+        namespaceOverride: other-namespace
+    asserts:
+      - template: deployment.yaml
+        equal:
+          path: metadata.namespace
+          value: my-namespace
+      - template: serviceaccount.yaml
+        equal:
+          path: metadata.namespace
+          value: my-namespace
+      - template: service.yaml
+        equal:
+          path: metadata.namespace
+          value: my-namespace
