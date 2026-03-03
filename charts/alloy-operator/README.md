@@ -5,7 +5,7 @@
 
 # alloy-operator
 
-![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.6.0](https://img.shields.io/badge/AppVersion-1.6.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.6.1](https://img.shields.io/badge/AppVersion-1.6.1-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -70,6 +70,14 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | image.repository | string | `"grafana/alloy-operator"` | Alloy Operator image repository |
 | image.tag | string | `""` | Alloy Operator image tag. When empty, the Chart's appVersion is used. |
 
+### Deployment Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| global.namespaceOverride | string | `""` | Global namespace override. When set, all resources will be deployed to this namespace instead of the Helm release namespace. Takes lower precedence than `namespaceOverride`. |
+| namespaceOverride | string | `""` | Overrides the namespace for all resources deployed by this chart. When empty, resources are deployed to the Helm release namespace. |
+| replicaCount | int | `1` | How many replicas to use for the Alloy Operator Deployment. |
+
 ### Leader Election Settings
 
 | Key | Type | Default | Description |
@@ -96,12 +104,6 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 |-----|------|---------|-------------|
 | rbac.create | bool | `true` | Whether to create the necessary RBAC resources for the Alloy Operator. |
 | rbac.createClusterRoles | bool | `true` | Create ClusterRoles for the Alloy Operator. If set to false, only Roles and RoleBindings will be created. This setting requires the use of `namespaces` or `ownNamespaceOnly` to be set. |
-
-### Deployment Settings
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| replicaCount | int | `1` | How many replicas to use for the Alloy Operator Deployment. |
 
 ### Resources
 

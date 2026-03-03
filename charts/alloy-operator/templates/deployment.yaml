@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "alloy-operator.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ include "alloy-operator.namespace" . }}
   labels:
     {{- include "alloy-operator.labels" . | nindent 4 }}
 spec:
@@ -54,7 +54,7 @@ spec:
 {{- end }}
 {{- $namespaces := .Values.namespaces }}
 {{- if .Values.ownNamespaceOnly }}
-  {{- $namespaces = list .Release.Namespace }}
+  {{- $namespaces = list (include "alloy-operator.namespace" .) }}
 {{- end }}
 {{- if $namespaces }}
           env:

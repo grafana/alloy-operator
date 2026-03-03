@@ -58,11 +58,11 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ include "alloy-operator.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
+    namespace: {{ include "alloy-operator.namespace" . }}
   {{- else }}
     {{- $namespaces := .Values.namespaces }}
     {{- if .Values.ownNamespaceOnly }}
-      {{- $namespaces = list .Release.Namespace }}
+      {{- $namespaces = list (include "alloy-operator.namespace" $) }}
     {{- end }}
     {{- range $namespace := $namespaces }}
 ---
@@ -87,7 +87,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: {{ include "alloy-operator.serviceAccountName" $ }}
-    namespace: {{ $.Release.Namespace }}
+    namespace: {{ include "alloy-operator.namespace" $ }}
     {{- end }}
   {{- end }}
 {{- end }}
