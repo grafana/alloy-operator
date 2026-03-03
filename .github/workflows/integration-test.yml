@@ -63,7 +63,7 @@ jobs:
           path: helm-chart-toolbox
 
       - name: Install Flux CLI
-        uses: fluxcd/flux2/action@8454b02a32e48d775b9f563cb51fdcb1787b5b93  # v2.7.5
+        uses: fluxcd/flux2/action@97222a775ae8e68f1e85508f356f248704255c9c  # v2.8.1
 
       - name: Install Kind CLI
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc  # v1.14.0
@@ -76,7 +76,7 @@ jobs:
           start: false
 
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@8454b02a32e48d775b9f563cb51fdcb1787b5b93  # v2.7.5
+        uses: fluxcd/flux2/action@97222a775ae8e68f1e85508f356f248704255c9c  # v2.8.1
 
       - name: Run test
         run: helm-chart-toolbox/tools/helm-test/helm-test "${TEST_DIRECTORY}"
