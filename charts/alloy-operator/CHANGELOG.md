@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+* Update Alloy to 1.6.2 (@petewall)
+
 ## 0.5.0
 
 * Add the ability to override the deployment namespace (@petewall)
