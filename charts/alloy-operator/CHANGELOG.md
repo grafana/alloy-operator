@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.1
+## 0.5.2
 
 * Update Alloy to 1.6.2 (@petewall)
 
