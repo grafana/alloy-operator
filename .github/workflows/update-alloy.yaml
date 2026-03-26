@@ -1,0 +1,123 @@
+---
+name: Update Alloy Helm Chart
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Daily at noon UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  update-alloy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: 'false'
+
+      - name: Install Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4  # v4.3.1
+
+      - name: Add Grafana Helm repository
+        run: helm repo add grafana https://grafana.github.io/helm-charts && helm repo update
+
+      - name: Check for new Alloy Helm chart version
+        id: check
+        run: |
+          CURRENT_VERSION=$(yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
+          LATEST_VERSION=$(helm show chart grafana/alloy | yq -r '.version')
+          echo "current=${CURRENT_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "latest=${LATEST_VERSION}" >> "${GITHUB_OUTPUT}"
+          if [ "${CURRENT_VERSION}" != "${LATEST_VERSION}" ]; then
+            echo "update_available=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "update_available=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Retrieve GitHub App credentials from Vault
+        if: steps.check.outputs.update_available == 'true'
+        id: get-secrets
+        uses: grafana/shared-workflows/actions/get-vault-secrets@28361cdb22223e5f1e34358c86c20908e7248760  # v1.1.0
+        env:
+          VAULT_REPO_SECRET_NAME: github-app
+        with:
+          repo_secrets: |
+            GITHUB_APP_ID=${{ env.VAULT_REPO_SECRET_NAME }}:app-id
+            PRIVATE_KEY=${{ env.VAULT_REPO_SECRET_NAME }}:private-key
+
+      - name: Generate GitHub App Token
+        if: steps.check.outputs.update_available == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859  # v3.0.0
+        with:
+          app-id: ${{ env.GITHUB_APP_ID }}
+          private-key: ${{ env.PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: Update Alloy Helm chart version
+        if: steps.check.outputs.update_available == 'true'
+        env:
+          LATEST_VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          cd charts/alloy-helm-chart
+          yq eval '.version = strenv(LATEST_VERSION)' -i Chart.yaml
+          yq eval '.dependencies[0].version = strenv(LATEST_VERSION)' -i Chart.yaml
+
+      - name: Bump Alloy Operator chart version
+        if: steps.check.outputs.update_available == 'true'
+        env:
+          LATEST_VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          CURRENT_OPERATOR_VERSION=$(yq '.version' charts/alloy-operator/Chart.yaml)
+          MAJOR=$(echo "${CURRENT_OPERATOR_VERSION}" | cut -d. -f1)
+          MINOR=$(echo "${CURRENT_OPERATOR_VERSION}" | cut -d. -f2)
+          PATCH=$(echo "${CURRENT_OPERATOR_VERSION}" | cut -d. -f3)
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
+          echo "NEW_OPERATOR_VERSION=${NEW_VERSION}" >> "${GITHUB_ENV}"
+
+          yq eval ".version = \"${NEW_VERSION}\"" -i charts/alloy-operator/Chart.yaml
+          yq eval ".appVersion = \"${LATEST_VERSION}\"" -i charts/alloy-operator/Chart.yaml
+
+      - name: Update changelog
+        if: steps.check.outputs.update_available == 'true'
+        env:
+          LATEST_VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          ENTRY="## ${NEW_OPERATOR_VERSION}\n\n* Update Alloy to ${LATEST_VERSION}\n"
+          sed -i "s/^# Changelog$/# Changelog\n\n${ENTRY}/" charts/alloy-operator/CHANGELOG.md
+
+      - name: Download new Alloy Helm chart
+        if: steps.check.outputs.update_available == 'true'
+        run: cd charts/alloy-helm-chart && helm dependency update
+
+      - name: Rebuild generated files
+        if: steps.check.outputs.update_available == 'true'
+        run: |
+          make build-charts
+          make README.md
+
+      - name: Create pull request
+        if: steps.check.outputs.update_available == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          LATEST_VERSION: ${{ steps.check.outputs.latest }}
+        run: |
+          BRANCH="update-alloy-${LATEST_VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git checkout -b "${BRANCH}"
+          git add -A
+          git commit -m "Update Alloy to ${LATEST_VERSION}"
+          git push --set-upstream origin "${BRANCH}"
+          gh pr create \
+            --title "Update Alloy to ${LATEST_VERSION}" \
+            --body "Updates the Alloy Helm chart dependency to version ${LATEST_VERSION} and bumps the Alloy Operator chart to ${NEW_OPERATOR_VERSION}."
