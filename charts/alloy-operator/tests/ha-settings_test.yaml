@@ -1,0 +1,94 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - HA Settings
+templates:
+  - deployment.yaml
+  - pdb.yaml
+tests:
+  - it: does not create a PDB by default
+    template: pdb.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: creates a PDB with minAvailable
+    template: pdb.yaml
+    set:
+      podDisruptionBudget:
+        minAvailable: 1
+    asserts:
+      - containsDocument:
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          name: RELEASE-NAME-alloy-operator
+      - equal:
+          path: spec.minAvailable
+          value: 1
+      - isNull:
+          path: spec.maxUnavailable
+
+  - it: creates a PDB with maxUnavailable
+    template: pdb.yaml
+    set:
+      podDisruptionBudget:
+        maxUnavailable: 1
+    asserts:
+      - containsDocument:
+          apiVersion: policy/v1
+          kind: PodDisruptionBudget
+          name: RELEASE-NAME-alloy-operator
+      - equal:
+          path: spec.maxUnavailable
+          value: 1
+      - isNull:
+          path: spec.minAvailable
+
+  - it: PDB uses correct selector labels
+    template: pdb.yaml
+    set:
+      podDisruptionBudget:
+        minAvailable: 1
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/name"]
+          value: alloy-operator
+      - equal:
+          path: spec.selector.matchLabels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+
+  - it: PDB respects namespace override
+    template: pdb.yaml
+    set:
+      podDisruptionBudget:
+        minAvailable: 1
+      namespaceOverride: custom-ns
+    asserts:
+      - equal:
+          path: metadata.namespace
+          value: custom-ns
+
+  - it: does not set topologySpreadConstraints by default
+    template: deployment.yaml
+    asserts:
+      - isNull:
+          path: spec.template.spec.topologySpreadConstraints
+
+  - it: can set topologySpreadConstraints
+    template: deployment.yaml
+    set:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: alloy-operator
+    asserts:
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].maxSkew
+          value: 1
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].topologyKey
+          value: kubernetes.io/hostname
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].whenUnsatisfiable
+          value: DoNotSchedule

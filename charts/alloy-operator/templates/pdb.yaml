@@ -1,0 +1,19 @@
+{{- if .Values.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "alloy-operator.fullname" . }}
+  namespace: {{ include "alloy-operator.namespace" . }}
+  labels:
+    {{- include "alloy-operator.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  {{- with .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "alloy-operator.selectorLabels" . | nindent 6 }}
+{{- end }}

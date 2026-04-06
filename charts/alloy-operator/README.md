@@ -39,10 +39,12 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | affinity | object | `{}` | Set the affinity for the Alloy Operator pods. |
 | nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Set the node selector for the Alloy Operator pods. |
 | podAnnotations | object | `{}` | Additional annotations to add to the Alloy Operator pods. |
+| podDisruptionBudget | object | `{}` | Configure a PodDisruptionBudget for the Alloy Operator pods. |
 | podLabels | object | `{}` | Additional labels to add to the Alloy Operator pods. |
 | podSecurityContext | object | `{"runAsNonRoot":true}` | Set the security context for the Alloy Operator pods. |
 | priorityClassName | string | `""` | Sets the priority class name for the Alloy Operator pods. |
 | tolerations | list | `[]` | Set the tolerations for the Alloy Operator pods. |
+| topologySpreadConstraints | list | `[]` | Set the topology spread constraints for the Alloy Operator pods. |
 
 ### CRDs
 

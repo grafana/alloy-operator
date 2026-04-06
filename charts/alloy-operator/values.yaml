@@ -184,6 +184,16 @@ tolerations: []
 # @section -- Pod Settings
 affinity: {}
 
+# -- Set the topology spread constraints for the Alloy Operator pods.
+# @section -- Pod Settings
+topologySpreadConstraints: []
+
+# -- Configure a PodDisruptionBudget for the Alloy Operator pods.
+# @section -- Pod Settings
+podDisruptionBudget: {}
+# minAvailable: 1
+# maxUnavailable: 1
+
 serviceMonitor:
   # -- Whether to create a ServiceMonitor
   # @section -- Service Monitor

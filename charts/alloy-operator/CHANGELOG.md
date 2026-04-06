@@ -3,6 +3,7 @@
 ## 0.5.3
 
 * Update Alloy to 1.7.0 (@petewall)
+* Add support for PodDisruptionBudget and topologySpreadConstraints (@petewall)
 * Add the ability to use global.imageRegistry instead of global.image.registry (@petewall)
 
 ## 0.5.2
