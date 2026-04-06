@@ -45,7 +45,7 @@ endif
 ##@ Build
 
 .PHONY: build
-build: README.md charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz build-image build-charts build-test-chart
+build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz README.md build-image build-charts build-test-chart
 
 UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
@@ -89,7 +89,7 @@ charts/alloy-operator/Chart.yaml: charts/alloy-helm-chart/Chart.yaml
 TABLE_START := $(shell grep --line-number "Version table start" README.md | sed -e "s/^\([0-9]*\):.*/\1/")
 TABLE_END := $(shell grep --line-number "Version table end" README.md | sed -e "s/^\([0-9]*\):.*/\1/")
 README_LENGTH := $(shell wc -l < README.md)
-README.md: charts/alloy-operator/Chart.yaml charts/alloy-helm-chart/Chart.yaml
+README.md: charts/alloy-operator/Chart.yaml charts/alloy-helm-chart/Chart.yaml charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
 	@head -n $(TABLE_START) $@ > $@.temp
 	@echo "" >> $@.temp
 	@echo "| Component        | Version |" >> $@.temp
