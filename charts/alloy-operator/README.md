@@ -59,26 +59,28 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 |-----|------|---------|-------------|
 | extraArgs | list | `[]` | Additional arguments to pass to the Alloy Operator. |
 
+### Deployment Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| fullnameOverride | string | `""` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
+| global.namespaceOverride | string | `""` | Global namespace override. When set, all resources will be deployed to this namespace instead of the Helm release namespace. Takes lower precedence than `namespaceOverride`. |
+| nameOverride | string | `""` | Overrides the chart's name. Used to change the infix in the resource names. |
+| namespaceOverride | string | `""` | Overrides the namespace for all resources deployed by this chart. When empty, resources are deployed to the Helm release namespace. |
+| replicaCount | int | `1` | How many replicas to use for the Alloy Operator Deployment. |
+
 ### Image Settings
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.image.pullSecrets | list | `[]` | Global image pull secrets. |
-| global.image.registry | string | `""` | Global image registry override. |
+| global.imageRegistry | string | `""` | Global image registry override. |
 | image.digest | string | `""` | Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;. |
 | image.pullPolicy | string | `"IfNotPresent"` | The pull policy for images. |
 | image.pullSecrets | list | `[]` | Optional set of image pull secrets. |
 | image.registry | string | `"ghcr.io"` | Alloy Operator image registry |
 | image.repository | string | `"grafana/alloy-operator"` | Alloy Operator image repository |
 | image.tag | string | `""` | Alloy Operator image tag. When empty, the Chart's appVersion is used. |
-
-### Deployment Settings
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| global.namespaceOverride | string | `""` | Global namespace override. When set, all resources will be deployed to this namespace instead of the Helm release namespace. Takes lower precedence than `namespaceOverride`. |
-| namespaceOverride | string | `""` | Overrides the namespace for all resources deployed by this chart. When empty, resources are deployed to the Helm release namespace. |
-| replicaCount | int | `1` | How many replicas to use for the Alloy Operator Deployment. |
 
 ### Leader Election Settings
 
@@ -150,10 +152,3 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | serviceMonitor.scrapeTimeout | string | `"10s"` | Set timeout for scrape |
 | serviceMonitor.targetLabels | list | `[]` | Set of labels to transfer from the Kubernetes Service onto the target |
 | serviceMonitor.telemetryPath | string | `"/metrics"` | Set path to metrics path |
-
-### Other Values
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| fullnameOverride | string | `""` | Overrides the chart's computed fullname. Used to change the full prefix of resource names. |
-| nameOverride | string | `""` | Overrides the chart's name. Used to change the infix in the resource names. |

@@ -1,8 +1,10 @@
 ---
 # -- Overrides the chart's name. Used to change the infix in the resource names.
+# @section -- Deployment Settings
 nameOverride: ""
 # -- Overrides the chart's computed fullname. Used to change the full prefix of
 # resource names.
+# @section -- Deployment Settings
 fullnameOverride: ""
 # -- Overrides the namespace for all resources deployed by this chart. When empty,
 # resources are deployed to the Helm release namespace.
@@ -15,11 +17,11 @@ global:
   # @section -- Deployment Settings
   namespaceOverride: ""
 
-  image:
-    # -- Global image registry override.
-    # @section -- Image Settings
-    registry: ""
+  # -- Global image registry override.
+  # @section -- Image Settings
+  imageRegistry: ""
 
+  image:
     # -- Global image pull secrets.
     # @section -- Image Settings
     pullSecrets: []

@@ -40,7 +40,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.global.image.registry | default .Values.image.registry }}/{{ .Values.image.repository }}{{ include "alloy-operator.imageIdentifier" . }}"
+          image: "{{ include "alloy-operator.imageRegistry" . }}/{{ .Values.image.repository }}{{ include "alloy-operator.imageIdentifier" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --health-probe-bind-address=:{{ .Values.service.health.port }}

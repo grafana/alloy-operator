@@ -1,0 +1,40 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Image Settings
+templates:
+  - deployment.yaml
+tests:
+  - it: uses the default image registry
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^ghcr\\.io/grafana/alloy-operator:"
+
+  - it: uses global.imageRegistry to override the image registry
+    set:
+      global:
+        imageRegistry: my-registry.example.com
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^my-registry\\.example\\.com/grafana/alloy-operator:"
+
+  - it: uses global.image.registry for backwards compatibility
+    set:
+      global:
+        image:
+          registry: old-registry.example.com
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^old-registry\\.example\\.com/grafana/alloy-operator:"
+
+  - it: prefers global.imageRegistry over global.image.registry
+    set:
+      global:
+        imageRegistry: preferred-registry.example.com
+        image:
+          registry: old-registry.example.com
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^preferred-registry\\.example\\.com/grafana/alloy-operator:"

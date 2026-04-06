@@ -30,11 +30,11 @@
                     "properties": {
                         "pullSecrets": {
                             "type": "array"
-                        },
-                        "registry": {
-                            "type": "string"
                         }
                     }
+                },
+                "imageRegistry": {
+                    "type": "string"
                 },
                 "namespaceOverride": {
                     "type": "string"

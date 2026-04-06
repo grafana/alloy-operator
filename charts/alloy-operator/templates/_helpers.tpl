@@ -56,6 +56,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- .Values.namespaceOverride | default ((.Values.global).namespaceOverride) | default .Release.Namespace -}}
 {{- end }}
 
+{{/* Calculate the image registry to use */}}
+{{- define "alloy-operator.imageRegistry" -}}
+{{- ((.Values.global).imageRegistry) | default (((.Values.global).image).registry) | default .Values.image.registry -}}
+{{- end -}}
+
 {{/* Calculate the image identifier to use */}}
 {{- define "alloy-operator.imageIdentifier" -}}
 {{- if .Values.image.digest }}
