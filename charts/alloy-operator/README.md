@@ -5,7 +5,7 @@
 
 # alloy-operator
 
-![Version: 0.5.3](https://img.shields.io/badge/Version-0.5.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
+![Version: 0.5.4](https://img.shields.io/badge/Version-0.5.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.7.0](https://img.shields.io/badge/AppVersion-1.7.0-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -73,6 +73,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.image.pullPolicy | string | `""` | Global image pull policy override. |
 | global.image.pullSecrets | list | `[]` | Global image pull secrets. |
 | global.imageRegistry | string | `""` | Global image registry override. |
 | image.digest | string | `""` | Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;. |

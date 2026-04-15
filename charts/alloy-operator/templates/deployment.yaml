@@ -41,7 +41,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ include "alloy-operator.imageRegistry" . }}/{{ .Values.image.repository }}{{ include "alloy-operator.imageIdentifier" . }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default .Values.image.pullPolicy }}
           args:
             - --health-probe-bind-address=:{{ .Values.service.health.port }}
             - --metrics-bind-address=:{{ .Values.service.metrics.port }}
