@@ -21,6 +21,10 @@ global:
   # @section -- Image Settings
   imageRegistry: ""
 
+  # -- Global image pull policy override.
+  # @section -- Image Settings
+  imagePullPolicy: ""
+
   image:
     # -- Global image pull secrets.
     # @section -- Image Settings

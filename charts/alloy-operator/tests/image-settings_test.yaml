@@ -28,6 +28,41 @@ tests:
           path: spec.template.spec.containers[0].image
           pattern: "^old-registry\\.example\\.com/grafana/alloy-operator:"
 
+  - it: uses the default image pull policy
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent
+
+  - it: uses image.pullPolicy to override the image pull policy
+    set:
+      image:
+        pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: uses global.imagePullPolicy to override the image pull policy
+    set:
+      global:
+        imagePullPolicy: Never
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Never
+
+  - it: prefers global.imagePullPolicy over image.pullPolicy
+    set:
+      global:
+        imagePullPolicy: Always
+      image:
+        pullPolicy: Never
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
   - it: prefers global.imageRegistry over global.image.registry
     set:
       global:

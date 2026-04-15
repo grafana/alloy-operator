@@ -28,6 +28,9 @@
                 "image": {
                     "type": "object",
                     "properties": {
+                        "pullPolicy": {
+                            "type": "string"
+                        },
                         "pullSecrets": {
                             "type": "array"
                         }
@@ -107,6 +110,9 @@
             "type": "boolean"
         },
         "podAnnotations": {
+            "type": "object"
+        },
+        "podDisruptionBudget": {
             "type": "object"
         },
         "podLabels": {
@@ -283,17 +289,6 @@
         },
         "topologySpreadConstraints": {
             "type": "array"
-        },
-        "podDisruptionBudget": {
-            "type": "object",
-            "properties": {
-                "maxUnavailable": {
-                    "type": ["integer", "string"]
-                },
-                "minAvailable": {
-                    "type": ["integer", "string"]
-                }
-            }
         }
     }
 }
