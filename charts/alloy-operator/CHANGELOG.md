@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.5
+
+* Update Alloy to 1.8.0 (@petewall)
+
 ## 0.5.4
 
 * Add support for global.imagePullPolicy (@petewall)
