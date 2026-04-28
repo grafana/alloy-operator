@@ -17,7 +17,13 @@ tests:
                 - serviceaccounts
                 - services
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - apps
               resources:
@@ -25,26 +31,50 @@ tests:
                 - deployments
                 - statefulsets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - autoscaling
               resources:
                 - horizontalpodautoscalers
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - networking.k8s.io
               resources:
                 - ingresses
                 - networkpolicies
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - policy
               resources:
                 - poddisruptionbudgets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - rbac.authorization.k8s.io
               resources:
@@ -53,7 +83,15 @@ tests:
                 - roles
                 - rolebindings
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
+                - bind
+                - escalate
       - documentIndex: 1
         equal:
           path: roleRef
@@ -86,7 +124,13 @@ tests:
                 - serviceaccounts
                 - services
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - apps
               resources:
@@ -94,32 +138,62 @@ tests:
                 - deployments
                 - statefulsets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - autoscaling
               resources:
                 - horizontalpodautoscalers
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - autoscaling.k8s.io
               resources:
                 - verticalpodautoscalers
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - networking.k8s.io
               resources:
                 - ingresses
                 - networkpolicies
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - policy
               resources:
                 - poddisruptionbudgets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - rbac.authorization.k8s.io
               resources:
@@ -128,7 +202,15 @@ tests:
                 - roles
                 - rolebindings
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
+                - bind
+                - escalate
 
   - it: can deploy ServiceMonitors if the cluster supports them
     capabilities:
@@ -147,7 +229,13 @@ tests:
                 - serviceaccounts
                 - services
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - apps
               resources:
@@ -155,32 +243,62 @@ tests:
                 - deployments
                 - statefulsets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - autoscaling
               resources:
                 - horizontalpodautoscalers
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - monitoring.coreos.com
               resources:
                 - servicemonitors
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - networking.k8s.io
               resources:
                 - ingresses
                 - networkpolicies
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - policy
               resources:
                 - poddisruptionbudgets
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
             - apiGroups:
                 - rbac.authorization.k8s.io
               resources:
@@ -189,7 +307,15 @@ tests:
                 - roles
                 - rolebindings
               verbs:
-                - '*'
+                - get
+                - list
+                - watch
+                - create
+                - update
+                - patch
+                - delete
+                - bind
+                - escalate
 
   - it: creates multiple alloy-objects Roles when using the namespaces option
     set:
