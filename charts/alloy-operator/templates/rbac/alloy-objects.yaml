@@ -2,39 +2,45 @@
 # Rules which allow the management of ConfigMaps, ServiceAccounts, and Services.
 - apiGroups: [""]
   resources: ["configmaps", "secrets", "serviceaccounts", "services"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 # Rules which allow the management of DaemonSets, Deployments, and StatefulSets.
 - apiGroups: ["apps"]
   resources: ["daemonsets", "deployments", "statefulsets"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 # Rules which allow the management of Horizontal Pod Autoscalers.
 - apiGroups: ["autoscaling"]
   resources: ["horizontalpodautoscalers"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- if .Capabilities.APIVersions.Has "autoscaling.k8s.io/v1" }}
 # Rules which allow the management of VerticalPodAutoscalers.
 - apiGroups: ["autoscaling.k8s.io"]
   resources: ["verticalpodautoscalers"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 {{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" }}
 # Rules which allow the management of ServiceMonitor.
 - apiGroups: ["monitoring.coreos.com"]
   resources: ["servicemonitors"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 {{- end }}
 # Rules which allow the management of Ingresses and NetworkPolicies.
 - apiGroups: ["networking.k8s.io"]
   resources: ["ingresses", "networkpolicies"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 # Rules which allow the management of PodDisruptionBudgets.
 - apiGroups: ["policy"]
   resources: ["poddisruptionbudgets"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 # Rules which allow the management of ClusterRoles, ClusterRoleBindings, Roles, and RoleBindings.
+# `bind` and `escalate` are required so the operator can create ClusterRoles/Roles for the Alloy
+# instances it manages. Kubernetes' privilege-escalation prevention requires the creator to either
+# already hold every permission it grants, or to have `escalate` (for roles) and `bind` (for
+# rolebindings). The operator's role doesn't enumerate every permission Alloy ever needs, so these
+# two verbs are required for the operator to function. `impersonate` and other dangerous verbs are
+# intentionally omitted.
 - apiGroups: ["rbac.authorization.k8s.io"]
   resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
-  verbs: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete", "bind", "escalate"]
 {{- end }}
 
 {{- if .Values.rbac.create }}
