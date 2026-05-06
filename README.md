@@ -11,9 +11,9 @@ The Alloy Operator is a Kubernetes Operator that manages the lifecycle of
 
 | Component        | Version |
 |------------------|---------|
-| Alloy Operator   | 0.5.6 |
-| Alloy Helm chart | 1.8.0 |
-| Alloy binary     | v1.16.0 |
+| Alloy Operator   | 0.5.7 |
+| Alloy Helm chart | 1.8.1 |
+| Alloy binary     | v1.16.1 |
 
 [//]: # (Version table end)
 
@@ -74,3 +74,17 @@ NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support t
 
 We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more
 information.
+
+### Updating the Alloy version
+
+The Alloy Operator embeds a specific version of Alloy by default. The Alloy Operator Helm chart's `appVersion` matches
+the Alloy Helm chart's version. See [current version](#current-version) for the specifics. To update the embedded Alloy
+version, run the script: `./scripts/update-alloy.sh`. Make sure to bump the Alloy Operator version and `make clean build test`
+
+### Releasing Alloy Operator
+
+1. Set a new Alloy Operator chart version
+2. Remake generated files with `make clean build test`
+3. Make sure all changes are represented in the CHANGELOG.md.
+4. Commit, create PR, merge to main
+5. Run the "Release Alloy Operator Helm chart" GitHub action.

@@ -3,7 +3,6 @@ HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
 
-LATEST_ALLOY_HELM_CHART_VERSION = $(shell helm show chart grafana/alloy | yq -r '.version')
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 ALLOY_BINARY_VERSION := $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
 ALLOY_OPERATOR_IMAGE = ghcr.io/grafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
@@ -31,16 +30,8 @@ help: ## Display this help.
 charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz:
 	cd charts/alloy-helm-chart && helm dependency update
 
-.PHONY: update-alloy-to-latest
-update-alloy-to-latest: ## Updates the Alloy chart to the latest version in the Helm repository
-ifneq ($(ALLOY_HELM_CHART_VERSION),$(LATEST_ALLOY_HELM_CHART_VERSION))
-	@echo "Upgrading Alloy from $(ALLOY_HELM_CHART_VERSION) to $(LATEST_ALLOY_HELM_CHART_VERSION)"
-	cd charts/alloy-helm-chart && \
-		yq eval '.version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' -i Chart.yaml && \
-		yq eval '.dependencies[0].version = "$(LATEST_ALLOY_HELM_CHART_VERSION)"' -i Chart.yaml
-else
-	@echo "Alloy is already at the latest version ($(ALLOY_HELM_CHART_VERSION))"
-endif
+.PHONY: fetch-alloy-chart
+fetch-alloy-chart: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
 
 ##@ Build
 

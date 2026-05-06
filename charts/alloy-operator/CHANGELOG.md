@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.7
+
+* Update Alloy Operator base image to operator-framework/helm-operator:v1.42.2 (@petewall)
+* Update Alloy to 1.8.1 (@petewall)
+
 ## 0.5.6
 
 * Replace wildcard (`*`) verbs in the alloy-objects RBAC rules with an explicit verb list. The rendered ClusterRole/Role no longer grants `impersonate` (or any future verbs Kubernetes adds) on `rbac.authorization.k8s.io` resources. `bind` and `escalate` are still granted because the operator needs them to create the ClusterRoles/RoleBindings that managed Alloy instances require (@petewall)
