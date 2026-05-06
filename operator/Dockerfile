@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/helm-operator:v1.42.0@sha256:102abedc1eb4ece4187eab36107cb3176e672ff6bf17d64396cd903ce13affa0
+FROM quay.io/operator-framework/helm-operator:v1.42.2@sha256:3791825677f659e93bf8a4728d326cb26668be8456d32312c5d7a30aef27b1c0
 
 LABEL org.opencontainers.image.source=https://github.com/grafana/alloy-operator
 LABEL org.opencontainers.image.description="Alloy Operator container image"
