@@ -6,12 +6,13 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
+
 ---
 # Source: alloy-operator/templates/rbac/alloy-manager.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -19,10 +20,10 @@ kind: ClusterRole
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -83,10 +84,10 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -96,6 +97,7 @@ subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
     namespace: operator
+
 ---
 # Source: alloy-operator/templates/rbac/alloy-objects.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -103,10 +105,10 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -116,6 +118,7 @@ subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
     namespace: operator
+
 ---
 # Source: alloy-operator/templates/rbac/leader-election.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -124,10 +127,10 @@ metadata:
   name: test-alloy-operator-leader-election-role
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -169,10 +172,10 @@ metadata:
   name: test-alloy-operator-leader-election-rolebinding
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -182,6 +185,7 @@ subjects:
   - kind: ServiceAccount
     name: test-alloy-operator
     namespace: operator
+
 ---
 # Source: alloy-operator/templates/service.yaml
 apiVersion: v1
@@ -190,10 +194,10 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -209,6 +213,7 @@ spec:
   selector:
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
+
 ---
 # Source: alloy-operator/templates/deployment.yaml
 apiVersion: apps/v1
@@ -217,10 +222,10 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.7
+    helm.sh/chart: alloy-operator-0.5.8
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.1"
+    app.kubernetes.io/version: "1.8.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -231,10 +236,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: alloy-operator-0.5.7
+        helm.sh/chart: alloy-operator-0.5.8
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: test
-        app.kubernetes.io/version: "1.8.1"
+        app.kubernetes.io/version: "1.8.2"
         app.kubernetes.io/managed-by: Helm
     spec:
       serviceAccountName: test-alloy-operator
