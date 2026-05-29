@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.8
+
+* Update Alloy to 1.8.2 (@petewall)
+
 ## 0.5.7
 
 * Update Alloy Operator base image to operator-framework/helm-operator:v1.42.2 (@petewall)
