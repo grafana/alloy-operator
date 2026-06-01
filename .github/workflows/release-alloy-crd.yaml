@@ -5,23 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  get-helm-charts-token:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    outputs:
-      token: ${{ steps.get-github-app-token.outputs.token }}
-    steps:
-      - name: Get GitHub App token
-        id: get-github-app-token
-        uses: grafana/shared-workflows/actions/create-github-app-token@ae92934a14a48b94494dbc06d74a81d47fe08a40 # create-github-app-token/v0.2.2
-        with:
-          github_app: alloy-operator
-
   release:
-    needs: get-helm-charts-token
-    uses: grafana/helm-charts/.github/workflows/update-helm-repo.yaml@fa81478435d74d219108506981c03827715068bc
+    uses: grafana/helm-charts/.github/workflows/update-helm-repo.yaml@d7c4f4491dbe46d853833cd15a35159c28061f39
     permissions:
       contents: write
       id-token: write
@@ -30,5 +15,4 @@ jobs:
       charts_dir: charts
       cr_configfile: cr.yaml
       ct_configfile: charts/alloy-crd/ct.yaml
-    secrets:
-      helm_repo_token: ${{ needs.get-helm-charts-token.outputs.token }}
+      github_app: alloy-operator
