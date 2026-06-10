@@ -6,8 +6,8 @@ icon: https://raw.githubusercontent.com/grafana/grafana/main/public/img/grafana_
 sources:
   - https://github.com/grafana/alloy-operator
 type: application
-version: 0.5.8
-appVersion: "1.8.2"
+version: 0.5.9
+appVersion: "1.9.0"
 maintainers:
   - email: pete.wall@grafana.com
     name: petewall

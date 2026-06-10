@@ -6,10 +6,10 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 
@@ -20,10 +20,10 @@ kind: ClusterRole
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -84,10 +84,10 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -105,10 +105,10 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -127,10 +127,10 @@ metadata:
   name: test-alloy-operator-leader-election-role
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -172,10 +172,10 @@ metadata:
   name: test-alloy-operator-leader-election-rolebinding
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -194,10 +194,10 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -222,10 +222,10 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.8
+    helm.sh/chart: alloy-operator-0.5.9
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
-    app.kubernetes.io/version: "1.8.2"
+    app.kubernetes.io/version: "1.9.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -236,10 +236,10 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: alloy-operator-0.5.8
+        helm.sh/chart: alloy-operator-0.5.9
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: test
-        app.kubernetes.io/version: "1.8.2"
+        app.kubernetes.io/version: "1.9.0"
         app.kubernetes.io/managed-by: Helm
     spec:
       serviceAccountName: test-alloy-operator
@@ -247,7 +247,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: alloy-operator
-          image: "ghcr.io/grafana/alloy-operator:1.8.2"
+          image: "ghcr.io/grafana/alloy-operator:1.9.0"
           imagePullPolicy: IfNotPresent
           args:
             - --health-probe-bind-address=:8081
