@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.10
+
+* Update Alloy to 1.10.0 (@petewall)
+
+## 0.5.9
+
+* Update Alloy to 1.9.0 (@petewall)
+
 ## 0.5.8
 
 * Update Alloy to 1.8.2 (@petewall)
