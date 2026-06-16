@@ -1,0 +1,324 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/grafana/alloy-operator/.vex/alloy-operator.openvex.json",
+  "author": "Grafana Alloy Operator maintainers",
+  "role": "Project maintainers",
+  "timestamp": "2026-06-16T00:00:00Z",
+  "last_updated": "2026-06-16T00:00:00Z",
+  "version": 1,
+  "tooling": "Reachability for Go entries assessed with govulncheck (binary mode); see .vex/README.md",
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2026-33845"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/gnutls@3.8.3-10.el9_7?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. GnuTLS DTLS DoS: the Go binary uses Go's crypto/tls, not GnuTLS."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-33846"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/gnutls@3.8.3-10.el9_7?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. GnuTLS DTLS heap overflow: the Go binary uses Go's crypto/tls, not GnuTLS."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-42009"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/gnutls@3.8.3-10.el9_7?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. GnuTLS DTLS reordering DoS: the Go binary uses Go's crypto/tls, not GnuTLS."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-42010"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/gnutls@3.8.3-10.el9_7?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. GnuTLS NUL-in-username auth bypass: the Go binary uses Go's crypto/tls, not GnuTLS."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-4111"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/libarchive@3.5.3-6.el9_6?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. libarchive RAR5 DoS: the Go binary uses Go's archive/tar, not libarchive, and processes no RAR archives."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-4424"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/libarchive@3.5.3-6.el9_6?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. libarchive RAR OOB read: the Go binary uses Go's archive/tar, not libarchive, and processes no RAR archives."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-4878"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/libcap@2.48-10.el9?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. libcap cap_set_file TOCTOU: the operator never shells out to setcap or calls cap_set_file."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-27135"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/libnghttp2@1.43.0-6.el9?arch=x86_64&distro=redhat-9.7"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. nghttp2 HTTP/2 DoS: the Go binary uses Go's net/http2, not libnghttp2."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-45447"
+      },
+      "products": [
+        {
+          "@id": "pkg:rpm/redhat/openssl-libs@3.5.1-7.el9_7?arch=x86_64&distro=redhat-9.7&epoch=1"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "The only process in this image is the statically linked, CGO_ENABLED=0 Go helm-operator binary (verified via `go version -m`); it does not dynamically link or invoke this RPM. The package ships in the UBI base filesystem but is never loaded or executed by the operator. OpenSSL PKCS7_verify UAF: the Go binary uses Go's crypto, not openssl-libs."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-35469"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/github.com/moby/spdystream@v0.5.0"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. SPDY DoS: spdystream is exercised only by client-go exec/attach/port-forward streaming, which this operator never initiates; any SPDY peer would be the trusted API server."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-32280"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. crypto/x509 chain-building DoS requires parsing an attacker-supplied certificate chain; the only certificates verified are the API server's, issued by the cluster CA."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-32281"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. crypto/x509 policy-validation DoS requires an attacker-supplied certificate chain; the only certificates verified are the API server's, issued by the cluster CA."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-32283"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. crypto/tls TLS 1.3 KeyUpdate DoS requires a malicious TLS peer; the operator's only TLS peer is the trusted API server."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-33811"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. net DNS CNAME crash requires a malicious DNS response; resolution is served by trusted in-cluster CoreDNS for cluster service names."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-33814"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. x/net HTTP/2 transport infinite loop requires connecting to a malicious HTTP/2 server; the operator's HTTP/2 client talks only to the trusted API server."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-39820"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. net/mail quadratic-parse DoS requires untrusted RFC 5322 message input; the operator parses no email/MIME."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-39823"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. html/template XSS only matters when output is served as HTML to a browser; rendered output is Kubernetes YAML manifests, never HTML."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-39836"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "Panic in net.Dial/LookupPort on a NUL byte affects only GOOS=windows; this image is GOOS=linux/amd64, so the vulnerable code path cannot execute."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-42499"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. net/mail quadratic-parse DoS requires untrusted RFC 5322 message input; the operator parses no email/MIME."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-42504"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. mime WordDecoder.DecodeHeader quadratic DoS requires untrusted MIME-encoded header input; the operator decodes no untrusted MIME."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-39825"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/stdlib@v1.25.8"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "govulncheck (binary mode) reports the vulnerable net/http/httputil ReverseProxy symbols are not reachable from this binary; the operator runs no reverse proxy."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-46680"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/github.com/containerd/containerd@v1.7.29"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "containerd runAsNonRoot/user-ID-handling bypass affects the CRI container-runtime code path; the helm-operator vendors containerd transitively but is not a container runtime and never resolves container user IDs."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-29181"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/go.opentelemetry.io/otel@v1.40.0"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_cannot_be_controlled_by_adversary",
+      "impact_statement": "The operator's only network peer is the trusted in-cluster Kubernetes API server (and, for DNS, in-cluster CoreDNS); it accepts no connections from and sends no requests to attacker-controlled endpoints. OpenTelemetry-Go baggage-header DoS requires processing crafted inbound baggage headers; the operator's OTel use is outbound (its own telemetry) and exposes no endpoint parsing untrusted baggage."
+    },
+    {
+      "vulnerability": {
+        "name": "CVE-2026-39883"
+      },
+      "products": [
+        {
+          "@id": "pkg:golang/go.opentelemetry.io/otel/sdk@v1.40.0"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "impact_statement": "OpenTelemetry-Go PATH-hijacking RCE affects only GOOS=bsd/solaris resource detectors; this image is GOOS=linux, so the vulnerable code path cannot execute."
+    }
+  ]
+}
