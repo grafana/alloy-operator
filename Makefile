@@ -2,6 +2,7 @@ HAS_ACTIONLINT := $(shell command -v actionlint;)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
+HAS_TRIVY := $(shell command -v trivy;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 ALLOY_BINARY_VERSION := $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
@@ -136,6 +137,18 @@ clean: ## Clean up build artifacts.
 .PHONY: test
 test: ## Run all tests.
 	make -C charts/alloy-operator test
+
+.PHONY: scan
+scan: ## Build the operator image and scan it for HIGH/CRITICAL CVEs.
+	docker buildx build --platform linux/amd64 --load --tag ${ALLOY_OPERATOR_IMAGE} operator
+ifdef HAS_TRIVY
+	trivy image --scanners vuln --severity HIGH,CRITICAL --ignorefile .trivyignore ${ALLOY_OPERATOR_IMAGE}
+else
+	docker run --rm \
+		--volume /var/run/docker.sock:/var/run/docker.sock \
+		--volume $(shell pwd)/.trivyignore:/.trivyignore \
+		aquasec/trivy:latest image --scanners vuln --severity HIGH,CRITICAL --ignorefile /.trivyignore ${ALLOY_OPERATOR_IMAGE}
+endif
 
 .PHONY: lint
 lint: lint-yaml lint-markdown lint-actionlint lint-zizmor ## Runs all linters.

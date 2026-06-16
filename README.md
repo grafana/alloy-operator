@@ -75,6 +75,26 @@ NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support t
 We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more
 information.
 
+### Security scanning
+
+The operator image is scanned for known vulnerabilities (CVEs) with
+[Trivy](https://trivy.dev/). The **CVE Scan** GitHub Action builds the image and scans it on every pull
+request that touches `operator/**`, on pushes to `main`, and weekly (to catch CVEs newly disclosed against
+the pinned base image). Findings are published to the repository's **Security → Code scanning** tab, and the
+job fails if a HIGH or CRITICAL CVE appears that is not already triaged.
+
+To scan locally, run `make scan` (requires `trivy`, or falls back to the Trivy container image).
+
+Because the operator image is a thin layer over the upstream
+[`operator-framework/helm-operator`](https://quay.io/repository/operator-framework/helm-operator) base image,
+essentially all findings originate from that base image. To resolve a CVE:
+
+1. **Bump the base image** digest in [`operator/Dockerfile`](operator/Dockerfile) to a newer `helm-operator`
+   release that ships the fix. This is the real fix, and Renovate opens these digest-bump PRs automatically.
+2. **Triage it** in [`.trivyignore`](.trivyignore) if no fixed base image exists yet — add the CVE ID with a
+   short note so the scan stays green while the finding is tracked. Re-check and prune `.trivyignore` whenever
+   the base image is bumped.
+
 ### Updating the Alloy version
 
 The Alloy Operator embeds a specific version of Alloy by default. The Alloy Operator Helm chart's `appVersion` matches
