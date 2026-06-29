@@ -5,7 +5,7 @@
 
 # alloy-operator
 
-![Version: 0.5.10](https://img.shields.io/badge/Version-0.5.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.10.0](https://img.shields.io/badge/AppVersion-1.10.0-informational?style=flat-square)
+![Version: 0.5.11](https://img.shields.io/badge/Version-0.5.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.10.0](https://img.shields.io/badge/AppVersion-1.10.0-informational?style=flat-square)
 
 A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 
@@ -14,6 +14,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | Name | Email | Url |
 | ---- | ------ | --- |
 | petewall | <pete.wall@grafana.com> |  |
+| TylerHelmuth | <tyler.helmuth@grafana.com> |  |
 
 <!-- markdownlint-disable no-bare-urls -->
 <!-- markdownlint-disable list-marker-space -->
@@ -27,7 +28,7 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 | Repository | Name | Version |
 |------------|------|---------|
 |  | podlogs-crd | 0.0.0 |
-| https://grafana.github.io/helm-charts | alloy-crd | 1.0.0 |
+| https://grafana.github.io/helm-charts | alloy-crd | 1.0.1 |
 <!-- markdownlint-enable no-bare-urls -->
 
 ## Values

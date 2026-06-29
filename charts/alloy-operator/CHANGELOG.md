@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.11
+
+* Include signed Alloy CRD chart (@petewall)
+* Include chart signing (@petewall)
+
 ## 0.5.10
 
 * Update Alloy to 1.10.0 (@petewall)
