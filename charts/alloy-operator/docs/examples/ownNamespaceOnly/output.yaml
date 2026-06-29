@@ -6,7 +6,7 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -20,7 +20,7 @@ kind: ClusterRole
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -84,7 +84,7 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator-alloy-manager
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -105,7 +105,7 @@ kind: ClusterRoleBinding
 metadata:
   name: test-alloy-operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -127,7 +127,7 @@ metadata:
   name: test-alloy-operator-leader-election-role
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -172,7 +172,7 @@ metadata:
   name: test-alloy-operator-leader-election-rolebinding
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -194,7 +194,7 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -222,7 +222,7 @@ metadata:
   name: test-alloy-operator
   namespace: operator
   labels:
-    helm.sh/chart: alloy-operator-0.5.10
+    helm.sh/chart: alloy-operator-0.5.11
     app.kubernetes.io/name: alloy-operator
     app.kubernetes.io/instance: test
     app.kubernetes.io/version: "1.10.0"
@@ -236,7 +236,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: alloy-operator-0.5.10
+        helm.sh/chart: alloy-operator-0.5.11
         app.kubernetes.io/name: alloy-operator
         app.kubernetes.io/instance: test
         app.kubernetes.io/version: "1.10.0"
