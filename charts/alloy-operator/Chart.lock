@@ -1,9 +1,9 @@
 dependencies:
 - name: alloy-crd
   repository: https://grafana.github.io/helm-charts
-  version: 1.0.0
+  version: 1.0.1
 - name: podlogs-crd
   repository: ""
   version: 0.0.0
-digest: sha256:4912a53de799c03d72164a59b5c3074b6dd0ce980db21bab30e5f84a9b84d17c
-generated: "2025-06-05T09:29:36.197717-05:00"
+digest: sha256:287a9c891b4eb51c111e3ae65dcaa258e64504d1347a046b3befee9035a47f27
+generated: "2026-06-29T13:25:22.913819-05:00"
