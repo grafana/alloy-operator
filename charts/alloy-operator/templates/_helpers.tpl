@@ -61,6 +61,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- ((.Values.global).imageRegistry) | default (((.Values.global).image).registry) | default .Values.image.registry -}}
 {{- end -}}
 
+{{/* Calculate the image pull policy to use */}}
+{{- define "alloy-operator.imagePullPolicy" -}}
+{{- ((.Values.global).imagePullPolicy) | default (((.Values.global).image).pullPolicy) | default .Values.image.pullPolicy -}}
+{{- end -}}
+
 {{/* Calculate the image identifier to use */}}
 {{- define "alloy-operator.imageIdentifier" -}}
 {{- if .Values.image.digest }}

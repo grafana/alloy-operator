@@ -74,9 +74,11 @@ A Helm chart the Alloy Operator, a project to innovate on creating instances of 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.image.pullPolicy | string | `""` | Global image pull policy override. |
 | global.image.pullSecrets | list | `[]` | Global image pull secrets. |
-| global.imagePullPolicy | string | `""` | Global image pull policy override. |
-| global.imageRegistry | string | `""` | Global image registry override. |
+| global.image.registry | string | `""` | Global image registry override. |
+| global.imagePullPolicy | string | `""` | DEPRECATED: use `global.image.pullPolicy` instead. Cannot be set at the same time as `global.image.pullPolicy`. |
+| global.imageRegistry | string | `""` | DEPRECATED: use `global.image.registry` instead. Cannot be set at the same time as `global.image.registry`. |
 | image.digest | string | `""` | Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;. |
 | image.pullPolicy | string | `"IfNotPresent"` | The pull policy for images. |
 | image.pullSecrets | list | `[]` | Optional set of image pull secrets. |

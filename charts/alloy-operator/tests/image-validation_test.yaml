@@ -1,0 +1,70 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Image Validation
+templates:
+  - image-validation.yaml
+tests:
+  - it: passes by default
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: passes when only global.image.registry is set
+    set:
+      global:
+        image:
+          registry: my-registry.example.com
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: passes when only global.imageRegistry is set
+    set:
+      global:
+        imageRegistry: my-registry.example.com
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: fails when both global.imageRegistry and global.image.registry are set
+    set:
+      global:
+        imageRegistry: my-registry.example.com
+        image:
+          registry: my-registry.example.com
+    asserts:
+      - failedTemplate:
+          errorMessage: |-
+            global.imageRegistry is deprecated and cannot be set at the same time as global.image.registry.
+            Please set only global.image.registry:
+            alloy-operator:
+              global:
+                image:
+                  registry: my-registry.example.com
+
+  - it: passes when only global.image.pullPolicy is set
+    set:
+      global:
+        image:
+          pullPolicy: Always
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: passes when only global.imagePullPolicy is set
+    set:
+      global:
+        imagePullPolicy: Always
+    asserts:
+      - notFailedTemplate: {}
+
+  - it: fails when both global.imagePullPolicy and global.image.pullPolicy are set
+    set:
+      global:
+        imagePullPolicy: Always
+        image:
+          pullPolicy: Always
+    asserts:
+      - failedTemplate:
+          errorMessage: |-
+            global.imagePullPolicy is deprecated and cannot be set at the same time as global.image.pullPolicy.
+            Please set only global.image.pullPolicy:
+            alloy-operator:
+              global:
+                image:
+                  pullPolicy: Always
