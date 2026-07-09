@@ -78,10 +78,11 @@ information.
 ### Security scanning
 
 The operator image is scanned for known vulnerabilities (CVEs) by the **CVE Scan** GitHub Action. It is
-currently **advisory and on demand** — run it manually from the **Actions** tab (or `gh workflow run
-trivy.yaml`). It reports findings but does not block PRs, because the operator image is a thin layer over a
-pinned upstream base image whose CVEs accumulate faster than the base image can be bumped; gating on them would
-keep PRs permanently red. The scan uses two complementary scanners:
+**advisory** — it reports findings but does not fail the build or block PRs, because the operator image is a
+thin layer over a pinned upstream base image whose CVEs accumulate faster than the base image can be bumped;
+gating on them would keep PRs permanently red. It runs on pull requests that touch `operator/**`, the workflow,
+or the [VEX ledger](.vex/); on pushes to `main`; weekly; and on demand from the **Actions** tab (or `gh
+workflow run trivy.yaml`). The scan uses two complementary scanners:
 
 * **[Trivy](https://trivy.dev/)** matches package versions across the whole image (UBI RPMs and the bundled Go
   binary). Findings justified in the VEX ledger are suppressed, so what surfaces is the set still needing
@@ -92,8 +93,8 @@ keep PRs permanently red. The scan uses two complementary scanners:
 
 Results go to the repository's **Security → Code scanning** tab and the run's job summary. Scan locally with
 `make scan` (Trivy) and `make reachability` (govulncheck); both fall back to a container image if the tool is
-not installed. To re-enable gating later (fail PRs on un-triaged HIGH/CRITICAL CVEs), add `pull_request` /
-`push` / `schedule` triggers back to the workflow and restore an `exit-code: '1'` Trivy step.
+not installed. To turn this back into a gate later (fail PRs on un-triaged HIGH/CRITICAL CVEs), drop the
+`continue-on-error` lines and restore an `exit-code: '1'` Trivy step.
 
 Because the operator image is a thin layer over the upstream
 [`operator-framework/helm-operator`](https://quay.io/repository/operator-framework/helm-operator) base image,

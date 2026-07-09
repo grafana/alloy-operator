@@ -1,15 +1,32 @@
 ---
 name: CVE Scan
 
-# Advisory only, on demand. This scan is informational: it reports CVEs but does
-# not block PRs. The operator image is a thin layer over the pinned upstream
-# helm-operator base image, so findings are upstream-only and accumulate faster
-# than the base image can be bumped; gating on them would keep PRs permanently
-# red. Run it manually from the Actions tab (or `gh workflow run`) when you want
-# a fresh picture. To re-enable PR/push/scheduled gating later, add the relevant
-# triggers back and restore an `exit-code: '1'` step.
+# Advisory scan: it reports CVEs to the Security tab and the run's job summary
+# but never fails the build, so it runs on PRs without blocking them. The
+# operator image is a thin layer over the pinned upstream helm-operator base
+# image, so findings are upstream-only and accumulate faster than the base image
+# can be bumped; gating on them would keep PRs permanently red. To turn this back
+# into a gate later, drop the `continue-on-error` lines and restore an
+# `exit-code: '1'` Trivy step.
 # yamllint disable-line rule:truthy
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/trivy.yaml
+      - operator/**
+      - .vex/**
+  pull_request:
+    paths:
+      - .github/workflows/trivy.yaml
+      - operator/**
+      - .vex/**
+
+  # Catch CVEs newly disclosed against the pinned base image even when nothing
+  # in the repo changes.
+  schedule:
+    - cron: "0 8 * * 1"  # Mondays at 08:00 UTC
+
   workflow_dispatch:
 
 permissions: {}
@@ -45,6 +62,7 @@ jobs:
       # justified in the VEX ledger are suppressed here, so the Security tab shows
       # only the CVEs that still need attention. Advisory: never fails the build.
       - name: Scan image (SARIF report)
+        continue-on-error: true  # advisory; never fails the build
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           image-ref: alloy-operator:scan
@@ -59,6 +77,7 @@ jobs:
       - name: Upload SARIF to code scanning
         uses: github/codeql-action/upload-sarif@a8d1ac45b9a34d11fe398d5503176af0d06b303e  # v3.30.7
         if: always()
+        continue-on-error: true  # advisory; never fails the build
         with:
           sarif_file: trivy-results.sarif
           category: trivy-image
@@ -66,6 +85,7 @@ jobs:
       # Full HIGH/CRITICAL table (including VEX-suppressed findings and their
       # justifications) for the run log and job summary. Advisory: exit-code 0.
       - name: CVE report
+        continue-on-error: true  # advisory; never fails the build
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           image-ref: alloy-operator:scan
@@ -82,6 +102,7 @@ jobs:
 
       - name: Publish CVE report to job summary
         if: always()
+        continue-on-error: true  # advisory; never fails the build
         run: |
           {
             echo '## Trivy image scan (HIGH/CRITICAL)'
@@ -97,14 +118,17 @@ jobs:
       # advisory (does not fail the build); the reachability findings back the
       # `vulnerable_code_not_in_execute_path` justifications in the VEX ledger.
       - name: Set up Go
+        continue-on-error: true  # advisory; never fails the build
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00  # v6.0.0
         with:
           go-version: '1.25'
 
       - name: Install govulncheck
+        continue-on-error: true  # advisory; never fails the build
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
 
       - name: Extract helm-operator binary
+        continue-on-error: true  # advisory; never fails the build
         run: |
           cid="$(docker create alloy-operator:scan)"
           docker cp "${cid}:/usr/local/bin/helm-operator" ./helm-operator
