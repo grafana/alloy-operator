@@ -1,0 +1,161 @@
+---
+name: CVE Scan
+
+# Advisory scan: it reports CVEs to the Security tab and the run's job summary
+# but never fails the build, so it runs on PRs without blocking them. The
+# operator image is a thin layer over the pinned upstream helm-operator base
+# image, so findings are upstream-only and accumulate faster than the base image
+# can be bumped; gating on them would keep PRs permanently red. To turn this back
+# into a gate later, drop the `continue-on-error` lines and restore an
+# `exit-code: '1'` Trivy step.
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/trivy.yaml
+      - operator/**
+      - .vex/**
+  pull_request:
+    paths:
+      - .github/workflows/trivy.yaml
+      - operator/**
+      - .vex/**
+
+  # Catch CVEs newly disclosed against the pinned base image even when nothing
+  # in the repo changes.
+  schedule:
+    - cron: "0 8 * * 1"  # Mondays at 08:00 UTC
+
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  scan-image:
+    name: Scan operator image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # upload SARIF to the Security tab
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          persist-credentials: 'false'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+
+      - name: Build operator image
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf  # v7.2.0
+        with:
+          context: operator
+          platforms: linux/amd64
+          provenance: false
+          sbom: false
+          load: true
+          push: false
+          tags: alloy-operator:scan
+
+      # Report un-triaged HIGH/CRITICAL findings to the Security tab. Findings
+      # justified in the VEX ledger are suppressed here, so the Security tab shows
+      # only the CVEs that still need attention. Advisory: never fails the build.
+      - name: Scan image (SARIF report)
+        continue-on-error: true  # advisory; never fails the build
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          image-ref: alloy-operator:scan
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          format: sarif
+          output: trivy-results.sarif
+          exit-code: '0'
+        env:
+          TRIVY_VEX: .vex/alloy-operator.openvex.json
+
+      - name: Upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@a8d1ac45b9a34d11fe398d5503176af0d06b303e  # v3.30.7
+        if: always()
+        continue-on-error: true  # advisory; never fails the build
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-image
+
+      # Full HIGH/CRITICAL table (including VEX-suppressed findings and their
+      # justifications) for the run log and job summary. Advisory: exit-code 0.
+      - name: CVE report
+        continue-on-error: true  # advisory; never fails the build
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+        with:
+          image-ref: alloy-operator:scan
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          format: table
+          output: trivy-report.txt
+          exit-code: '0'
+          skip-setup-trivy: true
+        env:
+          TRIVY_VEX: .vex/alloy-operator.openvex.json
+          TRIVY_SHOW_SUPPRESSED: 'true'
+          TRIVY_SKIP_DB_UPDATE: 'true'
+
+      - name: Publish CVE report to job summary
+        if: always()
+        continue-on-error: true  # advisory; never fails the build
+        run: |
+          {
+            echo '## Trivy image scan (HIGH/CRITICAL)'
+            echo '```'
+            cat trivy-report.txt
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      # Reachability analysis of the bundled helm-operator Go binary. Trivy
+      # matches package versions; govulncheck (binary mode) checks whether the
+      # vulnerable *symbols* are actually linked into the binary. This is the
+      # signal that tells us when a newly disclosed CVE becomes reachable. It is
+      # advisory (does not fail the build); the reachability findings back the
+      # `vulnerable_code_not_in_execute_path` justifications in the VEX ledger.
+      - name: Set up Go
+        continue-on-error: true  # advisory; never fails the build
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16  # v6.5.0
+        with:
+          go-version: '1.25'
+
+      - name: Install govulncheck
+        continue-on-error: true  # advisory; never fails the build
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Extract helm-operator binary
+        continue-on-error: true  # advisory; never fails the build
+        run: |
+          cid="$(docker create alloy-operator:scan)"
+          docker cp "${cid}:/usr/local/bin/helm-operator" ./helm-operator
+          docker rm "${cid}"
+
+      - name: Reachability scan (govulncheck)
+        continue-on-error: true  # advisory scanner; never fails the build
+        run: |
+          {
+            echo '## govulncheck reachability (helm-operator Go binary)'
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          govulncheck -mode=binary -format=text ./helm-operator \
+            | tee -a "${GITHUB_STEP_SUMMARY}" || true
+          echo '```' >> "${GITHUB_STEP_SUMMARY}"
+          # Binary-mode SARIF has no source locations, but GitHub code scanning
+          # requires each result to have one. Anchor every finding to
+          # operator/Dockerfile, where the base image that carries these CVEs is
+          # pinned.
+          govulncheck -mode=binary -format=sarif ./helm-operator \
+            | jq '.runs[].results[] |= (if ((.locations // []) | length) > 0 then . else .locations = [{physicalLocation:{artifactLocation:{uri:"operator/Dockerfile"},region:{startLine:1}}}] end)' \
+            > govulncheck.sarif || true
+
+      - name: Upload govulncheck SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@a8d1ac45b9a34d11fe398d5503176af0d06b303e  # v3.30.7
+        if: always()
+        continue-on-error: true  # advisory scanner; never fails the build
+        with:
+          sarif_file: govulncheck.sarif
+          category: govulncheck

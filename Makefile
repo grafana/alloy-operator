@@ -2,6 +2,8 @@ HAS_ACTIONLINT := $(shell command -v actionlint;)
 HAS_HELM_DOCS := $(shell command -v helm-docs;)
 HAS_MARKDOWNLINT := $(shell command -v markdownlint-cli2;)
 HAS_ZIZMOR := $(shell command -v zizmor;)
+HAS_TRIVY := $(shell command -v trivy;)
+HAS_GOVULNCHECK := $(shell command -v govulncheck;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
 ALLOY_BINARY_VERSION := $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
@@ -136,6 +138,34 @@ clean: ## Clean up build artifacts.
 .PHONY: test
 test: ## Run all tests.
 	make -C charts/alloy-operator test
+
+VEX_FILE := .vex/alloy-operator.openvex.json
+.PHONY: scan
+scan: ## Build the operator image and scan it for HIGH/CRITICAL CVEs (VEX-gated).
+	docker buildx build --platform linux/amd64 --load --tag ${ALLOY_OPERATOR_IMAGE} operator
+ifdef HAS_TRIVY
+	trivy image --scanners vuln --severity HIGH,CRITICAL --show-suppressed --vex $(VEX_FILE) ${ALLOY_OPERATOR_IMAGE}
+else
+	docker run --rm \
+		--volume /var/run/docker.sock:/var/run/docker.sock \
+		--volume $(shell pwd)/.vex:/.vex \
+		aquasec/trivy:latest image --scanners vuln --severity HIGH,CRITICAL --show-suppressed --vex /$(VEX_FILE) ${ALLOY_OPERATOR_IMAGE}
+endif
+
+.PHONY: reachability
+reachability: ## Extract the operator's Go binary and run govulncheck reachability analysis.
+	docker buildx build --platform linux/amd64 --load --tag ${ALLOY_OPERATOR_IMAGE} operator
+	@mkdir -p .temp
+	cid="$$(docker create ${ALLOY_OPERATOR_IMAGE})"; \
+		docker cp "$$cid":/usr/local/bin/helm-operator .temp/helm-operator; \
+		docker rm "$$cid"
+# govulncheck exits 3 when it finds vulnerabilities; treat that as a successful
+# report (the CI gate is Trivy + the VEX ledger), but still fail on real errors.
+ifdef HAS_GOVULNCHECK
+	govulncheck -mode=binary .temp/helm-operator || [ $$? -eq 3 ]
+else
+	go run golang.org/x/vuln/cmd/govulncheck@latest -mode=binary .temp/helm-operator || [ $$? -eq 3 ]
+endif
 
 .PHONY: lint
 lint: lint-yaml lint-markdown lint-actionlint lint-zizmor ## Runs all linters.

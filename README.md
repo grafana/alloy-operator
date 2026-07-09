@@ -75,6 +75,44 @@ NOTE: The Alloy instances *do not* deploy the PodLogs CRD, nor does it support t
 We welcome contributions to the Grafana Alloy Operator! Please see our [Contributing Guide](./CONTRIBUTING.md) for more
 information.
 
+### Security scanning
+
+The operator image is scanned for known vulnerabilities (CVEs) by the **CVE Scan** GitHub Action. It is
+**advisory** — it reports findings but does not fail the build or block PRs, because the operator image is a
+thin layer over a pinned upstream base image whose CVEs accumulate faster than the base image can be bumped;
+gating on them would keep PRs permanently red. It runs on pull requests that touch `operator/**`, the workflow,
+or the [VEX ledger](.vex/); on pushes to `main`; weekly; and on demand from the **Actions** tab (or `gh
+workflow run trivy.yaml`). The scan uses two complementary scanners:
+
+* **[Trivy](https://trivy.dev/)** matches package versions across the whole image (UBI RPMs and the bundled Go
+  binary). Findings justified in the VEX ledger are suppressed, so what surfaces is the set still needing
+  attention.
+* **[govulncheck](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)** (binary mode) adds symbol-level
+  *reachability* for the bundled `helm-operator` Go binary — it reports which CVEs are actually linked into the
+  binary, which Trivy cannot tell. This is the signal that warns when a newly disclosed CVE becomes reachable.
+
+Results go to the repository's **Security → Code scanning** tab and the run's job summary. Scan locally with
+`make scan` (Trivy) and `make reachability` (govulncheck); both fall back to a container image if the tool is
+not installed. To turn this back into a gate later (fail PRs on un-triaged HIGH/CRITICAL CVEs), drop the
+`continue-on-error` lines and restore an `exit-code: '1'` Trivy step.
+
+Because the operator image is a thin layer over the upstream
+[`operator-framework/helm-operator`](https://quay.io/repository/operator-framework/helm-operator) base image,
+essentially all findings originate from that base image. To resolve a CVE:
+
+1. **Bump the base image** digest in [`operator/Dockerfile`](operator/Dockerfile) to a newer `helm-operator`
+   release that ships the fix. This is the real fix, and Renovate opens these digest-bump PRs automatically.
+2. **Triage it** in the [VEX ledger](.vex/) if the finding does not affect this operator — add an OpenVEX
+   `not_affected` statement with a written justification (see [`.vex/README.md`](.vex/README.md)). This keeps an
+   auditable rationale for each accepted finding (rather than a bare ignore list) and removes it from the set
+   the scan surfaces as still needing attention.
+
+The genuine fixes live upstream in
+[`operator-framework/operator-sdk`](https://github.com/operator-framework/operator-sdk), which builds the
+`helm-operator` image from `images/helm-operator/Dockerfile` (Go-binary CVEs are fixed by bumping `go.mod` /
+the Go toolchain; UBI RPM CVEs by bumping the `ubi9/ubi-minimal` base tag). Contributions there benefit every
+downstream operator — see that repo's `CONTRIBUTING.MD`.
+
 ### Updating the Alloy version
 
 The Alloy Operator embeds a specific version of Alloy by default. The Alloy Operator Helm chart's `appVersion` matches
