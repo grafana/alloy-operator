@@ -112,6 +112,7 @@ jobs:
           docker rm "${cid}"
 
       - name: Reachability scan (govulncheck)
+        continue-on-error: true  # advisory scanner; never blocks the Trivy gate
         run: |
           {
             echo '## govulncheck reachability (helm-operator Go binary)'
@@ -120,12 +121,18 @@ jobs:
           govulncheck -mode=binary -format=text ./helm-operator \
             | tee -a "${GITHUB_STEP_SUMMARY}" || true
           echo '```' >> "${GITHUB_STEP_SUMMARY}"
+          # Binary-mode SARIF has no source locations, but GitHub code scanning
+          # requires each result to have one. Anchor every finding to
+          # operator/Dockerfile, where the base image that carries these CVEs is
+          # pinned.
           govulncheck -mode=binary -format=sarif ./helm-operator \
+            | jq '.runs[].results[] |= (if ((.locations // []) | length) > 0 then . else .locations = [{physicalLocation:{artifactLocation:{uri:"operator/Dockerfile"},region:{startLine:1}}}] end)' \
             > govulncheck.sarif || true
 
       - name: Upload govulncheck SARIF to code scanning
         uses: github/codeql-action/upload-sarif@a8d1ac45b9a34d11fe398d5503176af0d06b303e  # v3.30.7
         if: always()
+        continue-on-error: true  # advisory scanner; never blocks the Trivy gate
         with:
           sarif_file: govulncheck.sarif
           category: govulncheck
