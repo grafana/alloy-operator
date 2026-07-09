@@ -33,8 +33,14 @@
                         },
                         "pullSecrets": {
                             "type": "array"
+                        },
+                        "registry": {
+                            "type": "string"
                         }
                     }
+                },
+                "imagePullPolicy": {
+                    "type": "string"
                 },
                 "imageRegistry": {
                     "type": "string"

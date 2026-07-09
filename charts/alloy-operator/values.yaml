@@ -17,15 +17,23 @@ global:
   # @section -- Deployment Settings
   namespaceOverride: ""
 
-  # -- Global image registry override.
+  # -- DEPRECATED: use `global.image.registry` instead. Cannot be set at the same time as `global.image.registry`.
   # @section -- Image Settings
   imageRegistry: ""
 
-  # -- Global image pull policy override.
+  # -- DEPRECATED: use `global.image.pullPolicy` instead. Cannot be set at the same time as `global.image.pullPolicy`.
   # @section -- Image Settings
   imagePullPolicy: ""
 
   image:
+    # -- Global image registry override.
+    # @section -- Image Settings
+    registry: ""
+
+    # -- Global image pull policy override.
+    # @section -- Image Settings
+    pullPolicy: ""
+
     # -- Global image pull secrets.
     # @section -- Image Settings
     pullSecrets: []

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+* Support `global.image.pullPolicy` as an alternative to `global.imagePullPolicy`, matching the nested `global.image.*` convention already used for the image registry and pull secrets (@TylerHelmuth)
+* Deprecate `global.imageRegistry` and `global.imagePullPolicy` in favor of `global.image.registry` and `global.image.pullPolicy`. Setting a deprecated key at the same time as its `global.image.*` counterpart now fails rendering (@TylerHelmuth)
+
 ## 0.5.11
 
 * Include signed Alloy CRD chart (@petewall)
