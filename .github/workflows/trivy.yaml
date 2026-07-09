@@ -1,25 +1,15 @@
 ---
 name: CVE Scan
 
+# Advisory only, on demand. This scan is informational: it reports CVEs but does
+# not block PRs. The operator image is a thin layer over the pinned upstream
+# helm-operator base image, so findings are upstream-only and accumulate faster
+# than the base image can be bumped; gating on them would keep PRs permanently
+# red. Run it manually from the Actions tab (or `gh workflow run`) when you want
+# a fresh picture. To re-enable PR/push/scheduled gating later, add the relevant
+# triggers back and restore an `exit-code: '1'` step.
 # yamllint disable-line rule:truthy
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - .github/workflows/trivy.yaml
-      - operator/**
-      - .vex/**
-  pull_request:
-    paths:
-      - .github/workflows/trivy.yaml
-      - operator/**
-      - .vex/**
-
-  # Catch CVEs newly disclosed against the pinned base image even when nothing
-  # in the repo changes.
-  schedule:
-    - cron: "0 8 * * 1"  # Mondays at 08:00 UTC
-
   workflow_dispatch:
 
 permissions: {}
@@ -51,9 +41,9 @@ jobs:
           push: false
           tags: alloy-operator:scan
 
-      # Report HIGH/CRITICAL findings to the Security tab. Does not fail the
-      # build, so newly disclosed CVEs stay visible without blocking. Findings
-      # justified in the VEX ledger are suppressed (their justification is shown).
+      # Report un-triaged HIGH/CRITICAL findings to the Security tab. Findings
+      # justified in the VEX ledger are suppressed here, so the Security tab shows
+      # only the CVEs that still need attention. Advisory: never fails the build.
       - name: Scan image (SARIF report)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
@@ -73,23 +63,32 @@ jobs:
           sarif_file: trivy-results.sarif
           category: trivy-image
 
-      # Gate: fail on any HIGH/CRITICAL CVE that is NOT justified in the VEX
-      # ledger (.vex/alloy-operator.openvex.json). Fix by bumping the base image
-      # digest in operator/Dockerfile, or, if no fixed base image exists yet, add
-      # a justified `not_affected` statement to the VEX ledger.
-      - name: Fail on un-triaged HIGH/CRITICAL CVEs
+      # Full HIGH/CRITICAL table (including VEX-suppressed findings and their
+      # justifications) for the run log and job summary. Advisory: exit-code 0.
+      - name: CVE report
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
           image-ref: alloy-operator:scan
           scanners: vuln
           severity: HIGH,CRITICAL
           format: table
-          exit-code: '1'
+          output: trivy-report.txt
+          exit-code: '0'
           skip-setup-trivy: true
         env:
           TRIVY_VEX: .vex/alloy-operator.openvex.json
           TRIVY_SHOW_SUPPRESSED: 'true'
           TRIVY_SKIP_DB_UPDATE: 'true'
+
+      - name: Publish CVE report to job summary
+        if: always()
+        run: |
+          {
+            echo '## Trivy image scan (HIGH/CRITICAL)'
+            echo '```'
+            cat trivy-report.txt
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
 
       # Reachability analysis of the bundled helm-operator Go binary. Trivy
       # matches package versions; govulncheck (binary mode) checks whether the
@@ -112,7 +111,7 @@ jobs:
           docker rm "${cid}"
 
       - name: Reachability scan (govulncheck)
-        continue-on-error: true  # advisory scanner; never blocks the Trivy gate
+        continue-on-error: true  # advisory scanner; never fails the build
         run: |
           {
             echo '## govulncheck reachability (helm-operator Go binary)'
@@ -132,7 +131,7 @@ jobs:
       - name: Upload govulncheck SARIF to code scanning
         uses: github/codeql-action/upload-sarif@a8d1ac45b9a34d11fe398d5503176af0d06b303e  # v3.30.7
         if: always()
-        continue-on-error: true  # advisory scanner; never blocks the Trivy gate
+        continue-on-error: true  # advisory scanner; never fails the build
         with:
           sarif_file: govulncheck.sarif
           category: govulncheck

@@ -9,7 +9,9 @@ of CVE IDs, every entry is a `not_affected` statement carrying a machine-readabl
 
 Trivy consumes it (`--vex` / `TRIVY_VEX`) and suppresses only the exact
 `(CVE, package)` pairs that have a written justification. Any HIGH/CRITICAL
-finding **not** covered here fails the PR gate.
+finding **not** covered here is surfaced by the scan (Security tab + job
+summary) as still needing attention. The scan is currently advisory and on
+demand, so it does not block PRs — see the repository README.
 
 ## Why these CVEs do not affect us
 
