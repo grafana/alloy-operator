@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: alloy-operator
-description: A Helm chart the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
+description: A Helm chart for the Alloy Operator, a project to innovate on creating instances of Grafana Alloy.
 icon: https://raw.githubusercontent.com/grafana/grafana/main/public/img/grafana_icon.svg
 sources:
   - https://github.com/grafana/alloy-operator
