@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.6.1
+
 * Undeprecate `global.imageRegistry`/`global.imagePullPolicy` keys. Allow them and `global.image.*` to be set at the same time. When both are set, the `global.image.*` key takes precedence (@TylerHelmuth)
 
 ## 0.6.0
