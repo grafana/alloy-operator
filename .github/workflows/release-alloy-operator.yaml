@@ -59,4 +59,5 @@ jobs:
             --title "${TAGNAME}" \
             --repo "${GITHUB_REPOSITORY}" \
             --notes "Chart released at https://github.com/grafana/helm-charts/releases/tag/${TAGNAME}" \
-            ${prerelease_flag}
+            ${prerelease_flag} \
+            charts/alloy-crd/crds/collectors.grafana.com_alloy.yaml
