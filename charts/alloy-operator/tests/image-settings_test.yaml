@@ -28,6 +28,17 @@ tests:
           path: spec.template.spec.containers[0].image
           pattern: "^old-registry\\.example\\.com/grafana/alloy-operator:"
 
+  - it: prefers global.image.registry over global.imageRegistry
+    set:
+      global:
+        imageRegistry: old-registry.example.com
+        image:
+          registry: preferred-registry.example.com
+    asserts:
+      - matchRegex:
+          path: spec.template.spec.containers[0].image
+          pattern: "^preferred-registry\\.example\\.com/grafana/alloy-operator:"
+
   - it: uses the default image pull policy
     asserts:
       - equal:
@@ -66,6 +77,17 @@ tests:
   - it: uses global.image.pullPolicy for backwards compatibility
     set:
       global:
+        image:
+          pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: prefers global.image.pullPolicy over global.imagePullPolicy
+    set:
+      global:
+        imagePullPolicy: Never
         image:
           pullPolicy: Always
     asserts:

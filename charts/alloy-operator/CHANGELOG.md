@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Undeprecate `global.imageRegistry`/`global.imagePullPolicy` keys. Allow them and `global.image.*` to be set at the same time. When both are set, the `global.image.*` key takes precedence (@TylerHelmuth)
+
 ## 0.6.0
 
 * Support `global.image.pullPolicy` as an alternative to `global.imagePullPolicy`, matching the nested `global.image.*` convention already used for the image registry and pull secrets (@TylerHelmuth)
