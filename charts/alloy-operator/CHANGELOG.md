@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.6.2
+
+* Update Alloy to 1.11.0 (@petewall)
+
 ## 0.6.1
 
 * Undeprecate `global.imageRegistry`/`global.imagePullPolicy` keys. Allow them and `global.image.*` to be set at the same time. When both are set, the `global.image.*` key takes precedence (@TylerHelmuth)
