@@ -11,9 +11,9 @@ The Alloy Operator is a Kubernetes Operator that manages the lifecycle of
 
 | Component        | Version |
 |------------------|---------|
-| Alloy Operator   | 0.6.3 |
-| Alloy Helm chart | 1.11.1 |
-| Alloy binary     | v1.18.1 |
+| Alloy Operator   | 0.7.0 |
+| Alloy Helm chart | 1.12.0 |
+| Alloy binary     | v1.19.0 |
 
 [//]: # (Version table end)
 
