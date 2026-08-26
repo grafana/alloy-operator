@@ -1,0 +1,23 @@
+---
+kind: ClusterConfig
+apiVersion: eksctl.io/v1alpha5
+metadata:
+  region: ap-northeast-2
+  tags:
+    source: alloy-operator-platform-test
+iam:
+  withOIDC: true
+nodeGroups:
+  - name: ng-linux
+    instanceType: m5.large
+    minSize: 1
+    maxSize: 1
+    tags:
+      Team: platform-test
+  - name: ng-windows
+    instanceType: m5.large
+    amiFamily: WindowsServer2022FullContainer
+    minSize: 1
+    maxSize: 1
+    tags:
+      Team: platform-test

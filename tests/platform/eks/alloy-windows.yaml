@@ -1,0 +1,58 @@
+# yamllint disable rule:line-length
+# NOTE: Running Alloy ON Windows nodes is not yet verified with the alloy-operator / Alloy Helm
+# chart. Windows support in the chart is limited, so the image tag, nodeSelector, tolerations
+# and any Windows-specific securityContext below are BEST-EFFORT and must be validated against a
+# real Windows node group before enabling this test in CI. This is why the scenario is marked
+# `.manual-only`.
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-windows
+  namespace: default
+spec:
+  controller:
+    type: daemonset
+    nodeSelector:
+      kubernetes.io/os: windows
+    tolerations:
+      - key: os
+        operator: Equal
+        value: windows
+        effect: NoSchedule
+  alloy:
+    # TODO: point at a Windows-based Alloy image (verify the correct registry/tag).
+    # image:
+    #   tag: <ALLOY_VERSION>-windows
+    extraEnv:
+      - name: CLUSTER_NAME
+        valueFrom:
+          configMapKeyRef:
+            key: clusterName
+            name: test-parameters
+    configMap:
+      content: |-
+        remote.kubernetes.secret "grafana_cloud" {
+          name      = "grafana-cloud-credentials"
+          namespace = "default"
+        }
+
+        prometheus.exporter.self "alloy" {}
+
+        prometheus.scrape "alloy" {
+          targets    = prometheus.exporter.self.alloy.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
+        prometheus.remote_write "grafana_cloud" {
+          external_labels = {
+            cluster = sys.env("CLUSTER_NAME"),
+          }
+          endpoint {
+            url = "https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push"
+            basic_auth {
+              username = convert.nonsensitive(remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_USER"])
+              password = remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_PASS"]
+            }
+          }
+        }

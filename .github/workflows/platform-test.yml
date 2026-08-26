@@ -1,0 +1,194 @@
+---
+# yamllint disable rule:line-length
+name: Platform Test
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+    paths:
+      - .github/workflows/platform-test.yml
+      - charts/**
+      - tests/**
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  list-tests:
+    name: List tests
+    runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.list_tests.outputs.tests }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: 'false'
+          fetch-depth: 0
+
+      - name: List tests
+        id: list_tests
+        working-directory: tests/platform
+        env:
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          allTests=$(find . -name test-plan.yaml -exec dirname {} \; | sed -e "s/^\.\///g" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')
+          manualOnlyTests=$(find . -name .manual-only -type f -exec dirname {} \; | sed "s|^\./||" | jq --raw-input --slurp --compact-output 'split("\n") | map(select(. != ""))')
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # Filter out labels that don't start with "platform-test-" and remove the prefix
+            chosenTests=$(echo "${LABELS}" | jq --raw-output --compact-output '[.[] | select(startswith("platform-test-")) | sub("^platform-test-"; "")]')
+
+            # Choose the tests that match the labels
+            tests=$(jq --null-input --compact-output --argjson allTests "${allTests}" --argjson chosenTests "${chosenTests}" '$allTests | map(select(. as $test | $chosenTests | index($test)))')
+          else
+            tests=${allTests}
+          fi
+
+          # remove manual only tests
+          tests=$(jq --null-input --compact-output --argjson tests "${tests}" --argjson manualOnlyTests "${manualOnlyTests}" '$tests | map(select(. as $test | $manualOnlyTests | index($test) | not))')
+
+          echo "Tests: ${tests}"
+          echo "tests=${tests}" >> "${GITHUB_OUTPUT}"
+
+  run-tests:
+    name: Platform Test
+    needs: list-tests
+    runs-on: ubuntu-latest
+    if: ${{ needs.list-tests.outputs.tests != '[]' }}
+    strategy:
+      matrix:
+        test: ${{ fromJson(needs.list-tests.outputs.tests) }}
+      fail-fast: false
+    concurrency:
+      group: ${{ matrix.test || 'no-platform-test' }}
+      cancel-in-progress: false
+
+    # These permissions are needed to assume roles from GitHub's OIDC.
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          path: source
+          persist-credentials: 'false'
+
+      - name: Checkout helm-chart-toolbox
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          path: helm-chart-toolbox
+          repository: grafana/helm-chart-toolbox
+          persist-credentials: 'false'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310  # v5.0.1
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@889be9d6cc8afa8ed639e1e1ba4ab678e3b38d8c  # v2.9.4
+
+      - name: Check for cluster config
+        id: check-cluster-config
+        working-directory: source/tests/platform
+        env:
+          TEST: ${{ matrix.test }}
+        run: yq eval '"cluster-type=" + .cluster.type' "${TEST}/test-plan.yaml" > "${GITHUB_OUTPUT}"
+
+      - name: Setup Kind CLI
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'kind' }}
+        uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc  # v1.14.0
+        with:
+          install_only: true
+
+      - name: Configure Azure Credentials
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'aks' }}
+        run: |
+          echo "Not ready for automated testing yet"
+          exit 1
+#        uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5  # v2.3.0
+#        with:
+#          auth-type: IDENTITY
+#          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Setup Azure CLI
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'aks' }}
+        uses: azure/cli@9eb25b8360668fb0ecbafa808d40e2197b2f5f52  # v3.0.0
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az version
+
+      - name: Setup eksctl CLI
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'eks' }}
+        run: |
+          PLATFORM="$(uname -s)_$ARCH"
+          curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+          tar -xzf "eksctl_$PLATFORM.tar.gz" -C /tmp && rm "eksctl_$PLATFORM.tar.gz"
+          sudo mv /tmp/eksctl /usr/local/bin
+        env:
+          ARCH: amd64
+
+      - name: Fetch AWS Credentials from Vault
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'eks' }}
+        id: get-aws-credentials
+        uses: grafana/shared-workflows/actions/get-vault-secrets@a37de51f3d713a30a9e4b21bcdfbd38170020593  # v1.3.0
+        env:
+          VAULT_REPO_SECRET_NAME: aws
+        with:
+          export_env: false
+          repo_secrets: |
+            AWS_ACCESS_KEY_ID=${{ env.VAULT_REPO_SECRET_NAME }}:access-key-id
+            AWS_SECRET_ACCESS_KEY=${{ env.VAULT_REPO_SECRET_NAME }}:secret-access-key
+
+      - name: Configure AWS Credentials
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'eks' }}
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c  # v6.2.3
+        with:
+          aws-access-key-id: '${{ fromJSON(steps.get-aws-credentials.outputs.secrets).AWS_ACCESS_KEY_ID }}'
+          aws-secret-access-key: '${{ fromJSON(steps.get-aws-credentials.outputs.secrets).AWS_SECRET_ACCESS_KEY }}'
+          aws-region: ap-northeast-2
+
+      - name: Fetch GCP Credentials from Vault
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'gke' }}
+        id: get-gcp-service-account-token
+        uses: grafana/shared-workflows/actions/get-vault-secrets@a37de51f3d713a30a9e4b21bcdfbd38170020593  # v1.3.0
+        env:
+          VAULT_REPO_SECRET_NAME: gcp
+        with:
+          export_env: false
+          repo_secrets: GCP_SERVICE_ACCOUNT_TOKEN=${{ env.VAULT_REPO_SECRET_NAME }}:service-account-token
+
+      - name: Configure GCP Credentials
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'gke' }}
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093  # v3.0.0
+        with:
+          credentials_json: '${{ fromJSON(steps.get-gcp-service-account-token.outputs.secrets).GCP_SERVICE_ACCOUNT_TOKEN }}'
+
+      - name: Set up GCP Cloud SDK
+        if: ${{ steps.check-cluster-config.outputs.cluster-type == 'gke' }}
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db  # v3.0.1
+        with:
+          install_components: gke-gcloud-auth-plugin
+
+      - name: Fetch Grafana Cloud Credentials from Vault
+        uses: grafana/shared-workflows/actions/get-vault-secrets@a37de51f3d713a30a9e4b21bcdfbd38170020593  # v1.3.0
+        env:
+          VAULT_REPO_SECRET_NAME: grafana-cloud
+        with:
+          repo_secrets: |
+            GRAFANA_CLOUD_METRICS_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:metrics-username
+            GRAFANA_CLOUD_LOGS_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:logs-username
+            GRAFANA_CLOUD_RW_POLICY_TOKEN=${{ env.VAULT_REPO_SECRET_NAME }}:access-policy-token
+
+      - name: Run test
+        env:
+          KUBECONFIG: "${{ github.workspace }}/source/tests/platform/${{ matrix.test }}/kubeconfig.yaml"
+          TEST_DIRECTORY: "source/tests/platform/${{ matrix.test }}"
+          DELETE_CLUSTER: true
+        run: |
+          make -C "${TEST_DIRECTORY}" clean all
+          helm-chart-toolbox/tools/helm-test/helm-test "${TEST_DIRECTORY}"

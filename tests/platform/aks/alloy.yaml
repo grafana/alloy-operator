@@ -1,0 +1,42 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy
+  namespace: default
+spec:
+  controller:
+    type: deployment
+  alloy:
+    extraEnv:
+      - name: CLUSTER_NAME
+        valueFrom:
+          configMapKeyRef:
+            key: clusterName
+            name: test-parameters
+    configMap:
+      content: |-
+        remote.kubernetes.secret "grafana_cloud" {
+          name      = "grafana-cloud-credentials"
+          namespace = "default"
+        }
+
+        prometheus.exporter.self "alloy" {}
+
+        prometheus.scrape "alloy" {
+          targets    = prometheus.exporter.self.alloy.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
+        prometheus.remote_write "grafana_cloud" {
+          external_labels = {
+            cluster = sys.env("CLUSTER_NAME"),
+          }
+          endpoint {
+            url = "https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push"
+            basic_auth {
+              username = convert.nonsensitive(remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_USER"])
+              password = remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_PASS"]
+            }
+          }
+        }
