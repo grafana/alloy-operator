@@ -3,14 +3,82 @@ name: Build and Push Image
 
 # yamllint disable-line rule:truthy
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - .github/workflows/build-and-push-image.yaml
+      - operator/Dockerfile
+      - operator/watches.yaml
+      - operator/helm-charts/**
+  pull_request:
+    paths:
+      - .github/workflows/build-and-push-image.yaml
+      - operator/Dockerfile
+      - operator/watches.yaml
+      - operator/helm-charts/**
   workflow_dispatch:
 
-permissions:
-  packages: write
+permissions: {}
 
 jobs:
-  build-and-push:
+  # Decides whether the build should run and surfaces the version to tag with.
+  # For push/workflow_dispatch this is always true; for pull_request it is true
+  # only when the chart version has increased relative to the base branch.
+  determine-build:
+    name: Determine whether to build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should-build: ${{ steps.check.outputs.should-build }}
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: 'false'
+          fetch-depth: 0  # need the base branch to compare versions on PRs
+
+      - name: Get Version
+        id: get-version
+        run: echo "version=$(yq '.version' operator/helm-charts/alloy/Chart.yaml)" >> "${GITHUB_OUTPUT}"
+
+      - name: Check version
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_VERSION: ${{ steps.get-version.outputs.version }}
+        run: |
+          # Any non-PR trigger (push to main, manual dispatch) always builds.
+          if [ "${EVENT_NAME}" != "pull_request" ]; then
+            echo "Trigger '${EVENT_NAME}': building."
+            echo "should-build=true" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          base_version="$(git show "origin/${BASE_REF}:operator/helm-charts/alloy/Chart.yaml" | yq '.version')"
+          echo "Base version: ${base_version}"
+          echo "Head version: ${HEAD_VERSION}"
+
+          if [ "${base_version}" = "${HEAD_VERSION}" ]; then
+            echo "Version unchanged; skipping build."
+            echo "should-build=false" >> "${GITHUB_OUTPUT}"
+          elif [ "$(printf '%s\n%s\n' "${base_version}" "${HEAD_VERSION}" | sort -V | tail -n1)" = "${HEAD_VERSION}" ]; then
+            echo "Version increased; building."
+            echo "should-build=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "Version decreased; skipping build."
+            echo "should-build=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+  build-and-push:
+    name: Build and push
+    needs: determine-build
+    if: needs.determine-build.outputs.should-build == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -23,10 +91,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e  # v4.3.0
 
-      - name: Get Version
-        id: get-version
-        run: echo "version=$(yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)" >> "${GITHUB_OUTPUT}"
-
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302  # v6.2.0
@@ -34,7 +98,7 @@ jobs:
           images: ghcr.io/grafana/alloy-operator
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=raw,value=${{ steps.get-version.outputs.version }}
+            type=raw,value=${{ needs.determine-build.outputs.version }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f  # v4.6.0
