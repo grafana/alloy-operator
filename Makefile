@@ -38,7 +38,7 @@ fetch-alloy-chart: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSI
 ##@ Build
 
 .PHONY: build
-build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz README.md build-image build-charts build-test-chart
+build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz README.md build-image build-charts build-test-chart update-tests
 
 UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
@@ -125,6 +125,10 @@ charts/sample-parent-chart/Chart.yaml: charts/alloy-operator/Chart.yaml
 .PHONY: build-test-chart
 build-test-chart: charts/sample-parent-chart/Chart.yaml   ## Build the test Helm chart.
 
+.PHONY: update-tests
+update-tests:   ## Update platform test manifests to the current Alloy version.
+	make -C tests/platform/eks alloy-windows.yaml ALLOY_VERSION=$(ALLOY_BINARY_VERSION)
+
 .PHONY: clean
 clean: ## Clean up build artifacts.
 	rm -rf .temp
@@ -179,7 +183,7 @@ else
 	docker run --rm --volume $(shell pwd):/src --workdir /src rhysd/actionlint:latest -color $(GITHUB_ACTION_FILES)
 endif
 
-YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*" -not -path "./charts/alloy-operator/docs/examples/*/output.yaml")
+YAML_FILES ?= $(shell find . -name "*.yaml" -not -path "./operator/*" -not -path "./charts/alloy-operator/docs/examples/*/output.yaml" -not -name "kubeconfig.yaml")
 .PHONY: lint-yaml
 lint-yaml: $(YAML_FILES) ## Lint yaml files.
 	@yamllint $(YAML_FILES)

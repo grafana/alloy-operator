@@ -1,9 +1,3 @@
-# yamllint disable rule:line-length
-# NOTE: Running Alloy ON Windows nodes is not yet verified with the alloy-operator / Alloy Helm
-# chart. Windows support in the chart is limited, so the image tag, nodeSelector, tolerations
-# and any Windows-specific securityContext below are BEST-EFFORT and must be validated against a
-# real Windows node group before enabling this test in CI. This is why the scenario is marked
-# `.manual-only`.
 ---
 apiVersion: collectors.grafana.com/v1alpha1
 kind: Alloy
@@ -11,8 +5,15 @@ metadata:
   name: alloy-windows
   namespace: default
 spec:
+  image:
+    tag: v1.19.0-windowsservercore-ltsc2022
   controller:
     type: daemonset
+    initContainers:
+      - name: configure-firewall
+        command: [powershell]
+        args: [New-NetFirewallRule, -DisplayName, '''alloy''', -Direction, inbound, -Profile, Any, -Action, Allow, -LocalPort, "12345", -Protocol, TCP]
+        image: docker.io/grafana/alloy:v1.19.0-windowsservercore-ltsc2022
     nodeSelector:
       kubernetes.io/os: windows
     tolerations:
@@ -20,10 +21,19 @@ spec:
         operator: Equal
         value: windows
         effect: NoSchedule
+    dnsPolicy: ClusterFirstWithHostNet
+    hostNetwork: true
+  configReloader:
+    enabled: false
   alloy:
-    # TODO: point at a Windows-based Alloy image (verify the correct registry/tag).
-    # image:
-    #   tag: <ALLOY_VERSION>-windows
+    command: ['%CONTAINER_SANDBOX_MOUNT_POINT%\Program Files\GrafanaLabs\Alloy\alloy.exe']
+    securityContext:
+      allowPrivilegeEscalation: null
+      capabilities: null
+      seccompProfile: null
+      windowsOptions:
+        hostProcess: true
+        runAsUserName: NT AUTHORITY\SYSTEM
     extraEnv:
       - name: CLUSTER_NAME
         valueFrom:
@@ -44,6 +54,13 @@ spec:
           forward_to = [prometheus.remote_write.grafana_cloud.receiver]
         }
 
+        prometheus.exporter.windows "windows" {}
+
+        prometheus.scrape "windows" {
+          targets    = prometheus.exporter.windows.windows.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
         prometheus.remote_write "grafana_cloud" {
           external_labels = {
             cluster = sys.env("CLUSTER_NAME"),
@@ -56,3 +73,8 @@ spec:
             }
           }
         }
+  global:
+    podSecurityContext:
+      windowsOptions:
+        hostProcess: true
+        runAsUserName: NT AUTHORITY\SYSTEM

@@ -30,6 +30,13 @@ spec:
           forward_to = [prometheus.remote_write.grafana_cloud.receiver]
         }
 
+        prometheus.exporter.unix "unix" {}
+
+        prometheus.scrape "unix" {
+          targets    = prometheus.exporter.unix.unix.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
         prometheus.remote_write "grafana_cloud" {
           external_labels = {
             cluster = sys.env("CLUSTER_NAME"),
