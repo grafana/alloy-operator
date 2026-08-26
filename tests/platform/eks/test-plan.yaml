@@ -1,0 +1,44 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: eks
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files:
+      - alloy-linux.yaml
+      - alloy-windows.yaml
+
+cluster:
+  type: eks
+  configFile: eks-cluster-config.yaml
+  appendRandomNumber: true
+
+dependencies:
+  - preset: test-parameters
+  - preset: test-parameters
+    namespace: toolbox
+  - file: grafana-cloud-credentials.yaml
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/api/v1/query
+          envFrom:
+            - secretRef: {name: grafana-cloud-credentials}
+            - configMapRef: {name: test-parameters}
+          queries:
+            - query: count(alloy_build_info{cluster="$clusterName"})
+              type: promql
+              expect:
+                value: 2
+            - query: node_os_info{cluster="$clusterName", job="integrations/unix"}
+              type: promql
+            - query: windows_os_info{cluster="$clusterName", job="integrations/windows"}
+              type: promql

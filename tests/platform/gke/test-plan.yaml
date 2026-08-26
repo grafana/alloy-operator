@@ -1,0 +1,49 @@
+---
+apiVersion: helm-chart-toolbox.grafana.com/v1
+kind: TestPlan
+name: gke
+
+subject:
+  releaseName: alloy-operator
+  path: ../../../charts/alloy-operator
+  namespace: operator
+
+  postInstall:
+    files: [alloy.yaml]
+
+cluster:
+  type: gke
+  zone: us-west1
+  args:
+    - --num-nodes=1
+    - --labels source=alloy-operator-platform-test
+    # Org policy (compute.vmExternalIpAccess) forbids external node IPs -> private nodes.
+    # No public control-plane IP; reached via the IAM-gated DNS endpoint
+    # (requires CLOUDSDK_CONTAINER_USE_DNS_ENDPOINT=true in .envrc / CI).
+    - --enable-ip-alias
+    - --enable-private-nodes
+    - --enable-private-endpoint
+    - --enable-master-authorized-networks
+    - --enable-dns-access
+  appendRandomNumber: true
+
+dependencies:
+  - preset: test-parameters
+  - preset: test-parameters
+    namespace: toolbox
+  - file: grafana-cloud-credentials.yaml
+
+tests:
+  - type: query-test
+    values:
+      tests:
+        - env:
+            PROMETHEUS_URL: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/api/v1/query
+          envFrom:
+            - secretRef: {name: grafana-cloud-credentials}
+            - configMapRef: {name: test-parameters}
+          queries:
+            # The operator deployed an Alloy instance that remote-writes its own metrics
+            # to Grafana Cloud, labeled with this test's randomized cluster name.
+            - query: alloy_build_info{cluster="$clusterName"}
+              type: promql

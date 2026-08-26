@@ -1,0 +1,80 @@
+---
+apiVersion: collectors.grafana.com/v1alpha1
+kind: Alloy
+metadata:
+  name: alloy-windows
+  namespace: default
+spec:
+  image:
+    tag: v1.19.0-windowsservercore-ltsc2022
+  controller:
+    type: daemonset
+    initContainers:
+      - name: configure-firewall
+        command: [powershell]
+        args: [New-NetFirewallRule, -DisplayName, '''alloy''', -Direction, inbound, -Profile, Any, -Action, Allow, -LocalPort, "12345", -Protocol, TCP]
+        image: docker.io/grafana/alloy:v1.19.0-windowsservercore-ltsc2022
+    nodeSelector:
+      kubernetes.io/os: windows
+    tolerations:
+      - key: os
+        operator: Equal
+        value: windows
+        effect: NoSchedule
+    dnsPolicy: ClusterFirstWithHostNet
+    hostNetwork: true
+  configReloader:
+    enabled: false
+  alloy:
+    command: ['%CONTAINER_SANDBOX_MOUNT_POINT%\Program Files\GrafanaLabs\Alloy\alloy.exe']
+    securityContext:
+      allowPrivilegeEscalation: null
+      capabilities: null
+      seccompProfile: null
+      windowsOptions:
+        hostProcess: true
+        runAsUserName: NT AUTHORITY\SYSTEM
+    extraEnv:
+      - name: CLUSTER_NAME
+        valueFrom:
+          configMapKeyRef:
+            key: clusterName
+            name: test-parameters
+    configMap:
+      content: |-
+        remote.kubernetes.secret "grafana_cloud" {
+          name      = "grafana-cloud-credentials"
+          namespace = "default"
+        }
+
+        prometheus.exporter.self "alloy" {}
+
+        prometheus.scrape "alloy" {
+          targets    = prometheus.exporter.self.alloy.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
+        prometheus.exporter.windows "windows" {}
+
+        prometheus.scrape "windows" {
+          targets    = prometheus.exporter.windows.windows.targets
+          forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+        }
+
+        prometheus.remote_write "grafana_cloud" {
+          external_labels = {
+            cluster = sys.env("CLUSTER_NAME"),
+          }
+          endpoint {
+            url = "https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push"
+            basic_auth {
+              username = convert.nonsensitive(remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_USER"])
+              password = remote.kubernetes.secret.grafana_cloud.data["PROMETHEUS_PASS"]
+            }
+          }
+        }
+  global:
+    podSecurityContext:
+      windowsOptions:
+        hostProcess: true
+        runAsUserName: NT AUTHORITY\SYSTEM
