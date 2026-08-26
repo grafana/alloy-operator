@@ -180,8 +180,12 @@ jobs:
           VAULT_REPO_SECRET_NAME: grafana-cloud
         with:
           repo_secrets: |
+            GRAFANA_CLOUD_FLEET_MGMT_USER=${{ env.VAULT_REPO_SECRET_NAME }}:fleet-management-username
+            GRAFANA_CLOUD_FLEET_MGMT_TOKEN=${{ env.VAULT_REPO_SECRET_NAME }}:fleet-management-token
             GRAFANA_CLOUD_METRICS_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:metrics-username
             GRAFANA_CLOUD_LOGS_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:logs-username
+            GRAFANA_CLOUD_TRACES_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:traces-username
+            GRAFANA_CLOUD_OTLP_USERNAME=${{ env.VAULT_REPO_SECRET_NAME }}:otlp-username
             GRAFANA_CLOUD_RW_POLICY_TOKEN=${{ env.VAULT_REPO_SECRET_NAME }}:access-policy-token
 
       - name: Run test
