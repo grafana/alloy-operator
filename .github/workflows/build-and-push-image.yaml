@@ -41,7 +41,7 @@ jobs:
 
       - name: Get Version
         id: get-version
-        run: echo "version=$(yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)" >> "${GITHUB_OUTPUT}"
+        run: echo "version=$(yq '.version' operator/helm-charts/alloy/Chart.yaml)" >> "${GITHUB_OUTPUT}"
 
       - name: Check version
         id: check
@@ -57,7 +57,7 @@ jobs:
             exit 0
           fi
 
-          base_version="$(git show "origin/${BASE_REF}:charts/alloy-helm-chart/Chart.yaml" | yq '.dependencies[].version')"
+          base_version="$(git show "origin/${BASE_REF}:operator/helm-charts/alloy/Chart.yaml" | yq '.version')"
           echo "Base version: ${base_version}"
           echo "Head version: ${HEAD_VERSION}"
 
