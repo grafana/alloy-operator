@@ -6,14 +6,14 @@ metadata:
   namespace: default
 spec:
   image:
-    tag: v1.19.0-windowsservercore-ltsc2022
+    tag: v1.19.2-windowsservercore-ltsc2022
   controller:
     type: daemonset
     initContainers:
       - name: configure-firewall
         command: [powershell]
         args: [New-NetFirewallRule, -DisplayName, '''alloy''', -Direction, inbound, -Profile, Any, -Action, Allow, -LocalPort, "12345", -Protocol, TCP]
-        image: docker.io/grafana/alloy:v1.19.0-windowsservercore-ltsc2022
+        image: docker.io/grafana/alloy:v1.19.2-windowsservercore-ltsc2022
     nodeSelector:
       kubernetes.io/os: windows
     tolerations:
