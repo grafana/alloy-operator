@@ -6,7 +6,7 @@ HAS_TRIVY := $(shell command -v trivy;)
 HAS_GOVULNCHECK := $(shell command -v govulncheck;)
 
 ALLOY_HELM_CHART_VERSION := $(shell yq '.dependencies[].version' charts/alloy-helm-chart/Chart.yaml)
-ALLOY_BINARY_VERSION := $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
+ALLOY_BINARY_VERSION = $(shell helm show chart charts/alloy-helm-chart/charts/alloy-*.tgz | yq -r '.appVersion')
 ALLOY_OPERATOR_IMAGE = ghcr.io/grafana/alloy-operator:$(ALLOY_HELM_CHART_VERSION)
 ALLOY_OPERATOR_HELM_CHART_VERSION = $(shell yq '.version' charts/alloy-operator/Chart.yaml)
 
