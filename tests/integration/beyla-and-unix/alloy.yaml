@@ -12,7 +12,7 @@ spec:
   alloy:
     securityContext:
       capabilities:
-        add: [CAP_SYS_ADMIN, CAP_SYS_PTRACE]
+        add: [SYS_ADMIN, SYS_PTRACE]
     stabilityLevel: public-preview
     configMap:
       content: |-
