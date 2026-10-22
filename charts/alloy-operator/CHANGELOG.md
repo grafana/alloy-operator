@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.9.2
+
+* Update Alloy to 1.14.2 (@TylerHelmuth)
+
 ## 0.9.1
 
 * Update Alloy to 1.14.1 (@TylerHelmuth)
