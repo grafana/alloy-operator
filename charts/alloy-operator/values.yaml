@@ -73,7 +73,7 @@ image:
 
   # -- Alloy Operator image tag. When empty, the Chart's appVersion is used.
   # @section -- Image Settings
-  tag: ""
+  tag: "@sha256:9b6e52e6846c7c4f014137129d3185f2e1aa71d8c7b47f791cfef56c9028bdaf"
 
   # -- Alloy Operator image digest. If set, will override the tag. Format: sha256:&lt;digest&gt;.
   # @section -- Image Settings
