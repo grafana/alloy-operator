@@ -75,7 +75,7 @@ jobs:
           TRIVY_VEX: .vex/alloy-operator.openvex.json
 
       - name: Upload SARIF to code scanning
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee  # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370  # v4.39.1
         if: always()
         continue-on-error: true  # advisory; never fails the build
         with:
@@ -153,7 +153,7 @@ jobs:
             > govulncheck.sarif || true
 
       - name: Upload govulncheck SARIF to code scanning
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee  # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370  # v4.39.1
         if: always()
         continue-on-error: true  # advisory scanner; never fails the build
         with:
