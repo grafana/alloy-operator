@@ -40,7 +40,14 @@ fetch-alloy-chart: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSI
 .PHONY: build
 build: charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz README.md build-image build-charts build-test-chart update-tests
 
-UPSTREAM_ALLOY_HELM_CHART_FILES = $(shell tar -tzf charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz)
+# The list of files in the upstream chart is generated into an included makefile, so that Make
+# downloads the chart tarball first (via the rule above) instead of listing a tarball that may not exist yet.
+ALLOY_HELM_CHART_FILES_MK = .temp/alloy-chart-files-$(ALLOY_HELM_CHART_VERSION).mk
+$(ALLOY_HELM_CHART_FILES_MK): charts/alloy-helm-chart/charts/alloy-$(ALLOY_HELM_CHART_VERSION).tgz
+	@mkdir -p $(@D)
+	@echo "UPSTREAM_ALLOY_HELM_CHART_FILES := $$(tar -tzf $< | tr '\n' ' ')" > $@
+include $(ALLOY_HELM_CHART_FILES_MK)
+
 UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES = $(filter alloy/charts/%, $(UPSTREAM_ALLOY_HELM_CHART_FILES))
 UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES = $(filter-out alloy/values.yaml alloy/Chart.yaml alloy/Chart.lock $(UPSTREAM_ALLOY_HELM_CHART_CRDS_FILES), $(UPSTREAM_ALLOY_HELM_CHART_FILES))
 UNMODIFIED_OPERATOR_ALLOY_HELM_CHART_FILES = $(patsubst %, operator/helm-charts/%, $(UNMODIFIED_UPSTREAM_ALLOY_HELM_CHART_FILES))

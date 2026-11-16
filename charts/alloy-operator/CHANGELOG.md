@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.10.0
+
+* Update Alloy to 1.16.0 (@petewall)
+
 ## 0.9.4
 
 * Update Alloy to 1.14.4 (@petewall)

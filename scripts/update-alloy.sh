@@ -20,4 +20,7 @@ yq ".version = \"$latest\"" -i "$CHART_YAML"
 yq ".dependencies[].version = \"$latest\"" -i "$CHART_YAML"
 
 make fetch-alloy-chart
-make clean build test
+# Run clean separately: within a single make process the chart tarball is already
+# considered up to date, so cleaning it in the same invocation would break the build.
+make clean
+make build test
