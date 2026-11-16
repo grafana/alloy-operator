@@ -129,7 +129,9 @@ jobs:
 
       - name: Set Azure default resource group
         if: ${{ steps.check-cluster-config.outputs.cluster-type == 'aks' }}
-        run: az configure --defaults group="${{ fromJSON(steps.get-azure-credentials.outputs.secrets).AZURE_RESOURCE_GROUP }}"
+        env:
+          AZURE_RESOURCE_GROUP: ${{ fromJSON(steps.get-azure-credentials.outputs.secrets).AZURE_RESOURCE_GROUP }}
+        run: az configure --defaults group="${AZURE_RESOURCE_GROUP}"
 
       - name: Setup eksctl CLI
         if: ${{ steps.check-cluster-config.outputs.cluster-type == 'eks' }}
