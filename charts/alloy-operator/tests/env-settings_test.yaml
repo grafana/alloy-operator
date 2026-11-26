@@ -79,3 +79,44 @@ tests:
                 name: operator-env
             - secretRef:
                 name: operator-secrets
+
+  - it: renders templates in extra environment variables
+    set:
+      extraEnv:
+        - name: OPERATOR_NAMESPACE
+          value: "{{ .Release.Namespace }}"
+        - name: GOMEMLIMIT
+          value: "{{ .Values.resources.limits.memory }}"
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: "{{ include \"alloy-operator.fullname\" . }}-token"
+              key: token
+      resources:
+        limits:
+          memory: 115MiB
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: OPERATOR_NAMESPACE
+              value: NAMESPACE
+            - name: GOMEMLIMIT
+              value: 115MiB
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: RELEASE-NAME-alloy-operator-token
+                  key: token
+
+  - it: renders templates in extra environment variable sources
+    set:
+      extraEnvFrom:
+        - configMapRef:
+            name: "{{ .Release.Name }}-env"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].envFrom
+          value:
+            - configMapRef:
+                name: RELEASE-NAME-env

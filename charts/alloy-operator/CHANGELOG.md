@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-* Add `extraEnv` and `extraEnvFrom` to set environment variables on the Alloy Operator container (@mindw)
+* Add `extraEnv` and `extraEnvFrom` to set environment variables on the Alloy Operator container. Both are rendered with `tpl`. (@mindw)
 
 ## 0.10.0
 

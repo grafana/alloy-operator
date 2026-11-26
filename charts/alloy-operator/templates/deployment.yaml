@@ -63,12 +63,12 @@ spec:
               value: {{ $namespaces | join "," | quote }}
 {{- end }}
 {{- with .Values.extraEnv }}
-            {{- toYaml . | nindent 12 }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
 {{- end }}
 {{- end }}
 {{- with .Values.extraEnvFrom }}
           envFrom:
-            {{- toYaml . | nindent 12 }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
 {{- end }}
           ports:
             - name: http
