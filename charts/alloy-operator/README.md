@@ -59,6 +59,8 @@ Grafana Alloy Operator, providing innovative ways for creating instances of Graf
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | extraArgs | list | `[]` | Additional arguments to pass to the Alloy Operator. |
+| extraEnv | list | `[]` | Additional environment variables to set on the Alloy Operator container, such as `GOMEMLIMIT`. Each entry is a Kubernetes `EnvVar`, so `valueFrom` works as well as `value`. |
+| extraEnvFrom | list | `[]` | Additional sources of environment variables for the Alloy Operator container, such as a ConfigMap or Secret. Each entry is a Kubernetes `EnvFromSource`. |
 
 ### Deployment Settings
 
