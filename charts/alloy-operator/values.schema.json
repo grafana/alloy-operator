@@ -19,6 +19,12 @@
         "extraArgs": {
             "type": "array"
         },
+        "extraEnv": {
+            "type": "array"
+        },
+        "extraEnvFrom": {
+            "type": "array"
+        },
         "fullnameOverride": {
             "type": "string"
         },

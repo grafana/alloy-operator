@@ -62,6 +62,18 @@ leaderElection:
 # @section -- Operator Settings
 extraArgs: []
 
+# -- Additional environment variables to set on the Alloy Operator container, such as `GOMEMLIMIT`. Each entry is a
+# Kubernetes `EnvVar`, so `valueFrom` works as well as `value`. Entries are rendered with `tpl`, so they can use
+# template expressions such as `{{ .Release.Namespace }}`.
+# @section -- Operator Settings
+extraEnv: []
+
+# -- Additional sources of environment variables for the Alloy Operator container, such as a ConfigMap or Secret.
+# Each entry is a Kubernetes `EnvFromSource`. Entries are rendered with `tpl`, so they can use template expressions
+# such as `{{ .Release.Name }}`.
+# @section -- Operator Settings
+extraEnvFrom: []
+
 image:
   # -- Alloy Operator image registry
   # @section -- Image Settings

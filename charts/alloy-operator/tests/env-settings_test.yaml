@@ -1,0 +1,122 @@
+# yamllint disable rule:document-start rule:line-length rule:trailing-spaces
+suite: Test - Alloy Operator - Environment Variables
+templates:
+  - deployment.yaml
+tests:
+  - it: sets no env or envFrom by default
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].env
+      - notExists:
+          path: spec.template.spec.containers[0].envFrom
+
+  - it: can set extra environment variables
+    set:
+      extraEnv:
+        - name: GOMEMLIMIT
+          value: 115MiB
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: GOMEMLIMIT
+              value: 115MiB
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+  - it: keeps WATCH_NAMESPACE when extra environment variables are set with ownNamespaceOnly
+    set:
+      ownNamespaceOnly: true
+      extraEnv:
+        - name: GOMEMLIMIT
+          value: 115MiB
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: WATCH_NAMESPACE
+              value: NAMESPACE
+            - name: GOMEMLIMIT
+              value: 115MiB
+
+  - it: keeps WATCH_NAMESPACE when extra environment variables are set with namespaces
+    set:
+      namespaces:
+        - team-a
+        - team-b
+      extraEnv:
+        - name: GOMEMLIMIT
+          value: 115MiB
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: WATCH_NAMESPACE
+              value: team-a,team-b
+            - name: GOMEMLIMIT
+              value: 115MiB
+
+  - it: can set extra environment variable sources
+    set:
+      extraEnvFrom:
+        - configMapRef:
+            name: operator-env
+        - secretRef:
+            name: operator-secrets
+    asserts:
+      - notExists:
+          path: spec.template.spec.containers[0].env
+      - equal:
+          path: spec.template.spec.containers[0].envFrom
+          value:
+            - configMapRef:
+                name: operator-env
+            - secretRef:
+                name: operator-secrets
+
+  - it: renders templates in extra environment variables
+    set:
+      extraEnv:
+        - name: OPERATOR_NAMESPACE
+          value: "{{ .Release.Namespace }}"
+        - name: GOMEMLIMIT
+          value: "{{ .Values.resources.limits.memory }}"
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: "{{ include \"alloy-operator.fullname\" . }}-token"
+              key: token
+      resources:
+        limits:
+          memory: 115MiB
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: OPERATOR_NAMESPACE
+              value: NAMESPACE
+            - name: GOMEMLIMIT
+              value: 115MiB
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: RELEASE-NAME-alloy-operator-token
+                  key: token
+
+  - it: renders templates in extra environment variable sources
+    set:
+      extraEnvFrom:
+        - configMapRef:
+            name: "{{ .Release.Name }}-env"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].envFrom
+          value:
+            - configMapRef:
+                name: RELEASE-NAME-env

@@ -1,0 +1,8 @@
+---
+resources:
+  limits:
+    memory: 128Mi
+extraEnv:
+  # Let the Go runtime collect garbage before the container reaches its memory limit.
+  - name: GOMEMLIMIT
+    value: 115MiB  # 90% of resources.limits.memory

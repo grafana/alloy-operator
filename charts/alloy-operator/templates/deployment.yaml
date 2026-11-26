@@ -56,10 +56,19 @@ spec:
 {{- if .Values.ownNamespaceOnly }}
   {{- $namespaces = list (include "alloy-operator.namespace" .) }}
 {{- end }}
-{{- if $namespaces }}
+{{- if or $namespaces .Values.extraEnv }}
           env:
+{{- if $namespaces }}
             - name: WATCH_NAMESPACE
               value: {{ $namespaces | join "," | quote }}
+{{- end }}
+{{- with .Values.extraEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+{{- end }}
+{{- end }}
+{{- with .Values.extraEnvFrom }}
+          envFrom:
+            {{- tpl (toYaml .) $ | nindent 12 }}
 {{- end }}
           ports:
             - name: http
